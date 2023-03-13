@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-// import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import DefaultButtonComponent from "../../components/defaultButton/DefaultButtonComponent";
 
@@ -19,13 +19,14 @@ import { LoginFormType } from "./types/LoginFormType";
 
 const LoginPage: React.FC<LoginFormType> = () => {
   const { register, handleSubmit } = useForm<LoginFormType>();
-
+  const history = useHistory();
+  
   const onSubmit = (data: LoginFormType) => {
     console.log(data);
   };
 
-  const validButton = () => {
-    console.log('teste')
+  const redirect = () => {
+    history.push("/activities");
   };
 
   return (
@@ -38,11 +39,11 @@ const LoginPage: React.FC<LoginFormType> = () => {
           <h3>Acesse com seu usuário e senha dos sistemas Topocart</h3>
         </LabelContainer>
         <FormContainer>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form >
           <Input type="text" placeholder="email"></Input>
           <Input type="text" placeholder="senha"></Input>
           <ButtonContainer>
-            <DefaultButtonComponent label={"CONTINUAR"} onClick={validButton} />
+            <DefaultButtonComponent label={"CONTINUAR"} onClick={redirect} />
           </ButtonContainer>
         </form>
         </FormContainer>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import img from "../../assets/login-background.png"
+import img from "../../assets/login-background.png";
 import logoTopocart from "../../assets/logo_topocart.png";
 
 export const LoginContainer = styled.div`
@@ -12,7 +12,6 @@ export const LoginContainer = styled.div`
 `;
 
 export const ContainerTitle = styled.h1`
-  width: 50%;
   color: white;
 `;
 
@@ -27,7 +26,7 @@ export const ContainerBackground = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`
+`;
 
 export const LabelContainer = styled.div`
   display: flex;
@@ -40,6 +39,7 @@ export const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 18px;
+  margin-right: 23px;
 `;
 
 export const Footer = styled.div`
@@ -66,7 +66,7 @@ export const Input = styled.input`
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 3px;
-`
+`;
 
 export const LogoTopocart = styled.image`
   background-image: url(${logoTopocart});

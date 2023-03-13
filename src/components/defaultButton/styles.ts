@@ -11,12 +11,12 @@ export const disabledButtonStyle = {
 export const Button = styled.button`
   background-color: #009c66;
   ${(props) => props.disabled && disabledButtonStyle};
+  background-color: ${(props) =>
+    props.disabled ? disabledButtonStyle.backgroundColor : "#009c66"};
   color: white;
-  padding: 10px;
   border-radius: 5px;
   width: auto;
-  height: 38px;
-  width: 70%;
+  height: auto;
   margin: 4px;
   font-size: 13px;
 `;

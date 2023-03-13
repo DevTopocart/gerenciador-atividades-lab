@@ -8,9 +8,10 @@ const DefaultButtonComponent: React.FC<DefaultButtonPropTypes> = ({
   onClick,
   label,
   disabled,
+  background
 }) => {
   return (
-    <Button onClick={onClick} disabled={disabled}>
+    <Button onClick={onClick} disabled={disabled} style={{ background }}>
       {Icon && <Icon />} {label}
     </Button>
   );

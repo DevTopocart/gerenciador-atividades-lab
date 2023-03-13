@@ -5,4 +5,5 @@ export interface DefaultButtonPropTypes {
   icon?: IconType;
   onClick: () => void;
   disabled?: boolean;
+  background?: string;
 }

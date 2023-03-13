@@ -1,7 +1,10 @@
 import styled from "styled-components";
 
-export const ContainerTask = styled.div`
-  background-color: white;
+interface ContainerTaskProps {
+  clicked: boolean;
+}
+
+export const ContainerTaskClicked = styled.div<ContainerTaskProps>`
   margin: 8px;
   height: 100px;
   width: 476px;
@@ -9,7 +12,23 @@ export const ContainerTask = styled.div`
   left: 0px;
   top: 0px;
   border-radius: 0px;
+  background-color: ${({ clicked }) => (clicked ? "#009C66" : "#fff")};
+  color: ${({ clicked }) => (clicked ? "#000" : "#333")};
+  cursor: pointer;
 `;
+
+export const ContainerTask = styled.div<ContainerTaskProps>`
+  margin: 8px;
+  height: 100px;
+  width: 476px;
+  display: flex;
+  left: 0px;
+  top: 0px;
+  border-radius: 0px;
+  background-color: ${({ clicked }) => (clicked ? "#009C66" : "#fff")};
+  color: ${({ clicked }) => (clicked ? "#000" : "#333")};
+`;
+
 export const ContainerSideLeft = styled.div`
   width: 25%;
   margin-left: 10px;

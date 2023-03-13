@@ -4,6 +4,10 @@ import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import LoginPage from "./pages/login";
 import ActivitiesPage from "./pages/activities/index"
+import ActivitiesMinimizePage from "./pages/activities minimized";
+import ConfirmationPage from "./pages/confirmation";
+import { Switch, Route, BrowserRouter } from "react-router-dom";
+
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -15,12 +19,22 @@ function App() {
   }
 
   return (
-    // <div>
-    //     <LoginPage email="teste@gmail.com" password="teste"/>
-    // </div>
-    <div>
-      <ActivitiesPage/>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/">
+          <LoginPage email={""} password={""} />
+        </Route>
+        <Route exact path="/activities">
+          <ActivitiesPage/>
+        </Route>
+        <Route exact path="/minimize">
+          <ActivitiesMinimizePage/>
+        </Route>
+        <Route exact path="/confirmation">
+          <ConfirmationPage/>
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 }
 
