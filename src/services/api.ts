@@ -1,16 +1,38 @@
-// import axios from 'axios';
-// import urlEnv da env
+import axios from 'axios';
+import { invoke } from '@tauri-apps/api'
 
-// import axios from 'axios';
+const api = axios.create({
+  baseURL: 'https://topocart.easyproject.com',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  params: {
+    'key': '40258ec9f51a6fc2efcf5a861ef8f4d2ddf4b585'
+  }
+});
 
-// const api = axios.create({
-//   baseURL: 'https://exemplo.com/api',
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
+// api.interceptors.request.use(async (config: any) => {
+//   try {
+//     const response = await invoke('http', {
+//       method: config.method,
+//       url: config.url,
+//       options: {
+//         headers: config.headers,
+//         data: config.data,
+//         params: config.params,
+//       },
+//     });
+
+//     return {
+//       ...config,
+//       data: response,
+//       headers: {},
+//       status: 200,
+//       statusText: 'OK',
+//     };
+//   } catch (error) {
+//     return Promise.reject(error);
+//   }
 // });
 
-// export default api;
-
-// adicionar header e afins
-// Pode conter a url base do easy e a pessoa so ir complementando a url
+export default api;

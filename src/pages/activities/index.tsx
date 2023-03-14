@@ -1,5 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+import api from "../../services/api";
 
 import {
     ContainerBackground,
@@ -32,6 +33,16 @@ const ActivitiesPage: React.FC = () => {
 	const redirect = () => {
 		history.push("/minimize");
 	};
+
+	async function getIssues() {
+		const result = api
+		.get('/issues.json')
+		.then((response) => response.data);
+		return result;
+	}
+
+	let issues = getIssues()
+	console.log(issues)
 
   return (
 		<ContainerBackground>
