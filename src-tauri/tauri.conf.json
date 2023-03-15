@@ -11,6 +11,10 @@
     "version": "0.0.0"
   },
   "tauri": {
+    "systemTray": {
+      "iconPath": "icons/favico_topocart.png",
+      "iconAsTemplate": true
+    },
     "allowlist": {
       "all": false,
       "shell": {
@@ -21,7 +25,7 @@
     "bundle": {
       "active": true,
       "icon": [
-        "icons/favico_topocart.png"
+        "icons/icon.png"
       ],
       "identifier": "com.topocart.apontador-horas",
       "targets": "all"
