@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
+import logoTopocart from './../../assets/logo_topocart.png'
 
 import DefaultButtonComponent from "../../components/defaultButton/DefaultButtonComponent";
 
@@ -13,7 +14,8 @@ import {
   LabelContainer,
   LoginContainer,
   LogoTopocart,
-  FormContainer
+  FormContainer,
+  Title
 } from "./styles";
 import { LoginFormType } from "./types/LoginFormType";
 
@@ -32,11 +34,13 @@ const LoginPage: React.FC<LoginFormType> = () => {
   return (
     <ContainerBackground>
       <ContainerTitle>
-        <h2>Gerenciador de Atividades</h2>
+				<Title>
+					Gerenciador de Atividades
+				</Title>
       </ContainerTitle>
       <LoginContainer>
         <LabelContainer>
-          <h3>Acesse com seu usuário e senha dos sistemas Topocart</h3>
+          <h4>Acesse com seu usuário e senha dos sistemas Topocart</h4>
         </LabelContainer>
         <FormContainer>
         <form >
@@ -48,9 +52,9 @@ const LoginPage: React.FC<LoginFormType> = () => {
         </form>
         </FormContainer>
       </LoginContainer>
-      <Footer>
-        <LogoTopocart />
-      </Footer>
+			<Footer>
+				<LogoTopocart src={logoTopocart}/>
+			</Footer>
     </ContainerBackground>
   );
 };
