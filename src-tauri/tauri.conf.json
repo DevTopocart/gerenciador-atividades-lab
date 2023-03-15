@@ -39,8 +39,8 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
-        "title": "apontador-horas",
+        "resizable": false,
+        "title": "Gerenciador de Atividades - Topocart",
         "width": 800,
         "height": 600
       }
