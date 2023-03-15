@@ -74,7 +74,7 @@ export const TitleInformation = styled.h4`
   margin-right: 10px;
   margin-left: 10px;
   margin-top: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 40px;
 `;
 
 export const TimeSession = styled.h3`
@@ -88,6 +88,7 @@ export const Time = styled.h1`
   display: flex;
   justify-content: center;
   margin: 10px;
+  margin-bottom: 40px;
   text-align: center;
 `;
 
@@ -104,6 +105,12 @@ export const PauseIcon = styled(RiPauseMiniFill)`
   padding: 0.5rem;
   border-radius: 50%;
 `;
+
+export const ContainerControls = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+`
 
 export const ContainerPlay = styled.div`
   display: flex;
