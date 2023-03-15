@@ -3,7 +3,7 @@
 
 use tauri::SystemTray;
 use tauri::Manager;
-use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent};
+use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, WindowEvent, SystemTrayEvent};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -25,7 +25,7 @@ fn main() {
     
     let tray = SystemTray::new().with_menu(tray_menu);
 
-    tauri::Builder::default()    
+    let app = tauri::Builder::default()    
         .system_tray(tray)
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
@@ -70,6 +70,20 @@ fn main() {
             _ => {}
           })
         .invoke_handler(tauri::generate_handler![greet])
-        .run(tauri::generate_context!())
+        .on_window_event(|event| match event.event() {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                // don't kill the app when the user clicks close. this is important
+                event.window().hide().unwrap();
+                api.prevent_close();
+            }
+            tauri::WindowEvent::Focused(false) => {
+                // hide the window automaticall when the user
+                // clicks out. this is for a matter of taste.
+                // event.window().hide().unwrap();
+                println!("user clicou fora da janela principal");
+            }
+            _ => {}
+        })
+        .run(tauri::generate_context!())        
         .expect("error while running tauri application");
 }
