@@ -13,13 +13,13 @@ fn greet(name: &str) -> String {
 
 fn main() {
     
-    let openApp = CustomMenuItem::new("abrir".to_string(), "Abrir tela de atividades");
-    let closeApp = CustomMenuItem::new("minimizar".to_string(), "Minimizar tela de atividades");
+    let open_app = CustomMenuItem::new("abrir".to_string(), "Abrir tela de atividades");
+    let close_app = CustomMenuItem::new("minimizar".to_string(), "Minimizar tela de atividades");
     let quit = CustomMenuItem::new("sair".to_string(), "Fechar o gerenciador de atividades");
     let tray_menu = SystemTrayMenu::new()
-        .add_item(openApp)
+        .add_item(open_app)
         .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(closeApp)
+        .add_item(close_app)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(quit);
     
