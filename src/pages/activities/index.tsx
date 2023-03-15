@@ -131,6 +131,13 @@ const ActivitiesPage: React.FC = () => {
 						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
 						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
 						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
 					</ContainerTask>
 				</ContainerSideLeft>
 
