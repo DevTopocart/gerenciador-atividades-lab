@@ -28,6 +28,7 @@ export const ContainerTitle = styled.h1`
 export const Footer = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: column;
 `;
 
 export const ActivitiesContainer = styled.div`
@@ -146,4 +147,12 @@ export const Title = styled.div`
 
 export const LogoTopocart = styled.img`
   margin-top: 15px;
+`
+
+export const Version = styled.p`
+  color: white;
+  align-self: center;
+  font-size: 6pt;
+  margin: 0;
+  margin-top: 5px;
 `

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import api from "../../services/api";
 import logoTopocart from './../../assets/logo_topocart.png'
+import packageJson from './../../../package.json'
 
 import {
     	ContainerBackground,
@@ -23,6 +24,7 @@ import {
 		LogoTopocart,
 		Title,
 		ContainerControls,
+		Version,
 } from "./styles"
 import ActivitiesTaskComponent from "../../components/ActivitiesTasks/ActivitiesTaskComponent"
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
@@ -169,6 +171,9 @@ const ActivitiesPage: React.FC = () => {
 			</ActivitiesContainer>
 			<Footer>
 				<LogoTopocart src={logoTopocart}/>
+				<Version>
+					Versão {packageJson.version}
+				</Version>
 			</Footer>
 		</ContainerBackground>
   );

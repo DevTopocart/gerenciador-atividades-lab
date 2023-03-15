@@ -74,3 +74,11 @@ export const LogoTopocart = styled.img`
   align-self: flex-end;
   margin-top: 60px;
 `
+
+export const Version = styled.p`
+  color: white;
+  align-self: center;
+  font-size: 6pt;
+  margin: 0;
+  margin-top: 5px;
+`
