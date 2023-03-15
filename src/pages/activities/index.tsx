@@ -1,24 +1,27 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import api from "../../services/api";
+import logoTopocart from './../../assets/logo_topocart.png'
 
 import {
-    ContainerBackground,
+    	ContainerBackground,
 		ActivitiesContainer,
 		ContainerPlay,
 		ContainerPause,
 		Footer,
-		LogoTopocart,
 		ContainerTitle,
 		ContainerSideLeft,
-    ContainerSideRight,
+    	ContainerSideRight,
 		ContainerTask,
 		TitleInformation,
 		TimeSession,
 		PlayPauseTitle,
 		Time,
 		PlayIcon,
-		PauseIcon
+		PauseIcon,
+		User,
+		LogoTopocart,
+		Title,
 } from "./styles"
 import ActivitiesTaskComponent from "../../components/ActivitiesTasks/ActivitiesTaskComponent"
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
@@ -34,38 +37,41 @@ const ActivitiesPage: React.FC = () => {
 		history.push("/minimize");
 	};
 
-	async function getIssues() {
-		const result = api
-		.get('/issues.json')
-		.then((response) => response.data);
-		return result;
-	}
+	// async function getIssues() {
+	// 	const result = api
+	// 	.get('/issues.json')
+	// 	.then((response) => response.data);
+	// 	return result;
+	// }
 
-	let issues = getIssues()
-	console.log(issues)
+	// let issues = getIssues()
+	// console.log(issues)
 
   return (
 		<ContainerBackground>
 			<ContainerTitle>
-				<h2>Gerenciador de Atividades</h2>
-				<h6>Logado como: Victor Marotta</h6>
+				<Title>
+					Gerenciador de Atividades
+				</Title>
+				<User>
+					Logado como: Victor Marotta
+				</User>
 			</ContainerTitle>
 
 			<ActivitiesContainer>
 				<ContainerSideLeft>
-					<h3>Selecione uma atividade da lista abaixo:</h3>
 					<ContainerTask>
-					  <ActivitiesTaskComponent clicked={true} hours={"75,3h"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3h"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3h"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3h"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3h"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+					  <ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
 					</ContainerTask>
 				</ContainerSideLeft>
 
 				<ContainerSideRight>
 					<TitleInformation>
-						Utilize os controles abaixo para controlar a execução da atividade:
+						Selecione uma atividade e utilize os controles abaixo para controlar a execução da atividade:
 					</TitleInformation>
 					<TimeSession>
 						Tempo na Seção:
@@ -85,7 +91,7 @@ const ActivitiesPage: React.FC = () => {
 				</ContainerSideRight>
 			</ActivitiesContainer>
 			<Footer>
-				<LogoTopocart/>
+				<LogoTopocart src={logoTopocart}/>
 			</Footer>
 		</ContainerBackground>
   );

@@ -19,37 +19,21 @@ export const ContainerBackground = styled.div`
 `;
 
 export const ContainerTitle = styled.h1`
+  display: flex;
+  flex-direction: column;
   color: white;
-  height: 130px;
+  margin-bottom: 10px;
 `;
 
 export const Footer = styled.div`
-  position: fixed;
-  height: 50px;
-  bottom: 0px;
-  left: 0px;
-  color: white;
-  right: 0px;
-  margin-bottom: 10px;
   display: flex;
   justify-content: center;
 `;
 
-export const LogoTopocart = styled.image`
-  background-image: url(${logoTopocart});
-  background-repeat: no-repeat;
-  background-size: cover;
-  display: flex;
-  width: 75px;
-  height: 30px;
-  margin: 6px;
-`;
-
 export const ActivitiesContainer = styled.div`
-  width: 990px;
-  height: 500px;
-  left: 188px;
-  top: 147px;
+  width: 80%;
+  height: 70%;
+  top: 20%;
   background-color: white;
   border-radius: 5px;
   display: flex;
@@ -60,38 +44,43 @@ export const ContainerSideLeft = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 50%;
+  width: 55%;
 `;
+
 export const ContainerSideRight = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 50%;
 `;
 
 export const ContainerTask = styled.div`
-  width: 100%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+  width: 98%;
   flex-direction: column;
-  height: 420px;
-  margin-left: 20px;
+  height: 98%;
   border-radius: 5px;
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
   justify-content: start;
   background-color: #d9d9d9;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
-export const TitleInformation = styled.h3`
+export const TitleInformation = styled.h4`
   display: flex;
-  margin: 20px;
-  margin-left: 40px;
   text-align: center;
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
 `;
 
 export const TimeSession = styled.h3`
   display: flex;
   justify-content: center;
   margin: 10px;
-  margin-left: 40px;
   text-align: center;
 `;
 
@@ -99,7 +88,6 @@ export const Time = styled.h1`
   display: flex;
   justify-content: center;
   margin: 10px;
-  margin-left: 40px;
   text-align: center;
 `;
 
@@ -120,14 +108,12 @@ export const PauseIcon = styled(RiPauseMiniFill)`
 export const ContainerPlay = styled.div`
   display: flex;
   flex-direction: row;
-  margin-left: 75px;
-  align-items: flex-start;
-  margin-top: 45px;
+  align-items: center;
+  margin-top: 5%;
 `;
 
-export const PlayPauseTitle = styled.h1`
+export const PlayPauseTitle = styled.h3`
   display: flex;
-  margin-top: 15px;
   margin-left: 10px;
   text-align: center;
 `;
@@ -135,7 +121,22 @@ export const PlayPauseTitle = styled.h1`
 export const ContainerPause = styled.div`
   display: flex;
   flex-direction: row;
-  margin-left: 75px;
-  align-items: flex-start;
-  margin-top: 15px;
+  align-items: center;
 `;
+
+export const User = styled.p`
+  font-size: small;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: rgb(210,210,210,0.7);
+`
+
+export const Title = styled.div`
+  display: flex;
+  text-align: center;
+  margin-bottom: 5px;
+`
+
+export const LogoTopocart = styled.img`
+  margin-top: 15px;
+`
