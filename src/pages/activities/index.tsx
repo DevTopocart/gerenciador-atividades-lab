@@ -1,6 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import api from "../../services/api";
+import { invoke } from '@tauri-apps/api/tauri'
 
 import {
     ContainerBackground,
@@ -35,14 +36,21 @@ const ActivitiesPage: React.FC = () => {
 	};
 
 	async function getIssues() {
-		const result = api
-		.get('/issues.json')
-		.then((response) => response.data);
-		return result;
-	}
+		try {
+			const response = await api.get('/issues.json');
+			console.log(response.data)
+			return response.data;
+		} catch (error) {
+			console.error(error);
+		}
+	}	
 
-	let issues = getIssues()
-	console.log(issues)
+	async function teste() {
+		let issues = await getIssues()
+		console.log(issues)
+	}	
+
+
 
   return (
 		<ContainerBackground>
@@ -78,7 +86,7 @@ const ActivitiesPage: React.FC = () => {
 					</ContainerPlay>
 
 					<ContainerPause>
-						<IconButtonComponent icon={PauseIcon} onClick={onClick} background="green"/>
+						<IconButtonComponent icon={PauseIcon} onClick={teste} background="green"/>
 						<PlayPauseTitle> Pausar Atividade</PlayPauseTitle>
 					</ContainerPause>
 					
