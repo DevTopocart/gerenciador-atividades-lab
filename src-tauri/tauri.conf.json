@@ -21,7 +21,7 @@
         "all": true,
         "request": true,
         "scope": [
-          "https://topocart.easyproject.com/*"
+          "https://39c4756f97.bigus-e1.easyproject.com/*"
         ]
       },
       "fs": {
@@ -57,7 +57,7 @@
       "targets": "all"
     },
     "security": {
-      "csp": "default-src 'self' https://topocart.easyproject.com;"
+      "csp": "default-src 'self' https://39c4756f97.bigus-e1.easyproject.com/;"
     },
     "updater": {
       "active": false

@@ -19,20 +19,33 @@ import {
   Title,
   Version
 } from "./styles";
-import { LoginFormType } from "./types/LoginFormType";
+import api from "../../services/api";
 
-const LoginPage: React.FC<LoginFormType> = () => {
-  const { register, handleSubmit } = useForm<LoginFormType>();
+const LoginPage: React.FC = () => {
+
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const history = useHistory();
   
-  const onSubmit = (data: LoginFormType) => {
-    console.log(data);
-  };
+  // console.log(errors);
+  const onSubmit = async (data:any) =>{ 
 
-  const redirect = () => {
-    history.push("/activities");
-  };
+    let user = data.Usuario
+    let password = data.Senha
 
+    const response = await api.get('/users.json');
+
+    let users = response.data.users.map((e: any) => {return {"id_user": e.id, "intranet": e.custom_fields.filter((l: any) => l.name == 'Usuario da Intranet')[0].value}})
+    let authUser = users.filter((e: any) => e.intranet == `user.1`)[0].id_user
+    
+    console.log("🚀 ~ file: index.tsx:40 ~ onSubmit ~ authUser:", authUser)
+
+    history.push({
+      pathname: '/activities',
+      state: {user: authUser}
+    });
+
+  };
+  
   return (
     <ContainerBackground>
       <ContainerTitle>
@@ -45,12 +58,12 @@ const LoginPage: React.FC<LoginFormType> = () => {
           <h4>Acesse com seu usuário e senha dos sistemas Topocart</h4>
         </LabelContainer>
         <FormContainer>
-        <form >
-          <Input type="text" placeholder="email"></Input>
-          <Input type="text" placeholder="senha"></Input>
-          <ButtonContainer>
-            <DefaultButtonComponent label={"CONTINUAR"} onClick={redirect} />
-          </ButtonContainer>
+        
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <input type="text" placeholder="Usuario" {...register("Usuario", {required: true})} />
+          <input type="password" placeholder="Senha" {...register("Senha", {required: true})} />
+
+          <input type="submit" />
         </form>
         </FormContainer>
       </LoginContainer>

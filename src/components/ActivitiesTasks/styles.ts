@@ -26,7 +26,7 @@ export const HoursTask = styled.p`
 
 export const HoursTitle = styled.p`
   font-weight: 600;
-  opacity: 0.5;
+  opacity: 0.7;
   font-size: small;
   color: inherit;
   margin-top: 2px;

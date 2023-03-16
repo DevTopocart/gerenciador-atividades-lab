@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import api from "../../services/api";
 import { invoke } from '@tauri-apps/api/tauri'
 import logoTopocart from './../../assets/logo_topocart.png'
@@ -57,11 +57,13 @@ const formatMs = (milliseconds: number) => {
 }
 
 const ActivitiesPage: React.FC = () => {
+	const location:any = useLocation();
 	const history = useHistory();
 	const [time, setTime] = useState(0)
 	const [isRunning, setIsRunning] = useState(false)
 	const [startTime, setStartTime] = useState<number>(0)
 	const [timeWhenLastStopped, setTimeWhenLastStopped] = useState<number>(0)
+	const [issues,setIssues] = useState([])
 
 	const start = () => {
 
@@ -83,18 +85,6 @@ const ActivitiesPage: React.FC = () => {
 
 	const interval = useRef<ReturnType<typeof setInterval>>()
 
-	useEffect(() => {
-		if (startTime > 0) {
-		  interval.current = setInterval(() => {
-			setTime(() => Date.now() - startTime)
-		  }, 1)
-		} else {
-		  if (interval.current) {
-			clearInterval(interval.current)
-			interval.current = undefined
-		  }
-		}
-	  }, [startTime])
 	
 	function onClick(){
 		console.log('Clicked!')
@@ -107,20 +97,37 @@ const ActivitiesPage: React.FC = () => {
 
 	async function getIssues() {
 		try {
-			const response = await api.get('/issues.json');
-			console.log(response.data)
+
+			const response = await api.get('/issues.json',{
+				params: {
+					assigned_to_id: 88
+				}
+			});
+			
+			setIssues(response.data.issues)
 			return response.data;
 		} catch (error) {
+			
 			console.error(error);
 		}
-	}	
+	}		
+	
+	useEffect(() => {
 
-	async function teste() {
-		let issues = await getIssues()
-		console.log(issues)
-	}	
+		console.log(location.state.user)
+		getIssues()
 
-
+		if (startTime > 0) {
+			interval.current = setInterval(() => {
+			setTime(() => Date.now() - startTime)
+			}, 1)
+		} else {
+			if (interval.current) {
+			clearInterval(interval.current)
+			interval.current = undefined
+			}
+		}
+		}, [startTime])
 
   return (
 		<ContainerBackground>
@@ -136,18 +143,14 @@ const ActivitiesPage: React.FC = () => {
 			<ActivitiesContainer>
 				<ContainerSideLeft>
 					<ContainerTask>
-					  <ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-						<ActivitiesTaskComponent clicked={true} hours={"75,3"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
+						{issues.map((e: any) => {
+							return <ActivitiesTaskComponent 
+													clicked={true} 
+													hours={"XX,x"} 
+													title={e.subject} 
+													nameProject={e.project.name} 
+													projectDepartment={"XXXXXXX"}/>
+						})}
 					</ContainerTask>
 				</ContainerSideLeft>
 

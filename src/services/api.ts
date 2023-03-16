@@ -4,12 +4,12 @@ import axiosTauriApiAdapter from "axios-tauri-api-adapter";
 
 const api = axios.create({
   adapter: axiosTauriApiAdapter,
-  baseURL: "https://topocart.easyproject.com",
+  baseURL: "https://39c4756f97.bigus-e1.easyproject.com",
   headers: {
     "Content-Type": "application/json",
   },
   params: {
-    key: "40258ec9f51a6fc2efcf5a861ef8f4d2ddf4b585",
+    key: "d88f0ec1f38eabd194ce3058a970c53a98b539d5",
   },
 });
 
