@@ -4,71 +4,71 @@ interface ContainerTaskProps {
   clicked: boolean;
 }
 
-export const ContainerTaskClicked = styled.div<ContainerTaskProps>`
-  margin: 8px;
+export const ContainerTask = styled.div<ContainerTaskProps>`
+  margin: 1%;
   height: 100px;
-  width: 476px;
+  width: 98%;
   display: flex;
   left: 0px;
   top: 0px;
   border-radius: 0px;
-  background-color: ${({ clicked }) => (clicked ? "#009C66" : "#fff")};
-  color: ${({ clicked }) => (clicked ? "#000" : "#333")};
   cursor: pointer;
+  background-color: ${({ clicked }) => (clicked ? "#009C66" : "#fff")};
+  color: ${({ clicked }) => (clicked ? "#ffffff" : "#000000")};
 `;
 
-export const ContainerTask = styled.div<ContainerTaskProps>`
-  margin: 8px;
-  height: 100px;
-  width: 476px;
+export const HoursTask = styled.p`
+  color: inherit;
+  margin-top: 2px;
+  font-size: 25pt;
+  font-weight: 600;
+`;
+
+export const HoursTitle = styled.p`
+  font-weight: 600;
+  opacity: 0.5;
+  font-size: small;
+  color: inherit;
+  margin-top: 2px;
+`;
+
+export const Title = styled.h5`
+  margin: 0;
+  font-size: large;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  color: inherit;
+`;
+
+export const ProjectDepartment = styled.p`
   display: flex;
-  left: 0px;
-  top: 0px;
-  border-radius: 0px;
-  background-color: ${({ clicked }) => (clicked ? "#009C66" : "#fff")};
-  color: ${({ clicked }) => (clicked ? "#000" : "#333")};
+  justify-content: start;
+  font-size: small;
+  margin: 0;
+  opacity: 0.7;
+  color: inherit;
+`;
+
+export const ProjectTitle = styled.p`
+  display: flex;
+  justify-content: start;
+  font-size: small;
+  margin: 0;
+  margin-bottom: 5px;
+  opacity: 0.7;
+  color: inherit;
 `;
 
 export const ContainerSideLeft = styled.div`
-  width: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 45%;
+  text-align: left;
   margin-left: 10px;
-`;
-
-export const HoursTask = styled.h2`
-  height: 10px;
-  margin: 10px;
-  margin-top: 14px;
-`;
-
-export const HoursTitle = styled.h6`
-  margin: 0;
-  color: #707070;
-  margin-top: 6px;
-`;
-
-export const Title = styled.h3`
-  margin: 0;
-  margin-top: 6px;
-  margin-bottom: 5px;
-  color: #000000; ;
 `;
 
 export const ContainerSideRight = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-export const ProjectDepartment = styled.h3`
-  display: flex;
-  justify-content: start;
-  margin: 0;
-  margin-top: 2px;
-`;
-
-export const ProjectTitle = styled.h3`
-  display: flex;
-  justify-content: start;
-  margin: 0;
-  color: #707070;
-  margin-top: 6px;
 `;
