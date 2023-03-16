@@ -19,6 +19,7 @@
     "react-hook-form": "^7.43.5",
     "react-icons": "^4.8.0",
     "react-router-dom": "^5.2.0",
+    "react-use-form": "^0.1.0",
     "styled-components": "^5.3.8"
   },
   "devDependencies": {
