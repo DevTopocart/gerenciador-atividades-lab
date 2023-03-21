@@ -29,7 +29,6 @@ import {
 } from "./styles"
 import ActivitiesTaskComponent from "../../components/ActivitiesTasks/ActivitiesTaskComponent"
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
-import { Button } from "../../components/defaultButton/styles";
 
 const padStart = (num: number) => {
 	return num.toString().padStart(2, "0")

@@ -3,8 +3,7 @@ import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import logoTopocart from './../../assets/logo_topocart.png'
 import packageJson from './../../../package.json'
-
-import DefaultButtonComponent from "../../components/defaultButton/DefaultButtonComponent";
+import { NavLink } from 'react-router-dom'
 
 import {
   ContainerBackground,
@@ -26,7 +25,6 @@ const LoginPage: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const history = useHistory();
   
-  // console.log(errors);
   const onSubmit = async (data:any) =>{ 
 
     let user = data.Usuario
@@ -57,6 +55,7 @@ const LoginPage: React.FC = () => {
         <LabelContainer>
           <h4>Acesse com seu usuário e senha dos sistemas Topocart</h4>
         </LabelContainer>
+        <NavLink to="/activities/"> Dashboard </NavLink>
         <FormContainer>
         
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -65,6 +64,7 @@ const LoginPage: React.FC = () => {
 
           <input type="submit" />
         </form>
+
         </FormContainer>
       </LoginContainer>
 			<Footer>
