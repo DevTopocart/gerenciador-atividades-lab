@@ -11,8 +11,34 @@
     "version": "0.0.0"
   },
   "tauri": {
+    "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true,
+      "title": "Gerenciador de Atividades - Topocart"
+    },
     "allowlist": {
-      "all": false,
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": [
+          "https://39c4756f97.bigus-e1.easyproject.com/*"
+        ]
+      },
+      "fs": {
+        "scope": [
+          "https://*"
+        ],
+        "all": true,
+        "readFile": true,
+        "writeFile": true,
+        "readDir": true,
+        "copyFile": true,
+        "createDir": true,
+        "removeDir": true,
+        "removeFile": true,
+        "renameFile": true,
+        "exists": true
+      },
       "shell": {
         "all": false,
         "open": true
@@ -31,7 +57,7 @@
       "targets": "all"
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self' https://39c4756f97.bigus-e1.easyproject.com/;"
     },
     "updater": {
       "active": false
@@ -39,8 +65,8 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": true,
-        "title": "apontador-horas",
+        "resizable": false,
+        "title": "Gerenciador de Atividades - Topocart",
         "width": 800,
         "height": 600
       }
