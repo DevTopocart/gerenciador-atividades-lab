@@ -113,7 +113,7 @@ const ActivitiesPage: React.FC = () => {
 	
 	useEffect(() => {
 
-		console.log(location.state.user)
+		// console.log(location.state.user)
 		getIssues()
 
 		if (startTime > 0) {

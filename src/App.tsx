@@ -5,7 +5,6 @@ import ActivitiesMinimizePage from "./pages/activities minimized";
 import ConfirmationPage from "./pages/confirmation";
 import { Switch, Route } from "react-router-dom";
 
-
 function App() {
   return (
     <Switch>
