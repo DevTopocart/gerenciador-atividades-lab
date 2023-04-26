@@ -3,6 +3,8 @@ export interface ActivitiesTaskPropsType {
     title: string;
     nameProject: string;
     projectDepartment: string;
-    clicked: boolean;
+    index: number;
+    isSelected?: boolean;
+    onSelect: (index: number) => void;
   }
   
