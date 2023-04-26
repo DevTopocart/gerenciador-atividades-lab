@@ -11,8 +11,15 @@ const IconButtonComponent: React.FC<IconButtonPropsTypes> = ({
     background,
     disabled,
 }) => {
+    const handleClick = () => {
+        if (disabled) {
+          return;
+        }
+        onClick();
+      };
+
 	return (
-		<Button onClick={onClick} >  
+		<Button onClick={handleClick} disabledProp={disabled}>  
 			{Icon && <Icon />}
 		</Button>);
 }

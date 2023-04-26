@@ -7,3 +7,6 @@ export interface IconButtonPropsTypes {
     background: string
   }
   
+  export interface ButtonProps {
+    disabledProp?: boolean;
+  }
