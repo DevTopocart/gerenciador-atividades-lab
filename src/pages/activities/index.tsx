@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import api from "../../services/api";
-import { invoke } from '@tauri-apps/api/tauri'
 import logoTopocart from './../../assets/logo_topocart.png'
 import packageJson from './../../../package.json'
 
@@ -40,13 +39,9 @@ const formatMs = (milliseconds: number) => {
 	let minutes = Math.floor(seconds / 60)
 	let hours = Math.floor(minutes / 60)
 
-	// using the modulus operator gets the remainder if the time roles over
-	// we don't do this for hours because we want them to rollover
-	// seconds = 81 -> minutes = 1, seconds = 21.
-	// 60 minutes in an hour, 60 seconds in a minute, 1000 milliseconds in a second.
 	minutes = minutes % 60
 	seconds = seconds % 60
-	// divide the milliseconds by 10 to get the tenths of a second. 543 -> 54
+
 	const ms = Math.floor((milliseconds % 1000) / 10)
 
 	let str = `${padStart(hours)}:${padStart(minutes)}:${padStart(seconds)}`
@@ -63,57 +58,63 @@ const ActivitiesPage: React.FC = () => {
 	const [startTime, setStartTime] = useState<number>(0)
 	const [timeWhenLastStopped, setTimeWhenLastStopped] = useState<number>(0)
 	const [issues,setIssues] = useState([])
+	const [selectedTask, setSelectedTask] = useState<number | null>(null);
+
+  const handleTaskClick = (index: number, task: any) => {
+    setSelectedTask(index);
+		console.log(task)
+  };
 
 	const start = () => {
-
 		if (!isRunning) {
-
 			setIsRunning(true)
 			setStartTime(Date.now())
 		}
 	}
 
 	const stop = () => {
-
 		if (isRunning) {
-
 			setIsRunning(false)
 			setStartTime(0)
 		}
-	  }
+	}
 
 	const interval = useRef<ReturnType<typeof setInterval>>()
 
-	
-	function onClick(){
-		console.log('Clicked!')
-	}
-
 	const logout = () => {
-		console.log(1)
 		history.push(`/`);
 	};
 
 	async function getIssues() {
 		try {
-
 			const response = await api.get('/issues.json',{
 				params: {
-					assigned_to_id: 88
+					assigned_to_id: location.state.user.id
 				}
 			});
-			
-			setIssues(response.data.issues)
+	
+			const issues = response.data.issues;
+
+			for (let i = 0; i < issues.length; i++) {
+				const issue = issues[i];
+				const id_parent = issue.parent;
+				if(id_parent){
+					const response2 = await api.get(`/issues/${id_parent.id}.json`);
+					issue.name_parent = response2.data.issue.subject;
+				} else {
+					issue.name_parent = '----------------------';
+				}
+			}
+	
+			setIssues(issues);
 			return response.data;
 		} catch (error) {
-			
 			console.error(error);
 		}
-	}		
+	}	
 	
 	useEffect(() => {
 
-		// console.log(location.state.user)
 		getIssues()
 
 		if (startTime > 0) {
@@ -142,14 +143,21 @@ const ActivitiesPage: React.FC = () => {
 			<ActivitiesContainer>
 				<ContainerSideLeft>
 					<ContainerTask>
-						{issues.map((e: any) => {
-							return <ActivitiesTaskComponent 
-													clicked={true} 
-													hours={"XX,x"} 
-													title={e.subject} 
-													nameProject={e.project.name} 
-													projectDepartment={"XXXXXXX"}/>
-						})}
+					{issues.map((e: any, index: number) => {
+						return (
+							<ActivitiesTaskComponent
+								key={index}
+								index={index}
+								isSelected={selectedTask === index}  
+								// se esta selecionado o index correto
+								onSelect={() => handleTaskClick(index, e)}
+								// Lidar com a seleção do item para passar pro outro component
+								hours={"XX,x"}
+								title={e.subject}
+								nameProject={e.project.name}
+								projectDepartment={e.name_parent}         />
+						);
+					})}
 					</ContainerTask>
 				</ContainerSideLeft>
 
