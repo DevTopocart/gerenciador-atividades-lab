@@ -28,6 +28,7 @@ import {
 } from "./styles";
 import ActivitiesTaskComponent from "../../components/ActivitiesTasks/ActivitiesTaskComponent";
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
+import { toast } from "react-toastify";
 
 const padStart = (num: number) => {
   return num.toString().padStart(2, "0");
@@ -57,6 +58,7 @@ const ActivitiesPage: React.FC = () => {
   const [issues, setIssues] = useState([]);
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [isActivitySelected, setIsActivitySelected] = useState(false);
+  const [task, setTask] = useState<any>({});
 
   const handleTaskClick = (index: number, task: any) => {
     setSelectedTask(index);
@@ -65,6 +67,7 @@ const ActivitiesPage: React.FC = () => {
       setStartTime(0);
       setTime(0);
     }
+    setTask(task);
   };
 
   const start = () => {
@@ -74,10 +77,33 @@ const ActivitiesPage: React.FC = () => {
     }
   };
 
-  const stop = () => {
+  const stop = async () => {
     if (isRunning) {
       setIsRunning(false);
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString("en-CA");
+      const hours = time / 3600000;
+
+      const time_json = {
+        time_entry: {
+          project_id: task.project.id,
+          issue_id: task.id,
+          user_id: task.assigned_to.id,
+          hours: hours.toFixed(3),
+          spent_on: formattedDate,
+          comments: "Atividade lançada pelo apontador de horas",
+        },
+      };
+
+      api.post(`/time_entries.json`, time_json).then((response) => {
+          console.log(response);
+          toast.success("Tempo salvo com sucesso");
+        })
+        .catch((error) => {
+          toast.error('Entre em contato com o HelpDesk');
+        });
       setStartTime(0);
+      setTime(0);
     }
   };
 
@@ -101,8 +127,8 @@ const ActivitiesPage: React.FC = () => {
         const issue = issues[i];
         const id_parent = issue.parent;
         if (id_parent) {
-          const response2 = await api.get(`/issues/${id_parent.id}.json`);
-          issue.name_parent = response2.data.issue.subject;
+          const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
+          issue.name_parent = responseIssues.data.issue.subject;
         } else {
           issue.name_parent = "----------------------";
         }
