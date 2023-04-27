@@ -6,5 +6,6 @@ export interface ActivitiesTaskPropsType {
     index: number;
     isSelected?: boolean;
     onSelect: (index: number) => void;
+    disabled: boolean;
   }
   

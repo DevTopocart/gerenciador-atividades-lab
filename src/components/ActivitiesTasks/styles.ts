@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 interface ContainerTaskProps {
   isSelected?: boolean;
+  disabled: boolean;
 }
 
 export const ContainerTask = styled.div<ContainerTaskProps>`
@@ -15,6 +16,8 @@ export const ContainerTask = styled.div<ContainerTaskProps>`
   cursor: pointer;
   background-color: ${({ isSelected }) => (isSelected ? "#009C66" : "#fff")};
   color: ${({ isSelected }) => (isSelected ? "#ffffff" : "#000000")};
+  color: ${({ isSelected, disabled }) => (isSelected && !disabled ? "#ffffff" : "#000000")};
+  opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
 `;
 
 export const HoursTask = styled.p`

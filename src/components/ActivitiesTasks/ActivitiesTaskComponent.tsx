@@ -5,11 +5,13 @@ import { ContainerTask, ContainerSideLeft,HoursTask, HoursTitle,Title, Container
 
 const ActivitiesTaskComponent: React.FC<ActivitiesTaskPropsType> = (props) => {
   const handleClick = () => {
-    props.onSelect(props.index);
+    if (!props.disabled) {
+      props.onSelect(props.index);
+    }
     //  Passa o indice da tarefa que vai ser selecionada
   }
   return (
-    <ContainerTask isSelected={props.isSelected} onClick={handleClick}>
+    <ContainerTask isSelected={props.isSelected} onClick={handleClick}  disabled={props.disabled}>
       <ContainerSideLeft>
         <HoursTitle>
           Horas Executadas
