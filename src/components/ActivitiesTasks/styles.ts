@@ -14,9 +14,9 @@ export const ContainerTask = styled.div<ContainerTaskProps>`
   top: 0px;
   border-radius: 0px;
   cursor: pointer;
-  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
-  background-color: ${({ isSelected, disabled }) => (isSelected && !disabled ? "#009C66" : disabled ? "#e0e0e0" : "#fff")};
-  color: ${({ isSelected, disabled }) => (isSelected && !disabled ? "#ffffff" : disabled ? "#a9a9a9" : "#000000")};
+  background-color: ${({ isSelected }) => (isSelected ? "#009C66" : "#fff")};
+  color: ${({ isSelected }) => (isSelected ? "#ffffff" : "#000000")};
+  color: ${({ isSelected, disabled }) => (isSelected && !disabled ? "#ffffff" : "#000000")};
   opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
 `;
 

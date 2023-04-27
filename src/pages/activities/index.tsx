@@ -54,7 +54,6 @@ const ActivitiesPage: React.FC = () => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
-  const [timeWhenLastStopped, setTimeWhenLastStopped] = useState<number>(0);
   const [issues, setIssues] = useState([]);
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [isActivitySelected, setIsActivitySelected] = useState(false);
