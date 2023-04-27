@@ -1,9 +1,7 @@
 import styled from "styled-components";
 
-import img from "../../assets/login-background.png";
-import logoTopocart from "../../assets/logo_topocart.png";
+import img from "/login-background.png";
 import { RiPlayFill, RiStopMiniFill } from "react-icons/ri";
-import { RiPauseMiniFill } from "react-icons/ri";
 
 export const ContainerBackground = styled.div`
   background-image: url(${img});

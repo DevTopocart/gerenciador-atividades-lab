@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import api from "../../services/api";
-import logoTopocart from "./../../assets/logo_topocart.png";
+import logoTopocart from "/logo_topocart.png";
 import packageJson from "./../../../package.json";
-import loader from "../../assets/loader.svg"
+import loader from "/loader.svg"
 import {
   ContainerBackground,
   ActivitiesContainer,

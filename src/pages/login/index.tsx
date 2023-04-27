@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useForm,Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
-import logoTopocart from "./../../assets/logo_topocart.png";
+import logoTopocart from "/logo_topocart.png";
 import packageJson from "./../../../package.json";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import loader from "../../assets/loader.svg"
+import loader from "/loader.svg"
 
 import {
   ContainerBackground,

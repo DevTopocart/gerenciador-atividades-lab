@@ -1,8 +1,5 @@
 import styled from "styled-components";
-
-import img from "../../assets/login-background.png";
-import logoTopocart from "../../assets/logo_topocart.png";
-
+import img from "/login-background.png";
 
 export const ContainerBackground = styled.div`
   background-image: url(${img});
