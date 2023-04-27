@@ -2,12 +2,11 @@ import React from "react";
 import ActivitiesTaskComponent from "../ActivitiesTasks/ActivitiesTaskComponent";
 import DefaultButtonComponent from "../defaultButton/DefaultButtonComponent";
 import IconButtonComponent from "../IconButton/IconButtonComponent";
-import { ActivitiesMinimizedPropsType } from "./ActivitiesMinimizedPropsType";
 import { useHistory } from "react-router-dom"
 import { ContainerActivitiesMinimized, ContainerButtons, ContainerButtonsConfirmed, TitlePauseTask, TitleActivitiesMinimizedConfirmed, HoursTask,ContainerHours, HoursTitle, TitleActivitiesMinimized, PauseIcon } from "./styles";
 
 
-const ActivitiesMinimizeComponent: React.FC<ActivitiesMinimizedPropsType> = (props) =>{
+function ActivitiesMinimizeComponent(props: any) {
 	const history = useHistory();
 
 	function teste (): void {

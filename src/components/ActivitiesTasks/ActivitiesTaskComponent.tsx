@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-
-import { ActivitiesTaskPropsType } from "./ActivitiesTaskPropTypes";
 import { ContainerTask, ContainerSideLeft,HoursTask, HoursTitle,Title, ContainerSideRight, ProjectDepartment,ProjectTitle }  from "./styles"
 
-const ActivitiesTaskComponent: React.FC<ActivitiesTaskPropsType> = (props) => {
+function ActivitiesTaskComponent(props: any){
   const handleClick = () => {
     if (!props.disabled) {
       props.onSelect(props.index);
