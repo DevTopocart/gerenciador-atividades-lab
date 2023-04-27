@@ -3,7 +3,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import api from "../../services/api";
 import logoTopocart from "./../../assets/logo_topocart.png";
 import packageJson from "./../../../package.json";
-
+import loader from "../../assets/loader.svg"
 import {
   ContainerBackground,
   ActivitiesContainer,
@@ -25,6 +25,8 @@ import {
   Title,
   ContainerControls,
   Version,
+  FullPageLoader,
+  Loader,
 } from "./styles";
 import ActivitiesTaskComponent from "../../components/ActivitiesTasks/ActivitiesTaskComponent";
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
@@ -55,7 +57,8 @@ const ActivitiesPage: React.FC = () => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
-  const [issues, setIssues] = useState([]);
+  const [isLoading,setisLoading] = useState(false)
+  const [issues, setIssues] = useState<Array<any>>([]);
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [isActivitySelected, setIsActivitySelected] = useState(false);
   const [task, setTask] = useState<any>({});
@@ -78,6 +81,9 @@ const ActivitiesPage: React.FC = () => {
   };
 
   const stop = async () => {
+
+    setisLoading(true)
+
     if (isRunning) {
       setIsRunning(false);
       const today = new Date();
@@ -96,11 +102,23 @@ const ActivitiesPage: React.FC = () => {
       };
 
       api.post(`/time_entries.json`, time_json).then((response) => {
+        
+        setisLoading(false)
+
           console.log(response);
-          toast.success("Tempo salvo com sucesso");
+          toast.success(`${Math.round(hours*60*100)/100} minutos registrados na atividade '${issues!.filter((e:any) => e.id === task.id)[0].subject}'`);
         })
-        .catch((error) => {
-          toast.error('Entre em contato com o HelpDesk');
+        .catch((error: any) => {
+
+          console.log(error)
+          setisLoading(false)
+          if (error.response.status === 422) {
+            toast.warn('Nenhum tempo foi registrado no Easy Project')
+          } else {
+
+            toast.error('Não foi possível registrar o tempo no Easy Project');
+          }
+
         });
       setStartTime(0);
       setTime(0);
@@ -114,6 +132,9 @@ const ActivitiesPage: React.FC = () => {
   };
 
   async function getIssues() {
+
+    setisLoading(true)
+    
     try {
       const response = await api.get("/issues.json", {
         params: {
@@ -130,19 +151,22 @@ const ActivitiesPage: React.FC = () => {
           const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
           issue.name_parent = responseIssues.data.issue.subject;
         } else {
-          issue.name_parent = "----------------------";
+          issue.name_parent = "-";
         }
       }
 
       setIssues(issues);
+      setisLoading(false)
       return response.data;
     } catch (error) {
+      
+      setisLoading(false)
+      toast.error("Não foi possível obter a lista de atividades do Easy Project")
       console.error(error);
     }
   }
 
   useEffect(() => {
-    getIssues();
     if (startTime > 0) {
       interval.current = setInterval(() => {
         setTime(() => Date.now() - startTime);
@@ -155,72 +179,85 @@ const ActivitiesPage: React.FC = () => {
     }
   }, [startTime]);
 
+  useEffect(() => {
+
+    getIssues();
+  },[])
+
   return (
-    <ContainerBackground>
-      <ContainerTitle>
-        <Title>Gerenciador de Atividades</Title>
-        <User>Logado como: Victor Marotta</User>
-      </ContainerTitle>
+    <>
+      {
+        isLoading &&
+        <FullPageLoader>
+          <Loader src={loader}></Loader>
+        </FullPageLoader>
+      }
+      <ContainerBackground>
+        <ContainerTitle>
+          <Title>Gerenciador de Atividades</Title>
+          <User>Logado como: {location.state.user.firstname} {location.state.user.lastname}</User>
+        </ContainerTitle>
 
-      <ActivitiesContainer>
-        <ContainerSideLeft>
-          <ContainerTask>
-            {issues.map((e: any, index: number) => {
-              return (
-                <ActivitiesTaskComponent
-                  key={index}
-                  index={index}
-                  isSelected={selectedTask === index}
-                  // se esta selecionado o index correto
-                  onSelect={() => handleTaskClick(index, e)}
-                  // Lidar com a seleção do item para passar pro outro component
-                  hours={"XX,x"}
-                  title={e.subject}
-                  nameProject={e.project.name}
-                  projectDepartment={e.name_parent}
-                  disabled={isRunning}
+        <ActivitiesContainer>
+          <ContainerSideLeft>
+            <ContainerTask>
+              {issues.map((e: any, index: number) => {
+                return (
+                  <ActivitiesTaskComponent
+                    key={index}
+                    index={index}
+                    isSelected={selectedTask === index}
+                    // se esta selecionado o index correto
+                    onSelect={() => handleTaskClick(index, e)}
+                    // Lidar com a seleção do item para passar pro outro component
+                    hours={"XX,x"}
+                    title={e.subject}
+                    nameProject={e.project.name}
+                    projectDepartment={e.name_parent}
+                    disabled={isRunning}
+                  />
+                );
+              })}
+            </ContainerTask>
+          </ContainerSideLeft>
+
+          <ContainerSideRight>
+            <TitleInformation>
+              Selecione uma atividade e utilize os controles abaixo para controlar
+              a execução da atividade:
+            </TitleInformation>
+            <TimeSession>Tempo na Seção:</TimeSession>
+            <Time>{formatMs(time)}</Time>
+
+            <ContainerControls>
+              <ContainerPlay>
+                <IconButtonComponent
+                  icon={PlayIcon}
+                  onClick={start}
+                  disabled={!isActivitySelected || isRunning}
+                  background="green"
                 />
-              );
-            })}
-          </ContainerTask>
-        </ContainerSideLeft>
+                <PlayPauseTitle> Iniciar Atividade </PlayPauseTitle>
+              </ContainerPlay>
 
-        <ContainerSideRight>
-          <TitleInformation>
-            Selecione uma atividade e utilize os controles abaixo para controlar
-            a execução da atividade:
-          </TitleInformation>
-          <TimeSession>Tempo na Seção:</TimeSession>
-          <Time>{formatMs(time)}</Time>
-
-          <ContainerControls>
-            <ContainerPlay>
-              <IconButtonComponent
-                icon={PlayIcon}
-                onClick={start}
-                disabled={!isActivitySelected}
-                background="green"
-              />
-              <PlayPauseTitle> Iniciar Atividade </PlayPauseTitle>
-            </ContainerPlay>
-
-            <ContainerPause>
-              <IconButtonComponent
-                icon={PauseIcon}
-                onClick={stop}
-                disabled={!isActivitySelected}
-                background="green"
-              />
-              <PlayPauseTitle> Pausar Atividade</PlayPauseTitle>
-            </ContainerPause>
-          </ContainerControls>
-        </ContainerSideRight>
-      </ActivitiesContainer>
-      <Footer>
-        <LogoTopocart src={logoTopocart} />
-        <Version>Versão {packageJson.version}</Version>
-      </Footer>
-    </ContainerBackground>
+              <ContainerPause>
+                <IconButtonComponent
+                  icon={PauseIcon}
+                  onClick={stop}
+                  disabled={!isActivitySelected || !isRunning}
+                  background="green"
+                />
+                <PlayPauseTitle> Parar Atividade</PlayPauseTitle>
+              </ContainerPause>
+            </ContainerControls>
+          </ContainerSideRight>
+        </ActivitiesContainer>
+        <Footer>
+          <LogoTopocart src={logoTopocart} />
+          <Version>Versão {packageJson.version}</Version>
+        </Footer>
+      </ContainerBackground>
+    </>
   );
 };
 

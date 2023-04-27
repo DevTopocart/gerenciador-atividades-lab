@@ -19,23 +19,16 @@ export const ContainerBackground = styled.div`
 
 export const LoginContainer = styled.div`
   width: 40%;
-  height: 60%;
+  height: 50%;
   background-color: white;
   border-radius: 4px;
   justify-content: center;
 `;
 
-export const SpanError = styled.span`
-  color: red;
-  font-size: 15px;
-  padding: 0%;
-`
-
 export const ContainerTitle = styled.h1`
   display: flex;
   flex-direction: column;
   color: white;
-  font-family: Poppins;
   margin-bottom: 50px;
 `;
 
@@ -43,18 +36,11 @@ export const LabelContainer = styled.div`
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 20px;
-`;
-
-export const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 2%;
-  margin-right: 23px;
 `;
 
 export const Footer = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
 `;
 
@@ -64,25 +50,48 @@ export const FormContainer = styled.div`
   justify-content: center;
 `;
 
-export const Input = styled.input`
+interface InputProps {
+  color?: string
+}
+
+export const Input = styled.input<InputProps>`
+  margin-top: 10px;
+  height: 35px;
   width: 80%;
-  background-color: #D9D9D9;
-  margin-bottom: 5%;
+  background-color: ${props => props.color || "whitesmoke"};
   border: 1px solid #ccc;
   border-radius: 3px;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 export const InputSubmit = styled.button`
-  width: 50%;
+  margin-top: 15px;
+  width: 70%;
   background-color: #009C66;
-  margin-bottom: 5%;
   border-radius: 4px;
+  border: none;
   font-style: normal;
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: 400;
+  font-size: large;
   line-height: 27px;
   color: white;
-  font-family: Poppins;
+
+  &:active {
+    
+    background-color: #009C66;
+  }
+
+  &:hover {
+
+    background-color: #017d52;
+  }
 `;
 
 export const Title = styled.div`
@@ -99,7 +108,23 @@ export const LogoTopocart = styled.img`
 export const Version = styled.p`
   color: white;
   align-self: center;
-  font-size: 6pt;
+  font-size: 8pt;
   margin: 0;
   margin-top: 5px;
+`
+
+export const Loader = styled.img`
+  animation-name: spin;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  @keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 `

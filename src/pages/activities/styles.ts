@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 import img from "../../assets/login-background.png";
 import logoTopocart from "../../assets/logo_topocart.png";
-import { RiPlayFill } from "react-icons/ri";
+import { RiPlayFill, RiStopMiniFill } from "react-icons/ri";
 import { RiPauseMiniFill } from "react-icons/ri";
 
 export const ContainerBackground = styled.div`
@@ -100,7 +100,7 @@ export const PlayIcon = styled(RiPlayFill)`
   border-radius: 50%;
 `;
 
-export const PauseIcon = styled(RiPauseMiniFill)`
+export const PauseIcon = styled(RiStopMiniFill)`
   background-color: #707070;
   color: white;
   padding: 0.5rem;
@@ -155,4 +155,33 @@ export const Version = styled.p`
   font-size: 6pt;
   margin: 0;
   margin-top: 5px;
+`
+
+export const FullPageLoader = styled.div`
+  position: absolute;
+  display: flex;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.75);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+`
+
+export const Loader = styled.img`
+  height: 200px;
+  animation-name: spin;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  @keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 `
