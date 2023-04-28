@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 
 module.exports = {
   branches: ['ci-enhancements'],
-  repositoryUrl: 'https://github.com/paschendale/webgis-itabirito',
+  repositoryUrl: 'https://github.com/DevTopocart/apontador-horas',
   plugins: [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
@@ -15,7 +15,7 @@ module.exports = {
     ],
     [
       '@semantic-release/git', {
-        'assets': ['app/package.json', 'src-tauri/tauri.conf.json'],
+        'assets': ['package.json', 'src-tauri/tauri.conf.json'],
         'message': 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
       }
     ],
@@ -30,6 +30,5 @@ module.exports = {
         }
       }
     ]
-  ],
-  pkgRoot: 'app'
+  ]
 };
