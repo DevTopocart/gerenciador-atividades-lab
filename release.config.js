@@ -1,7 +1,7 @@
 const { execSync } = require('child_process');
 
 module.exports = {
-  branches: ['develop','technical/ci-enhancements'],
+  branches: ['technical/ci-enhancements'],
   repositoryUrl: 'https://github.com/paschendale/webgis-itabirito',
   plugins: [
     '@semantic-release/commit-analyzer',
