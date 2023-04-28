@@ -1,7 +1,7 @@
 const { execSync } = require('child_process');
 
 module.exports = {
-  branches: ['ci-enhancements'],
+  branches: ['ci-enhancements','develop'],
   repositoryUrl: 'https://github.com/DevTopocart/apontador-horas',
   plugins: [
     '@semantic-release/commit-analyzer',
@@ -23,8 +23,7 @@ module.exports = {
       '@semantic-release/exec',
       {
         prepareCmd: () => {
-          const version = require('./src-tauri/tauri.conf.json').package.version;
-          const newVersion = semanticRelease.getNextVersion(version, 'minor');
+          const newVersion = require('./package.json').version;
           const command = `npx json -I -f src-tauri/tauri.conf.json -e "this.package.version='${newVersion}'"`;
           execSync(command);
         }

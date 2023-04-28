@@ -7,7 +7,11 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri"
-  },
+  },  
+  "files": [
+    "src-tauri/target/release/bundle/msi",    
+    "src-tauri/target/release/bundle/deb"
+  ],
   "dependencies": {
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^8.0.7",

@@ -13,8 +13,12 @@ jobs:
       issues: write
       pull-requests: write
 
-    runs-on: ubuntu-latest
-    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
 
       - name: Copy data
@@ -27,6 +31,14 @@ jobs:
         run: yarn add semantic-release @semantic-release/git @semantic-release/github @semantic-release/exec json child_process
 
       - name: Semantic Release
-        run: npx semantic-release --dry-run
+        run: npx semantic-release
         env:
           GH_TOKEN : ${{ secrets.GH_TOKEN }}
+
+      - name: Build Tauri
+        if: matrix.os == 'ubuntu-latest'
+        run: yarn tauri build
+
+      - name: Build Tauri
+        if: matrix.os == 'windows-latest'
+        run: yarn tauri build
