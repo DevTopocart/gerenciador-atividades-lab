@@ -28,12 +28,15 @@ jobs:
         uses: actions/setup-node@v2.1.5
 
       - name: Install dependencies
-        run: yarn add semantic-release @semantic-release/git @semantic-release/github @semantic-release/exec json child_process
+        run: yarn add semantic-release @semantic-release/git @semantic-release/github json child_process
 
       - name: Semantic Release
-        run: npx semantic-release
+        run: npx semantic-release --dry-run
         env:
           GH_TOKEN : ${{ secrets.GH_TOKEN }}
+
+      - name: Update tauri.conf.json version
+        run: node ./update-tauri-version.js
 
       - name: Build Tauri
         if: matrix.os == 'ubuntu-latest'
