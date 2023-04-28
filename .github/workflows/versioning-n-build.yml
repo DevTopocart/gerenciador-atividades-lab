@@ -37,6 +37,9 @@ jobs:
 
       - name: Update tauri.conf.json version
         run: node ./update-tauri-version.js
+        
+      - name: Install build dependencies
+        run: yarn 
 
       - name: Build Tauri
         if: matrix.os == 'ubuntu-latest'
