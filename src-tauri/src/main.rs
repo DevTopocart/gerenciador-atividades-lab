@@ -3,7 +3,7 @@
 
 use tauri::SystemTray;
 use tauri::Manager;
-use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, WindowEvent, SystemTrayEvent};
+use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -25,7 +25,7 @@ fn main() {
     
     let tray = SystemTray::new().with_menu(tray_menu);
 
-    let app = tauri::Builder::default()    
+    let _app = tauri::Builder::default()    
         .system_tray(tray)
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {

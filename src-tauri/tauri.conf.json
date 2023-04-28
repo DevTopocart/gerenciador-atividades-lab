@@ -17,6 +17,7 @@
       "title": "Gerenciador de Atividades - Topocart"
     },
     "allowlist": {
+      "all": false,
       "http": {
         "all": true,
         "request": true,
@@ -53,11 +54,11 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.topocart.apontador-horas",
+      "identifier": "com.topocart-apontador-horas.dev",
       "targets": "all"
     },
     "security": {
-      "csp": "default-src 'self' https://topocart.easyredmine.com/;"
+      "csp": null
     },
     "updater": {
       "active": false
@@ -68,7 +69,9 @@
         "resizable": false,
         "title": "Gerenciador de Atividades - Topocart",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "visible": false,
+        "center": true
       }
     ]
   }
