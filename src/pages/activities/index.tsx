@@ -27,10 +27,13 @@ import {
   Version,
   FullPageLoader,
   Loader,
+  ContainerActivitiesMinimizedCentered,
+  DisableBackground,
 } from "./styles";
 import ActivitiesTaskComponent from "../../components/ActivitiesTasks/ActivitiesTaskComponent";
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
 import { toast } from "react-toastify";
+import ActivitiesMinimizeComponent from "../../components/ActivitiesMinimized/ActivitiesMinimizedComponent";
 
 const padStart = (num: number) => {
   return num.toString().padStart(2, "0");
@@ -61,7 +64,13 @@ const ActivitiesPage: React.FC = () => {
   const [issues, setIssues] = useState<Array<any>>([]);
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [isActivitySelected, setIsActivitySelected] = useState(false);
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
   const [task, setTask] = useState<any>({});
+
+  const minTime = 30; 
+  const maxTime = 60;
+  const randomTime = Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime; 
+  const randomTimeMs = randomTime * 60 * 1000;
 
   const handleTaskClick = (index: number, task: any) => {
     setSelectedTask(index);
@@ -70,6 +79,7 @@ const ActivitiesPage: React.FC = () => {
       setStartTime(0);
       setTime(0);
     }
+    console.log(task)
     setTask(task);
   };
 
@@ -165,7 +175,10 @@ const ActivitiesPage: React.FC = () => {
       console.error(error);
     }
   }
-
+  const teste = ( )=> {
+    setIsButtonClicked(true)
+  }
+  
   useEffect(() => {
     if (startTime > 0) {
       interval.current = setInterval(() => {
@@ -180,7 +193,14 @@ const ActivitiesPage: React.FC = () => {
   }, [startTime]);
 
   useEffect(() => {
+    if (time >= randomTimeMs && time <=randomTimeMs + 300000) {
+      setIsButtonClicked(true);
+    } else {
+      setIsButtonClicked(false);
+    }
+  }, [time]);
 
+  useEffect(() => {
     getIssues();
   },[])
 
@@ -194,6 +214,7 @@ const ActivitiesPage: React.FC = () => {
       }
       <ContainerBackground>
         <ContainerTitle>
+          <button onClick={teste}>Testee</button>
           <Title>Gerenciador de Atividades</Title>
           <User>Logado como: {location.state.user.firstname} {location.state.user.lastname}</User>
         </ContainerTitle>
@@ -250,12 +271,29 @@ const ActivitiesPage: React.FC = () => {
                 <PlayPauseTitle> Parar Atividade</PlayPauseTitle>
               </ContainerPause>
             </ContainerControls>
+         
           </ContainerSideRight>
         </ActivitiesContainer>
+        
         <Footer>
           <LogoTopocart src={logoTopocart} />
           <Version>Versão {packageJson.version}</Version>
         </Footer>
+
+        <DisableBackground disabled={isButtonClicked}/>
+        {isButtonClicked && (
+          <ContainerActivitiesMinimizedCentered>
+
+            <ActivitiesMinimizeComponent hours={"XX,x"}
+            time={formatMs(time)}
+            pauseTime={stop}
+            playTime={setIsButtonClicked}
+            title={task.subject}
+            nameProject={task.project.name}
+            projectDepartment={task.name_parent}/>
+
+          </ContainerActivitiesMinimizedCentered>
+        )}
       </ContainerBackground>
     </>
   );

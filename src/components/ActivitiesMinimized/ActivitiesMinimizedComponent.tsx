@@ -1,53 +1,56 @@
-import React from "react";
 import ActivitiesTaskComponent from "../ActivitiesTasks/ActivitiesTaskComponent";
 import DefaultButtonComponent from "../defaultButton/DefaultButtonComponent";
-import IconButtonComponent from "../IconButton/IconButtonComponent";
-import { useHistory } from "react-router-dom"
-import { ContainerActivitiesMinimized, ContainerButtons, ContainerButtonsConfirmed, TitlePauseTask, TitleActivitiesMinimizedConfirmed, HoursTask,ContainerHours, HoursTitle, TitleActivitiesMinimized, PauseIcon } from "./styles";
-
+import {
+  ContainerActivitiesMinimized,
+  ContainerButtonsConfirmed,
+  TitleActivitiesMinimizedConfirmed,
+  HoursTask,
+  ContainerHours,
+  HoursTitle,
+} from "./styles";
 
 function ActivitiesMinimizeComponent(props: any) {
-	const history = useHistory();
+  function timePause(): void {
+    props.pauseTime(true);
+    props.playTime(false);
+  }
 
-	function teste (): void {
-		console.log('teste')
-	}
-	
-	const redirectConfirmation = () => {
-		history.push("/confirmation");
-	};
+  function timePlay(): void {
+    props.playTime(false);
+  }
 
-	return(
-			!props.isConfirmation ?(
-		<ContainerActivitiesMinimized>
-			<TitleActivitiesMinimized>{props.title}</TitleActivitiesMinimized>
-			<ActivitiesTaskComponent clicked={false} hours={"75,3h"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-			<ContainerHours>
-				<HoursTitle>Tempo na seção:</HoursTitle>
-				<HoursTask>00:42:12</HoursTask>
+  return (
+    <ContainerActivitiesMinimized>
+			
+      <TitleActivitiesMinimizedConfirmed>
+        Você ainda está nesta tarefa?
+      </TitleActivitiesMinimizedConfirmed>
+      <ActivitiesTaskComponent
+        hours={"75,3h"}
+        title={props.title}
+        nameProject={props.nameProject}
+        projectDepartment={props.projectDepartment}
+      />
 
-				<ContainerButtons>
-					<IconButtonComponent icon={PauseIcon} onClick={redirectConfirmation} background={""}></IconButtonComponent>
-					<TitlePauseTask> Pausar Atividade</TitlePauseTask>
-				</ContainerButtons>
-			</ContainerHours>
+      <ContainerHours>
+        <HoursTitle>Tempo na seção:</HoursTitle>
+        <HoursTask>{props.time}</HoursTask>
+        <ContainerButtonsConfirmed>
+          <DefaultButtonComponent
+            label={"Sim"}
+            onClick={timePlay}
+            background={""}
+          ></DefaultButtonComponent>
+          <DefaultButtonComponent
+            label={"Não"}
+            onClick={timePause}
+            background={"red"}
+          ></DefaultButtonComponent>
+        </ContainerButtonsConfirmed>
+      </ContainerHours>
 
-		</ContainerActivitiesMinimized>
-			) : (
-		<ContainerActivitiesMinimized>
-			<TitleActivitiesMinimizedConfirmed>{props.title}</TitleActivitiesMinimizedConfirmed>
-			<ActivitiesTaskComponent clicked={false} hours={"75,3h"} title={"Restituição de Delimitadores Físicos"} nameProject={"Produto - Projeto"} projectDepartment={"Restituição"}/>
-			<ContainerHours>
-				<HoursTitle>Tempo na seção:</HoursTitle>
-				<HoursTask>01:00:00</HoursTask>
-				<ContainerButtonsConfirmed>
-					<DefaultButtonComponent label={"Sim"} onClick={teste} background={""} ></DefaultButtonComponent>
-					<DefaultButtonComponent label={"Não"} onClick={teste} background={"red"} ></DefaultButtonComponent>
-				</ContainerButtonsConfirmed>
-			</ContainerHours>
-	
-		</ContainerActivitiesMinimized>)
-		);
+    </ContainerActivitiesMinimized>
+  );
 }
 
 export default ActivitiesMinimizeComponent;
