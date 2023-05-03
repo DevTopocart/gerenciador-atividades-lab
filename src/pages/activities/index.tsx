@@ -142,8 +142,8 @@ const ActivitiesPage: React.FC = () => {
       setTime(0);
       const newRandomTimeMs = generateRandomTime();
       setRandomTimeMs(newRandomTimeMs);
-      setIsPoupUp(false);
       setConfirmedActivities(false);
+      setIsPoupUp(false);
     }
   };
 
