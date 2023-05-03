@@ -12,7 +12,6 @@ import {
 function ActivitiesMinimizeComponent(props: any) {
   function timePause(): void {
     props.pauseTime(true);
-    props.playTime(false);
   }
 
   function timePlay(): void {
