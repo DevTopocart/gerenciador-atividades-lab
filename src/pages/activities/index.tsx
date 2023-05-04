@@ -34,6 +34,8 @@ import ActivitiesTaskComponent from "../../components/ActivitiesTasks/Activities
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
 import { toast } from "react-toastify";
 import ActivitiesMinimizeComponent from "../../components/ActivitiesMinimized/ActivitiesMinimizedComponent";
+import { invoke } from '@tauri-apps/api/tauri'
+
 
 const padStart = (num: number) => {
   return num.toString().padStart(2, "0");
@@ -76,7 +78,6 @@ const ActivitiesPage: React.FC = () => {
       setStartTime(0);
       setTime(0);
     }
-    console.log(task);
     setTask(task);
   };
 
@@ -209,11 +210,12 @@ const ActivitiesPage: React.FC = () => {
     if (confirmedActivities) {
       const newRandomTimeMs = generateRandomTime();
       setRandomTimeMs(time + newRandomTimeMs);
-    } else if (time >= 1800 + 30000) {
+    } else if (time >= randomTimeMs + 30000) {
       setIsPoupUp(false);
       stop();
-    } else if (time >= 1800 && !confirmedActivities) {
+    } else if (time >= randomTimeMs && !confirmedActivities) {
       setIsPoupUp(true);
+      invoke('open_poup_up');
     }
   }, [time, confirmedActivities, randomTimeMs]);
 

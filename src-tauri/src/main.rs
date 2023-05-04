@@ -11,6 +11,12 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[tauri::command]
+async fn open_poup_up(app: tauri::AppHandle) {
+    let window = app.get_window("main").unwrap();
+    window.show().unwrap();
+}
+
 fn main() {
     
     let open_app = CustomMenuItem::new("abrir".to_string(), "Abrir tela de atividades");
@@ -69,7 +75,7 @@ fn main() {
             }
             _ => {}
           })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet,open_poup_up ])
         .on_window_event(|event| match event.event() {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 // don't kill the app when the user clicks close. this is important
