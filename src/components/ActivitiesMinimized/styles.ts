@@ -5,7 +5,7 @@ export const ContainerActivitiesMinimized = styled.div`
   display: flex;
   flex-direction: column;
   width: 491px;
-  height: 192px;
+  height: 210px;
   background-color: #d9d9d9;
   border-radius: 4px;
 `;
@@ -27,34 +27,27 @@ export const TitleActivitiesMinimizedConfirmed = styled.h3`
 `;
 
 export const HoursTask = styled.h2`
-  height: 10px;
-  margin: 0;
+  margin-top: 10px;
+  margin-left: 4px;
 `;
 
 export const HoursTitle = styled.h4`
-  margin: 0;
   margin-right: 6px;
   margin-left: 6px;
+  margin-top: 9px;
   border-radius: nullpx;
 `;
 
 export const ContainerHours = styled.div`
   display: flex;
-  margin-top: 4px;
+  margin-top: 20px;
   margin-left: 4px;
 `;
 
-export const ContainerButtons = styled.div`
-  display: flex;
-  margin-left: 50px;
-  margin-bottom: 10px;
-`;
-
 export const ContainerButtonsConfirmed = styled.div`
-  position: absolute;
-  margin: 0;
-  margin-left: 300px;
-  top: 148px;
+    padding-bottom: 10px;
+    margin-left: 60px;
+    margin-bottom: 10px;
 `;
 
 export const PauseIcon = styled(RiPauseMiniFill)`
