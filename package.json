@@ -16,6 +16,8 @@
     "axios": "^1.3.4",
     "axios-tauri-api-adapter": "^0.2.0",
     "history": "^4.10.1",
+    "ldap-ts-client": "^0.14.8",
+    "ldapjs": "^3.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.5",
