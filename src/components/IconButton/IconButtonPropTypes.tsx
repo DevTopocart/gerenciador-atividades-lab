@@ -4,7 +4,7 @@ export interface IconButtonPropsTypes {
     icon?: IconType;
     onClick: () => void;
     disabled?: boolean;
-    background: string
+    background?: string
   }
   
   export interface ButtonProps {

@@ -10,6 +10,8 @@ import {
   ContainerPlay,
   ContainerPause,
   Footer,
+  ContainerLogout,
+  LogoutIcon,
   ContainerTitle,
   ContainerSideLeft,
   ContainerSideRight,
@@ -34,8 +36,7 @@ import ActivitiesTaskComponent from "../../components/ActivitiesTasks/Activities
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
 import { toast } from "react-toastify";
 import ActivitiesMinimizeComponent from "../../components/ActivitiesMinimized/ActivitiesMinimizedComponent";
-import { invoke } from '@tauri-apps/api/tauri'
-
+import { invoke } from "@tauri-apps/api/tauri";
 
 const padStart = (num: number) => {
   return num.toString().padStart(2, "0");
@@ -210,12 +211,11 @@ const ActivitiesPage: React.FC = () => {
     if (confirmedActivities) {
       const newRandomTimeMs = generateRandomTime();
       setRandomTimeMs(time + newRandomTimeMs);
-    } else if (time >= randomTimeMs + 30000) {
+    } else if (time >= randomTimeMs + 300000) {
       setIsPoupUp(false);
       stop();
     } else if (time >= randomTimeMs && !confirmedActivities) {
       setIsPoupUp(true);
-      invoke('open_poup_up');
     }
   }, [time, confirmedActivities, randomTimeMs]);
 
@@ -230,7 +230,11 @@ const ActivitiesPage: React.FC = () => {
           <Loader src={loader}></Loader>
         </FullPageLoader>
       )}
+
       <ContainerBackground>
+        <ContainerLogout>
+          <IconButtonComponent icon={LogoutIcon} onClick={logout} />
+        </ContainerLogout>
         <ContainerTitle>
           <Title>Gerenciador de Atividades</Title>
           <User>
