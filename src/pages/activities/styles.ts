@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import img from "/login-background.png";
-import { RiPlayFill, RiStopMiniFill } from "react-icons/ri";
+import { RiPlayFill, RiStopMiniFill, RiLogoutBoxLine } from "react-icons/ri";
 
 export const ContainerBackground = styled.div`
   background-image: url(${img});
@@ -13,7 +13,6 @@ export const ContainerBackground = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 `;
 
@@ -84,6 +83,12 @@ export const TimeSession = styled.h3`
   text-align: center;
 `;
 
+export const ContainerLogout = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: start;
+`;
+
 export const Time = styled.h1`
   display: flex;
   justify-content: center;
@@ -97,6 +102,16 @@ export const PlayIcon = styled(RiPlayFill)`
   color: white;
   padding: 0.5rem;
   border-radius: 50%;
+`;
+
+export const LogoutIcon = styled(RiLogoutBoxLine)`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  color: white;
 `;
 
 export const PauseIcon = styled(RiStopMiniFill)`
