@@ -270,7 +270,7 @@ const ActivitiesPage: React.FC = () => {
           <ContainerSideRight>
             <TitleInformation>
               Selecione uma atividade e utilize os controles abaixo para
-              controlar a execução da atividade:
+              registrar o tempo gasto em sua execução:
             </TitleInformation>
             <TimeSession>Tempo na Seção:</TimeSession>
             <Time>{formatMs(time)}</Time>
