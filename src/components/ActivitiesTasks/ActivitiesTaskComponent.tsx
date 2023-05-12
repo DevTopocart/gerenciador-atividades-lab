@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ContainerTask, ContainerSideLeft,HoursTask, HoursTitle,Title, ContainerSideRight, ProjectDepartment,ProjectTitle }  from "./styles"
+import { ContainerTask, ContainerSideLeft,HoursTask, HoursTitle,Title, ContainerSideRight, ProjectDepartment,ProjectTitle, ExternalLinkContainer }  from "./styles"
 
 function ActivitiesTaskComponent(props: any){
   const handleClick = () => {
@@ -15,7 +15,12 @@ function ActivitiesTaskComponent(props: any){
           Horas Executadas
         </HoursTitle>
         <HoursTask>
-          {props.hours}
+          <p className="integer">
+            {Math.floor(props.hours)}
+          </p>
+          <p className="decimal">
+            {`.${Math.floor((props.hours - Math.floor(props.hours))*100)}`}
+          </p>
         </HoursTask>
       </ContainerSideLeft>
 
