@@ -3,12 +3,18 @@
 
 use tauri::SystemTray;
 use tauri::Manager;
-use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, WindowEvent, SystemTrayEvent};
+use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+#[tauri::command]
+async fn open_poup_up(app: tauri::AppHandle) {
+    let window = app.get_window("main").unwrap();
+    window.show().unwrap();
 }
 
 fn main() {
@@ -25,7 +31,7 @@ fn main() {
     
     let tray = SystemTray::new().with_menu(tray_menu);
 
-    let app = tauri::Builder::default()    
+    let _app = tauri::Builder::default()    
         .system_tray(tray)
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
@@ -69,7 +75,7 @@ fn main() {
             }
             _ => {}
           })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet,open_poup_up ])
         .on_window_event(|event| match event.event() {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 // don't kill the app when the user clicks close. this is important
@@ -86,4 +92,5 @@ fn main() {
         })
         .run(tauri::generate_context!())        
         .expect("error while running tauri application");
+      
 }

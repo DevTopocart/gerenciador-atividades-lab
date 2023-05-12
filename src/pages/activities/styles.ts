@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import img from "/login-background.png";
-import { RiPlayFill, RiStopMiniFill } from "react-icons/ri";
+import { RiPlayFill, RiStopMiniFill, RiLogoutBoxLine } from "react-icons/ri";
 
 export const ContainerBackground = styled.div`
   background-image: url(${img});
@@ -9,10 +9,10 @@ export const ContainerBackground = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   width: 100vw;
+  position: relative;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 `;
 
@@ -83,6 +83,12 @@ export const TimeSession = styled.h3`
   text-align: center;
 `;
 
+export const ContainerLogout = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: start;
+`;
+
 export const Time = styled.h1`
   display: flex;
   justify-content: center;
@@ -98,11 +104,37 @@ export const PlayIcon = styled(RiPlayFill)`
   border-radius: 50%;
 `;
 
+export const LogoutIcon = styled(RiLogoutBoxLine)`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  color: white;
+`;
+
 export const PauseIcon = styled(RiStopMiniFill)`
   background-color: #707070;
   color: white;
   padding: 0.5rem;
   border-radius: 50%;
+`;
+
+export const ContainerActivitiesMinimizedCentered = styled.div`
+  position: absolute;
+  width: 500px
+  height: 100vh;
+`;
+
+export const DisableBackground = styled.div<{ disabled: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: ${(props) => (props.disabled ? "rgba(0, 0, 0, 0.5)" : "transparent")};
+  pointer-events: ${(props) => (props.disabled ? "all" : "none")};
 `;
 
 export const ContainerControls = styled.div`
