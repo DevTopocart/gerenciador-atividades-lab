@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ContainerTask, ContainerSideLeft,HoursTask, HoursTitle,Title, ContainerSideRight, ProjectDepartment,ProjectTitle, ExternalLinkContainer }  from "./styles"
+import { FiExternalLink } from "react-icons/fi";
 
 function ActivitiesTaskComponent(props: any){
   const handleClick = () => {
@@ -29,6 +30,12 @@ function ActivitiesTaskComponent(props: any){
         <ProjectDepartment>{props.projectDepartment}</ProjectDepartment>
         <ProjectTitle>{props.nameProject}</ProjectTitle>
       </ContainerSideRight>
+
+      <ExternalLinkContainer>
+        <a href={`https://topocart.easyredmine.com/issues/${props.issueId}`} target="_blank">
+          <FiExternalLink/>
+        </a>
+      </ExternalLinkContainer>
       
     </ContainerTask>
   )

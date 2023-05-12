@@ -101,3 +101,13 @@ export const ContainerSideRight = styled.div`
   justify-content: space-between;
   margin-bottom: 5px;
 `;
+
+export const ExternalLinkContainer = styled.div`
+  position: absolute;
+  margin-top: 72px;
+  margin-left: 290px;
+
+  a {
+    color: inherit;
+  }
+`
