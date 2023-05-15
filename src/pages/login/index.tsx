@@ -82,7 +82,7 @@ const LoginPage: React.FC = () => {
               {...register("Senha", { required: true })}
             />
             {/* {errors.Senha && <SpanError>Este campo é obrigatório</SpanError>} */}
-            <InputSubmit type="submit">
+            <InputSubmit type="submit" disabled={isLoading}>
               {
                 (!isLoading) ? 'Acessar' : <><Loader src={loader}></Loader>&nbsp;&nbsp;Acessando</>
               }

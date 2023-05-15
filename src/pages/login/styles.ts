@@ -89,6 +89,12 @@ export const InputSubmit = styled.button`
 
     background-color: #017d52;
   }
+
+  &:disabled {
+
+    cursor: default;
+    background-color: rgb(200,200,200);
+  }
 `;
 
 export const Title = styled.div`

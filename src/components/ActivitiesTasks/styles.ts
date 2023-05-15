@@ -13,6 +13,7 @@ export const ContainerTask = styled.div<ContainerTaskProps>`
   left: 0px;
   top: 0px;
   border-radius: 0px;
+  line-height: 1.2;
   cursor: pointer;
   background-color: ${({ isSelected }) => (isSelected ? "#009C66" : "#fff")};
   color: ${({ isSelected }) => (isSelected ? "#ffffff" : "#000000")};
@@ -20,27 +21,48 @@ export const ContainerTask = styled.div<ContainerTaskProps>`
   opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
 `;
 
-export const HoursTask = styled.p`
+export const HoursTask = styled.div`
+  display: flex;
   color: inherit;
-  margin-top: 2px;
-  font-size: 25pt;
-  font-weight: 600;
+  align-items: baseline;
+  margin-bottom: 5px;
+
+  p {
+    margin: 0px;
+  }
+
+  .integer {
+    font-size: 50px;
+    letter-spacing: -7px;
+    font-weight: 600;
+  }
+
+  .decimal {
+    margin-left: 5px;
+    font-size: 15px;
+  }
 `;
 
 export const HoursTitle = styled.p`
-  font-weight: 600;
+  margin-top: 5px;
+  font-weight: 300;
   opacity: 0.7;
-  font-size: small;
+  font-size: 10px;
   color: inherit;
-  margin-top: 2px;
 `;
 
-export const Title = styled.h5`
+export const Title = styled.p`
   margin: 0;
-  font-size: large;
+  font-size: 15px;
+  font-weight: 600;
   margin-top: 5px;
   margin-bottom: 0px;
   color: inherit;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines to show */
+          line-clamp: 3; 
+  -webkit-box-orient: vertical;
 `;
 
 export const ProjectDepartment = styled.p`
@@ -65,13 +87,27 @@ export const ProjectTitle = styled.p`
 export const ContainerSideLeft = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  width: 45%;
+  justify-content: space-between;
+  max-width: 25%;
   text-align: left;
   margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 5px;
 `;
 
 export const ContainerSideRight = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 5px;
 `;
+
+export const ExternalLinkContainer = styled.div`
+  position: absolute;
+  margin-top: 72px;
+  margin-left: 290px;
+
+  a {
+    color: inherit;
+  }
+`

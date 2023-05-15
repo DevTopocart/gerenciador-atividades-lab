@@ -990,7 +990,8 @@ const ActivitiesPage: React.FC = () => {
                     // se esta selecionado o index correto
                     onSelect={() => handleTaskClick(index, e)}
                     // Lidar com a seleção do item para passar pro outro component
-                    hours={"XX,x"}
+                    hours={12.433}
+                    issueId={e.id}
                     title={e.subject}
                     nameProject={e.project.name}
                     projectDepartment={e.name_parent}
@@ -1004,7 +1005,7 @@ const ActivitiesPage: React.FC = () => {
           <ContainerSideRight>
             <TitleInformation>
               Selecione uma atividade e utilize os controles abaixo para
-              controlar a execução da atividade:
+              registrar o tempo gasto em sua execução:
             </TitleInformation>
             <TimeSession>Tempo na Seção:</TimeSession>
             <Time>{formatMs(time)}</Time>
