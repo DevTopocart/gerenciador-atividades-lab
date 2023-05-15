@@ -36,7 +36,7 @@ import ActivitiesTaskComponent from "../../components/ActivitiesTasks/Activities
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
 import { toast } from "react-toastify";
 import ActivitiesMinimizeComponent from "../../components/ActivitiesMinimized/ActivitiesMinimizedComponent";
-import { invoke } from "@tauri-apps/api/tauri";
+import axios from "axios";
 
 const padStart = (num: number) => {
   return num.toString().padStart(2, "0");
@@ -58,6 +58,717 @@ const formatMs = (milliseconds: number) => {
 };
 
 const ActivitiesPage: React.FC = () => {
+
+  const mock = {
+    "time_entries": [
+        {
+            "id": 623,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.004,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-11",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-11T12:35:54Z",
+            "updated_on": "2023-05-11T12:35:54Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 597,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.001,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T10:17:31Z",
+            "updated_on": "2023-05-04T10:17:31Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 598,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.003,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T10:17:45Z",
+            "updated_on": "2023-05-04T10:17:45Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 599,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.003,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T10:18:35Z",
+            "updated_on": "2023-05-04T10:18:35Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 603,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.009,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T11:04:57Z",
+            "updated_on": "2023-05-04T11:04:57Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 604,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.002,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T11:06:05Z",
+            "updated_on": "2023-05-04T11:06:05Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 605,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.004,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T11:06:21Z",
+            "updated_on": "2023-05-04T11:06:21Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 609,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.002,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T12:38:10Z",
+            "updated_on": "2023-05-04T12:38:10Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 610,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.01,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T12:38:48Z",
+            "updated_on": "2023-05-04T12:38:48Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 612,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.005,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T12:39:32Z",
+            "updated_on": "2023-05-04T12:39:32Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 613,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.005,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T12:39:58Z",
+            "updated_on": "2023-05-04T12:39:58Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 614,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.004,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T12:41:01Z",
+            "updated_on": "2023-05-04T12:41:01Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 615,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.009,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T12:41:43Z",
+            "updated_on": "2023-05-04T12:41:43Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 616,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.009,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T12:42:24Z",
+            "updated_on": "2023-05-04T12:42:24Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 617,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.016,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T12:43:48Z",
+            "updated_on": "2023-05-04T12:43:48Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 619,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.011,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-04",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-04T20:47:46Z",
+            "updated_on": "2023-05-04T20:47:46Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 525,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.084,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T08:55:22Z",
+            "updated_on": "2023-05-03T08:55:22Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 526,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.009,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T08:58:11Z",
+            "updated_on": "2023-05-03T08:58:11Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 527,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.015,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T08:59:31Z",
+            "updated_on": "2023-05-03T08:59:31Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 528,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.002,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T09:00:44Z",
+            "updated_on": "2023-05-03T09:00:44Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 529,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.017,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T09:01:48Z",
+            "updated_on": "2023-05-03T09:01:48Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 530,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.009,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T09:06:20Z",
+            "updated_on": "2023-05-03T09:06:20Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 531,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.079,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T09:11:19Z",
+            "updated_on": "2023-05-03T09:11:19Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 532,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.009,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T09:12:03Z",
+            "updated_on": "2023-05-03T09:12:03Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        },
+        {
+            "id": 533,
+            "project": {
+                "id": 176,
+                "name": "Apontador de Horas"
+            },
+            "issue": {
+                "id": 2127
+            },
+            "user": {
+                "id": 105,
+                "name": "Fellipe da Costa Silva"
+            },
+            "activity": {
+                "id": 16,
+                "name": "Work"
+            },
+            "hours": 0.009,
+            "comments": "Atividade lançada pelo apontador de horas",
+            "spent_on": "2023-05-03",
+            "easy_external_id": null,
+            "entity_id": 2127,
+            "entity_type": "Issue",
+            "created_on": "2023-05-03T09:13:17Z",
+            "updated_on": "2023-05-03T09:13:17Z",
+            "easy_is_billable": false,
+            "easy_billed": false
+        }
+    ],
+    "total_count": 106,
+    "offset": 0,
+    "limit": 25
+}
+
+
+
   const location: any = useLocation();
   const history = useHistory();
   const [time, setTime] = useState(0);
@@ -122,7 +833,6 @@ const ActivitiesPage: React.FC = () => {
         .then((response) => {
           setisLoading(false);
 
-          console.log(response);
           toast.success(
             `${
               Math.round(hours * 60 * 100) / 100
@@ -155,6 +865,19 @@ const ActivitiesPage: React.FC = () => {
     history.push(`/`);
   };
 
+  function somarHoras(json: any) {
+    let totalHoras = 0;
+  
+    if ( json.time_entries && Array.isArray(json.time_entries)) {
+      for (const entry of json.time_entries) {
+      if (entry.hours && typeof entry.hours === 'number') {
+          totalHoras += entry.hours;
+      }
+      }
+    }
+    return totalHoras;
+  }
+
   async function getIssues() {
     setisLoading(true);
 
@@ -168,13 +891,24 @@ const ActivitiesPage: React.FC = () => {
       const issues = response.data.issues;
 
       for (let i = 0; i < issues.length; i++) {
-        const issue = issues[i];
-        const id_parent = issue.parent;
+        const total = somarHoras(mock);
+        console.log(total.toFixed(2)); 
+        const responseTimeIssues = await api.get("/time_entries.json", {
+          params: {
+            set_filter: true,
+            issue_id: issues[i].id,
+            user_id: issues[i].assigned_to.id,
+          },
+        });
+        console.log(responseTimeIssues)
+        // issues[i].time = responseTimeIssues.data;
+
+        const id_parent = issues[i].parent;
         if (id_parent) {
           const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
-          issue.name_parent = responseIssues.data.issue.subject;
+          issues[i].name_parent = responseIssues.data.issue.subject;
         } else {
-          issue.name_parent = "-";
+          issues[i].name_parent = "-";
         }
       }
 
@@ -189,6 +923,7 @@ const ActivitiesPage: React.FC = () => {
       console.error(error);
     }
   }
+
   const confirmedButtonActivities = () => {
     setIsPoupUp(false);
     setConfirmedActivities(true);
