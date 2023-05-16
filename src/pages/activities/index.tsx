@@ -36,7 +36,7 @@ import ActivitiesTaskComponent from "../../components/ActivitiesTasks/Activities
 import IconButtonComponent from "../../components/IconButton/IconButtonComponent";
 import { toast } from "react-toastify";
 import ActivitiesMinimizeComponent from "../../components/ActivitiesMinimized/ActivitiesMinimizedComponent";
-import { invoke } from "@tauri-apps/api/tauri";
+import axios from "axios";
 
 const padStart = (num: number) => {
   return num.toString().padStart(2, "0");
@@ -58,8 +58,10 @@ const formatMs = (milliseconds: number) => {
 };
 
 const ActivitiesPage: React.FC = () => {
+
   const location: any = useLocation();
   const history = useHistory();
+  const interval = useRef<ReturnType<typeof setInterval>>();
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
@@ -100,6 +102,7 @@ const ActivitiesPage: React.FC = () => {
   const stop = async () => {
     setisLoading(true);
 
+    await getIssues();
     if (isRunning) {
       setIsRunning(false);
       const today = new Date();
@@ -122,7 +125,6 @@ const ActivitiesPage: React.FC = () => {
         .then((response) => {
           setisLoading(false);
 
-          console.log(response);
           toast.success(
             `${
               Math.round(hours * 60 * 100) / 100
@@ -149,11 +151,23 @@ const ActivitiesPage: React.FC = () => {
     }
   };
 
-  const interval = useRef<ReturnType<typeof setInterval>>();
 
   const logout = () => {
     history.push(`/`);
   };
+
+  function addHours(json: any) {
+    let totalHoras = 0;
+  
+    if ( json.time_entries && Array.isArray(json.time_entries)) {
+      for (const entry of json.time_entries) {
+      if (entry.hours && typeof entry.hours === 'number') {
+          totalHoras += entry.hours;
+      }
+      }
+    }
+    return totalHoras.toFixed(2);
+  }
 
   async function getIssues() {
     setisLoading(true);
@@ -167,14 +181,22 @@ const ActivitiesPage: React.FC = () => {
 
       const issues = response.data.issues;
 
-      for (let i = 0; i < issues.length; i++) {
-        const issue = issues[i];
-        const id_parent = issue.parent;
+      for (let i = 0; i < issues.length; i++) { 
+        const responseTimeIssues = await api.get("/time_entries.json", {
+          params: {
+            set_filter: true,
+            issue_id: issues[i].id,
+            user_id: issues[i].assigned_to.id,
+          },
+        });
+        const totalHours = addHours(responseTimeIssues.data);
+        issues[i].time = totalHours;
+        const id_parent = issues[i].parent;
         if (id_parent) {
           const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
-          issue.name_parent = responseIssues.data.issue.subject;
+          issues[i].name_parent = responseIssues.data.issue.subject;
         } else {
-          issue.name_parent = "-";
+          issues[i].name_parent = "-";
         }
       }
 
@@ -189,6 +211,7 @@ const ActivitiesPage: React.FC = () => {
       console.error(error);
     }
   }
+
   const confirmedButtonActivities = () => {
     setIsPoupUp(false);
     setConfirmedActivities(true);
@@ -255,7 +278,7 @@ const ActivitiesPage: React.FC = () => {
                     // se esta selecionado o index correto
                     onSelect={() => handleTaskClick(index, e)}
                     // Lidar com a seleção do item para passar pro outro component
-                    hours={12.433}
+                    hours={e.time}
                     issueId={e.id}
                     title={e.subject}
                     nameProject={e.project.name}
