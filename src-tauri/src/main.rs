@@ -7,14 +7,16 @@ use tauri::{CustomMenuItem, SystemTrayMenu, SystemTrayMenuItem, SystemTrayEvent}
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+fn greet() {
+  println!("I was invoked from JS, with this message:");
 }
 
 #[tauri::command]
-async fn open_poup_up(app: tauri::AppHandle) {
-    let window = app.get_window("main").unwrap();
-    window.show().unwrap();
+fn popup_window(window: tauri::Window) {
+  println!("Maximizing window!");
+  window.show().unwrap();
+  window.unminimize().unwrap();
+  println!("Window maximized!");
 }
 
 fn main() {
@@ -75,7 +77,7 @@ fn main() {
             }
             _ => {}
           })
-        .invoke_handler(tauri::generate_handler![greet,open_poup_up ])
+        .invoke_handler(tauri::generate_handler![greet,popup_window])
         .on_window_event(|event| match event.event() {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 // don't kill the app when the user clicks close. this is important

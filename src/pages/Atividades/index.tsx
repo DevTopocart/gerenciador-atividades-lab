@@ -14,7 +14,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { invoke } from '@tauri-apps/api';
+import { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from '../../components/FullPageLoader';
@@ -71,11 +72,13 @@ export default function Atividades() {
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
 
   const [timer, setTimer] = useState<{
-    running: boolean;
+    running: 'stopped' | 'running' | 'paused';
     elapsedTime: number;
+    nextCheck: Date;
   }>({
-    running: false,
+    running: 'stopped',
     elapsedTime: 0,
+    nextCheck: new Date(),
   });
 
   function handleTaskClick(index: number, issue: Issues) {
@@ -177,10 +180,12 @@ export default function Atividades() {
     getIssues();
   }, []);
 
+  const intervalTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (timer.running) {
+    if (timer.running === 'running') {
       interval = setInterval(() => {
         setTimer((current) => ({
           ...current,
@@ -189,17 +194,49 @@ export default function Atividades() {
       }, 1000);
     }
 
-    return () => clearInterval(interval); // Cleanup on unmount or when `isRunning` changes
+    return () => clearInterval(interval); 
   }, [timer]);
 
   function startTimer() {
-    setTimer((current) => ({ ...current, running: true }));
+    setTimer((current) => ({ ...current, running: 'running', nextCheck: new Date(Date.now() + generateRandomTime()) }));
   }
 
   function stopTimer() {
-    setTimer((current) => ({ ...current, running: false }));
+    setTimer((current) => ({ ...current, running: 'stopped' }));
     logTime()
   }
+
+  function pauseTimer() {
+    setTimer((current) => ({ ...current, running: 'paused' }));
+  }
+
+  const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (timer.running === 'running') {
+
+      const now = new Date();
+      const targetDate = timer.nextCheck; // Set your exact date and time here
+  
+      const delay = targetDate.getTime() - now.getTime();
+      console.log(`Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms` )
+  
+      if (delay > 0) {
+        nextTimeoutCheckRef.current = setTimeout(() => {
+          console.log('Checando por presença');
+          invoke('popup_window')
+          pauseTimer()
+        }, delay);
+      }
+    }
+
+    return () => {
+      // Clean up
+      if (nextTimeoutCheckRef.current) {
+        clearTimeout(nextTimeoutCheckRef.current);
+      }
+    };
+  }, [timer]);
 
   return (
     <Box
@@ -314,7 +351,7 @@ export default function Atividades() {
                   >
                     <CardContent>
                       <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                        #{task.id}
+                        #{task.id} - {task.status.name}
                       </Typography>
                       <Typography variant="h5" gutterBottom>
                         {task.subject}
@@ -440,7 +477,7 @@ export default function Atividades() {
                     color="success"
                     fullWidth
                     variant="contained"
-                    disabled={!selectedIssue || timer.running}
+                    disabled={!selectedIssue || timer.running === 'running'}
                     onClick={startTimer}
                     sx={{
                       marginBottom: "2%",
@@ -454,7 +491,7 @@ export default function Atividades() {
                     color="success"
                     fullWidth
                     variant="contained"
-                    disabled={!selectedIssue || !timer.running}
+                    disabled={!selectedIssue || timer.running === 'stopped'}
                     onClick={stopTimer}
                   >
                     Parar Atividade
