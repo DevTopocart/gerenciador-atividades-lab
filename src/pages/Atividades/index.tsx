@@ -17,9 +17,9 @@ import {
 import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FullPageLoader, Loader } from '../../components/FullPageLoader';
 import { Issues } from "../../interfaces";
 import api from "../../services/api";
-import { FullPageLoader, Loader } from "../Activities/styles";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 

@@ -1,5 +1,4 @@
 import { Route, Switch } from "react-router-dom";
-import "./App.css";
 import Atividades from "./pages/Atividades";
 import LoginPage from "./pages/login";
 import Theme from "./providers/Theme";
