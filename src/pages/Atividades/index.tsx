@@ -75,10 +75,12 @@ export default function Atividades() {
     running: 'stopped' | 'running' | 'paused';
     elapsedTime: number;
     nextCheck: Date;
+    expiredCheck: Date | null;
   }>({
     running: 'stopped',
     elapsedTime: 0,
     nextCheck: new Date(),
+    expiredCheck: null
   });
 
   function handleTaskClick(index: number, issue: Issues) {
@@ -180,8 +182,6 @@ export default function Atividades() {
     getIssues();
   }, []);
 
-  const intervalTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -223,9 +223,28 @@ export default function Atividades() {
   
       if (delay > 0) {
         nextTimeoutCheckRef.current = setTimeout(() => {
-          console.log('Checando por presença');
+          setTimer((current) => ({...current, expiredCheck: new Date(Date.now() + 300000)}))
+          toast.warn('Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos', {autoClose: 300000});
           invoke('popup_window')
           pauseTimer()
+          
+        }, delay);
+      }
+    }
+
+    if (timer.running === 'paused' && timer.expiredCheck) {
+      
+      const now = new Date();
+      const targetDate = timer.expiredCheck; // Set your exact date and time here
+  
+      const delay = targetDate.getTime() - now.getTime();
+      console.log(`Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms` )
+  
+      if (delay > 0) {
+        nextTimeoutCheckRef.current = setTimeout(() => {
+          stopTimer()
+          console.log('Salvando dados');
+          
         }, delay);
       }
     }
