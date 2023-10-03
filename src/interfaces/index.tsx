@@ -64,3 +64,44 @@ export interface Project {
   id: number;
   name: string;
 }
+export interface User {
+  id: number;
+  login: string;
+  firstname: string;
+  lastname: string;
+  mail: string;
+  phone: string;
+  status: number;
+  easy_system_flag: boolean;
+  easy_lesser_admin: boolean;
+  language: string;
+  admin: boolean;
+  easy_user_type: Easyusertype;
+  custom_fields: Customfield[];
+  last_login_on: string;
+  passwd_changed_on: string;
+  working_time_calendar: Workingtimecalendar;
+  created_on: string;
+  updated_on: string;
+}
+
+export interface Workingtimecalendar {
+  id: number;
+  name: string;
+  default_working_hours: number;
+  time_from: string;
+  time_to: string;
+}
+
+export interface Customfield {
+  id: number;
+  name: string;
+  internal_name?: any;
+  field_format: string;
+  value: string;
+}
+
+export interface Easyusertype {
+  id: number;
+  name: string;
+}

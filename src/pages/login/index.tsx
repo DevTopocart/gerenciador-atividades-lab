@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
+import { User } from "../../interfaces";
 import api from "../../services/api";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
@@ -28,25 +29,58 @@ export default function LoginPage() {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async (data: any) => {
+  async function getUsers(page: number = 0, pageSize: number = 25, users: User[] = []): Promise<User[] | undefined> {
+    
+    try {
+
+      const request = await api
+        .get(`/users.json`, {
+          params: {
+            limit: pageSize,
+            offset: page * pageSize,
+          }
+        })
+
+      if (request.data.total_count > (page + 1) * pageSize) {
+        users.push(...request.data.users)
+        await getUsers(page + 1, pageSize,users)
+      } else {
+        users.push(...request.data.users)
+      }      
+      
+      return users
+    } catch (error) {
+      console.error("Não foi possivel obter os usuários do Easy Project", error)
+      throw error
+    }    
+    
+  }
+
+  async function onSubmit(data: any) {
     let user = data.Usuario;
     let password = data.Senha;
 
     setIsLoading(true);
-    const response = await api.get("/users.json");
-    let foundUser = response.data.users.find((e: any) => e.login == user);
 
-    if (foundUser == undefined) {
+    try {
+
+      const users = await getUsers();
+      let foundUser = users!.find((e) => e.login == user);
+  
+      if (foundUser == undefined) {
+        setIsLoading(false);
+        toast.error(
+          `O usuário ${user} não foi encontrado no Easy Project, verifique com seu líder.`,
+        );
+      } else {
+        setIsLoading(false);
+        history.push({
+          pathname: "/atividades",
+          state: { user: foundUser },
+        });
+      }
+    } catch {
       setIsLoading(false);
-      toast.error(
-        `O usuário ${user} não foi encontrado no Easy Project, verifique com seu líder.`,
-      );
-    } else {
-      setIsLoading(false);
-      history.push({
-        pathname: "/atividades",
-        state: { user: foundUser },
-      });
     }
   };
 
