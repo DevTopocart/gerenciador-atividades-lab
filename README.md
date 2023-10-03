@@ -9,4 +9,3 @@ This template should help get you started developing with Tauri, React and Types
 Comando para instalar o Rust
 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-

@@ -20,7 +20,6 @@ function ActivitiesMinimizeComponent(props: any) {
 
   return (
     <ContainerActivitiesMinimized>
-			
       <TitleActivitiesMinimizedConfirmed>
         Você ainda está nesta tarefa?
       </TitleActivitiesMinimizedConfirmed>
@@ -47,7 +46,6 @@ function ActivitiesMinimizeComponent(props: any) {
           ></DefaultButtonComponent>
         </ContainerButtonsConfirmed>
       </ContainerHours>
-
     </ContainerActivitiesMinimized>
   );
 }

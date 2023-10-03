@@ -1,26 +1,36 @@
 import React, { useState } from "react";
-import { ContainerTask, ContainerSideLeft,HoursTask, HoursTitle,Title, ContainerSideRight, ProjectDepartment,ProjectTitle, ExternalLinkContainer }  from "./styles"
+import {
+  ContainerTask,
+  ContainerSideLeft,
+  HoursTask,
+  HoursTitle,
+  Title,
+  ContainerSideRight,
+  ProjectDepartment,
+  ProjectTitle,
+  ExternalLinkContainer,
+} from "./styles";
 import { FiExternalLink } from "react-icons/fi";
 
-function ActivitiesTaskComponent(props: any){
+function ActivitiesTaskComponent(props: any) {
   const handleClick = () => {
     if (!props.disabled) {
       props.onSelect(props.index);
     }
     //  Passa o indice da tarefa que vai ser selecionada
-  }
+  };
   return (
-    <ContainerTask isSelected={props.isSelected} onClick={handleClick}  disabled={props.disabled}>
+    <ContainerTask
+      isSelected={props.isSelected}
+      onClick={handleClick}
+      disabled={props.disabled}
+    >
       <ContainerSideLeft>
-        <HoursTitle>
-          Horas Executadas
-        </HoursTitle>
+        <HoursTitle>Horas Executadas</HoursTitle>
         <HoursTask>
-          <p className="integer">
-            {Math.floor(props.hours)}
-          </p>
+          <p className="integer">{Math.floor(props.hours)}</p>
           <p className="decimal">
-            {`.${Math.floor((props.hours - Math.floor(props.hours))*100)}`}
+            {`.${Math.floor((props.hours - Math.floor(props.hours)) * 100)}`}
           </p>
         </HoursTask>
       </ContainerSideLeft>
@@ -32,13 +42,15 @@ function ActivitiesTaskComponent(props: any){
       </ContainerSideRight>
 
       <ExternalLinkContainer>
-        <a href={`https://topocart.easyredmine.com/issues/${props.issueId}`} target="_blank">
-          <FiExternalLink/>
+        <a
+          href={`https://topocart.easyredmine.com/issues/${props.issueId}`}
+          target="_blank"
+        >
+          <FiExternalLink />
         </a>
       </ExternalLinkContainer>
-      
     </ContainerTask>
-  )
+  );
 }
 
 export default ActivitiesTaskComponent;

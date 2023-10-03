@@ -45,9 +45,9 @@ export const ContainerHours = styled.div`
 `;
 
 export const ContainerButtonsConfirmed = styled.div`
-    padding-bottom: 10px;
-    margin-left: 60px;
-    margin-bottom: 10px;
+  padding-bottom: 10px;
+  margin-left: 60px;
+  margin-bottom: 10px;
 `;
 
 export const PauseIcon = styled(RiPauseMiniFill)`

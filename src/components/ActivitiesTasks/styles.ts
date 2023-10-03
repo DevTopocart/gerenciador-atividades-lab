@@ -17,7 +17,8 @@ export const ContainerTask = styled.div<ContainerTaskProps>`
   cursor: pointer;
   background-color: ${({ isSelected }) => (isSelected ? "#009C66" : "#fff")};
   color: ${({ isSelected }) => (isSelected ? "#ffffff" : "#000000")};
-  color: ${({ isSelected, disabled }) => (isSelected && !disabled ? "#ffffff" : "#000000")};
+  color: ${({ isSelected, disabled }) =>
+    isSelected && !disabled ? "#ffffff" : "#000000"};
   opacity: ${({ disabled }) => (disabled ? "0.5" : "1")};
 `;
 
@@ -61,7 +62,7 @@ export const Title = styled.p`
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3; /* number of lines to show */
-          line-clamp: 3; 
+  line-clamp: 3;
   -webkit-box-orient: vertical;
 `;
 
@@ -110,4 +111,4 @@ export const ExternalLinkContainer = styled.div`
   a {
     color: inherit;
   }
-`
+`;

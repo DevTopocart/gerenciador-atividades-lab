@@ -48,14 +48,14 @@ export const FormContainer = styled.div`
 `;
 
 interface InputProps {
-  color?: string
+  color?: string;
 }
 
 export const Input = styled.input<InputProps>`
   margin-top: 10px;
   height: 35px;
   width: 80%;
-  background-color: ${props => props.color || "whitesmoke"};
+  background-color: ${(props) => props.color || "whitesmoke"};
   border: 1px solid #ccc;
   border-radius: 3px;
   border-top: none;
@@ -71,7 +71,7 @@ export const ButtonContainer = styled.div`
 export const InputSubmit = styled.button`
   margin-top: 15px;
   width: 70%;
-  background-color: #009C66;
+  background-color: #009c66;
   border-radius: 4px;
   border: none;
   font-style: normal;
@@ -81,19 +81,16 @@ export const InputSubmit = styled.button`
   color: white;
 
   &:active {
-    
-    background-color: #009C66;
+    background-color: #009c66;
   }
 
   &:hover {
-
     background-color: #017d52;
   }
 
   &:disabled {
-
     cursor: default;
-    background-color: rgb(200,200,200);
+    background-color: rgb(200, 200, 200);
   }
 `;
 
@@ -101,12 +98,12 @@ export const Title = styled.div`
   display: flex;
   text-align: center;
   margin-bottom: 5px;
-`
+`;
 
 export const LogoTopocart = styled.img`
   align-self: flex-end;
   margin-top: 60px;
-`
+`;
 
 export const Version = styled.p`
   color: white;
@@ -114,7 +111,7 @@ export const Version = styled.p`
   font-size: 8pt;
   margin: 0;
   margin-top: 5px;
-`
+`;
 
 export const Loader = styled.img`
   animation-name: spin;
@@ -123,11 +120,11 @@ export const Loader = styled.img`
   animation-timing-function: linear;
 
   @keyframes spin {
-  from {
-    transform: rotate(0deg);
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-`
+`;

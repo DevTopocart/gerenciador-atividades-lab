@@ -14,7 +14,7 @@
   -webkit-text-size-adjust: 100%;
 }
 
-body{
+body {
   margin: 0;
 }
 
@@ -93,26 +93,26 @@ button {
 }
 
 /* ===== Scrollbar CSS ===== */
-  /* Firefox */
-  * {
-    scrollbar-width: auto;
-    scrollbar-color: #474747 #f7f7f7;
-  }
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #474747 #f7f7f7;
+}
 
-  /* Chrome, Edge, and Safari */
-  *::-webkit-scrollbar {
-    width: 8px;
-  }
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
 
-  *::-webkit-scrollbar-track {
-    background: #e6e6e6;
-  }
+*::-webkit-scrollbar-track {
+  background: #e6e6e6;
+}
 
-  *::-webkit-scrollbar-thumb {
-    background-color: #747474;
-    border-radius: 1px;
-    border: 0px solid #ffffff;
-  }
+*::-webkit-scrollbar-thumb {
+  background-color: #747474;
+  border-radius: 1px;
+  border: 0px solid #ffffff;
+}
 
 @media (prefers-color-scheme: no-dark) {
   :root {

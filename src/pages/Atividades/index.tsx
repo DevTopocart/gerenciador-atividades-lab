@@ -58,7 +58,6 @@ const formatMs = (milliseconds: number) => {
 };
 
 const ActivitiesPage: React.FC = () => {
-
   const location: any = useLocation();
   const history = useHistory();
   const interval = useRef<ReturnType<typeof setInterval>>();
@@ -130,7 +129,7 @@ const ActivitiesPage: React.FC = () => {
               Math.round(hours * 60 * 100) / 100
             } minutos registrados na atividade '${
               issues!.filter((e: any) => e.id === task.id)[0].subject
-            }'`
+            }'`,
           );
         })
         .catch((error: any) => {
@@ -151,19 +150,18 @@ const ActivitiesPage: React.FC = () => {
     }
   };
 
-
   const logout = () => {
     history.push(`/`);
   };
 
   function addHours(json: any) {
     let totalHoras = 0;
-  
-    if ( json.time_entries && Array.isArray(json.time_entries)) {
+
+    if (json.time_entries && Array.isArray(json.time_entries)) {
       for (const entry of json.time_entries) {
-      if (entry.hours && typeof entry.hours === 'number') {
+        if (entry.hours && typeof entry.hours === "number") {
           totalHoras += entry.hours;
-      }
+        }
       }
     }
     return totalHoras.toFixed(2);
@@ -181,7 +179,7 @@ const ActivitiesPage: React.FC = () => {
 
       const issues = response.data.issues;
 
-      for (let i = 0; i < issues.length; i++) { 
+      for (let i = 0; i < issues.length; i++) {
         const responseTimeIssues = await api.get("/time_entries.json", {
           params: {
             set_filter: true,
@@ -206,7 +204,7 @@ const ActivitiesPage: React.FC = () => {
     } catch (error) {
       setisLoading(false);
       toast.error(
-        "Não foi possível obter a lista de atividades do Easy Project"
+        "Não foi possível obter a lista de atividades do Easy Project",
       );
       console.error(error);
     }

@@ -133,7 +133,8 @@ export const DisableBackground = styled.div<{ disabled: boolean }>`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: ${(props) => (props.disabled ? "rgba(0, 0, 0, 0.5)" : "transparent")};
+  background-color: ${(props) =>
+    props.disabled ? "rgba(0, 0, 0, 0.5)" : "transparent"};
   pointer-events: ${(props) => (props.disabled ? "all" : "none")};
 `;
 
@@ -141,7 +142,7 @@ export const ContainerControls = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: left;
-`
+`;
 
 export const ContainerPlay = styled.div`
   display: flex;
@@ -166,18 +167,18 @@ export const User = styled.p`
   font-size: small;
   font-weight: 500;
   margin-bottom: 5px;
-  color: rgb(210,210,210,0.7);
-`
+  color: rgb(210, 210, 210, 0.7);
+`;
 
 export const Title = styled.div`
   display: flex;
   text-align: center;
   margin-bottom: 5px;
-`
+`;
 
 export const LogoTopocart = styled.img`
   margin-top: 15px;
-`
+`;
 
 export const Version = styled.p`
   color: white;
@@ -185,7 +186,7 @@ export const Version = styled.p`
   font-size: 6pt;
   margin: 0;
   margin-top: 5px;
-`
+`;
 
 export const FullPageLoader = styled.div`
   position: absolute;
@@ -193,11 +194,11 @@ export const FullPageLoader = styled.div`
   top: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.75);
+  background-color: rgba(0, 0, 0, 0.75);
   z-index: 10000;
   align-items: center;
   justify-content: center;
-`
+`;
 
 export const Loader = styled.img`
   height: 200px;
@@ -207,11 +208,11 @@ export const Loader = styled.img`
   animation-timing-function: linear;
 
   @keyframes spin {
-  from {
-    transform: rotate(0deg);
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-`
+`;

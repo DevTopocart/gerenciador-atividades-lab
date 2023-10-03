@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import img from "./assets/login-background.png"
+import img from "./assets/login-background.png";
 
 export const ContainerBackground = styled.div`
   background-image: url(${img});
@@ -13,4 +13,4 @@ export const ContainerBackground = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`
+`;
