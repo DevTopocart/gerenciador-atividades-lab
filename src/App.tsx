@@ -1,18 +1,21 @@
+import { Route, Switch } from "react-router-dom";
 import "./App.css";
+import Atividades from "./pages/Atividades";
 import LoginPage from "./pages/login";
-import ActivitiesPage from "./pages/activities/index"
-import { Switch, Route } from "react-router-dom";
+import Theme from "./providers/Theme";
 
 function App() {
   return (
-    <Switch>
-      <Route path="/" exact>
-        <LoginPage/>
-      </Route>
-      <Route path="/activities/">
-        <ActivitiesPage/>  
-      </Route>
-    </Switch>
+    <Theme>
+      <Switch>
+        <Route path="/" exact>
+          <LoginPage />
+        </Route>
+        <Route path="/atividades/">
+          <Atividades />
+        </Route>
+      </Switch>
+    </Theme>
   );
 }
 

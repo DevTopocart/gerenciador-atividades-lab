@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-import img from "/login-background.png";
-import { RiPlayFill, RiStopMiniFill, RiLogoutBoxLine } from "react-icons/ri";
+import { RiLogoutBoxLine, RiPlayFill, RiStopMiniFill } from "react-icons/ri";
+import img from "./../../assets/login-background.jpg";
 
 export const ContainerBackground = styled.div`
   background-image: url(${img});
@@ -123,7 +123,7 @@ export const PauseIcon = styled(RiStopMiniFill)`
 
 export const ContainerActivitiesMinimizedCentered = styled.div`
   position: absolute;
-  width: 500px
+  width: 500px;
   height: 100vh;
 `;
 

@@ -1,28 +1,25 @@
-import { Button, TextField } from "@mui/material";
-import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import packageJson from "./../../../package.json";
-import loader from "/loader.svg";
-import logoTopocart from "/logo_topocart.png";
-
+import packageJson from "../../../package.json";
 import api from "../../services/api";
-import {
-  ContainerBackground,
-  ContainerTitle,
-  Footer,
-  FormContainer,
-  LabelContainer,
-  Loader,
-  LoginContainer,
-  LogoTopocart,
-  Title,
-  Version,
-} from "./styles";
+import loader from "./../../assets/loader.svg";
+import background from "./../../assets/login-background.jpg";
+import logoTopocart from "./../../assets/logo_topocart.png";
+import { Loader, LogoTopocart, Version } from "./styles";
 
-const LoginPage: React.FC = () => {
+export default function LoginPage() {
   const {
     register,
     handleSubmit,
@@ -47,54 +44,113 @@ const LoginPage: React.FC = () => {
     } else {
       setIsLoading(false);
       history.push({
-        pathname: "/activities",
+        pathname: "/atividades",
         state: { user: foundUser },
       });
     }
   };
 
   return (
-    <ContainerBackground>
-      <ContainerTitle>
-        <Title>Gerenciador de Atividades</Title>
-      </ContainerTitle>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundImage: `url(${background})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
+    >
+      <Typography
+        variant="h3"
+        fontWeight={"bold"}
+        sx={{
+          paddingBottom: "3rem",
+        }}
+      >
+        Gerenciador de Atividades
+      </Typography>
 
-      <LoginContainer>
-        <LabelContainer>
-          <h4>Acesse com seu usuário e senha dos sistemas Topocart</h4>
-        </LabelContainer>
+      <Divider />
 
-        <FormContainer>
+      <Card
+        sx={{
+          width: "400px",
+        }}
+      >
+        <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <TextField
-              type="text"
-              placeholder="Nome de usuário"
-              {...register("Usuario", { required: "Este campo é obrigatório" })}
-            />
-            <TextField
-              type="password"
-              placeholder="Senha"
-              {...register("Senha", { required: true })}
-            />
-            {/* {errors.Senha && <SpanError>Este campo é obrigatório</SpanError>} */}
-            <Button type="submit" disabled={isLoading}>
-              {!isLoading ? (
-                "Acessar"
-              ) : (
-                <>
-                  <Loader src={loader}></Loader>&nbsp;&nbsp;Acessando
-                </>
-              )}
-            </Button>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Typography textAlign="center" variant="h6">
+                Utilize seu usuário e senha da rede para acessar o sistema.
+              </Typography>
+              <TextField
+                type="text"
+                variant="filled"
+                placeholder="Nome de usuário"
+                sx={{
+                  paddingTop: "1rem",
+                }}
+                {...register("Usuario", {
+                  required: "Este campo é obrigatório",
+                })}
+              />
+              <TextField
+                type="password"
+                variant="filled"
+                placeholder="Senha"
+                sx={{
+                  paddingTop: "1rem",
+                }}
+                {...register("Senha", { required: "Este campo é obrigatório" })}
+              />
+              <Divider
+                sx={{
+                  paddingTop: "0.5rem",
+                  paddingBottom: "0.5rem",
+                }}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                color="secondary"
+                sx={{
+                  padding: "1rem",
+                }}
+              >
+                {!isLoading ? (
+                  "Acessar"
+                ) : (
+                  <>
+                    <Loader src={loader}></Loader>&nbsp;&nbsp;Acessando
+                  </>
+                )}
+              </Button>
+            </Box>
           </form>
-        </FormContainer>
-      </LoginContainer>
-      <Footer>
+        </CardContent>
+      </Card>
+      <Box
+        sx={{
+          paddingTop: "5rem",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <LogoTopocart src={logoTopocart} />
         <Version>Versão {packageJson.version}</Version>
-      </Footer>
-    </ContainerBackground>
+      </Box>
+    </Box>
   );
-};
-
-export default LoginPage;
+}
