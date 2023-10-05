@@ -83,6 +83,8 @@ export interface User {
   working_time_calendar: Workingtimecalendar;
   created_on: string;
   updated_on: string;
+  supervisor?: Easyusertype;
+  supervisor_user_id?: number;
 }
 
 export interface Workingtimecalendar {
@@ -111,4 +113,10 @@ export interface Group {
   name: string;
   easy_system_flag: boolean;
   created_on: string;
+  custom_fields?: Customfield[];
+}
+
+export interface MinifiedUser {
+  id: number;
+  name: string;
 }

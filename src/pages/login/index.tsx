@@ -13,8 +13,7 @@ import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
-import { Group, User } from "../../interfaces";
-import api from "../../services/api";
+import { getGroups, getUsers } from "../../services/easy";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 import logoTopocart from "./../../assets/logo_topocart.png";
@@ -29,60 +28,6 @@ export default function LoginPage() {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
 
-  async function getUsers(page: number = 0, pageSize: number = 25, users: User[] = []): Promise<User[] | undefined> {
-    
-    try {
-
-      const request = await api
-        .get(`/users.json`, {
-          params: {
-            limit: pageSize,
-            offset: page * pageSize,
-          }
-        })
-
-      if (request.data.total_count > (page + 1) * pageSize) {
-        users.push(...request.data.users)
-        await getUsers(page + 1, pageSize,users)
-      } else {
-        users.push(...request.data.users)
-      }      
-      
-      return users
-    } catch (error) {
-      console.error("Não foi possivel obter os usuários do Easy Project", error)
-      throw error
-    }    
-    
-  }
-
-  async function getGroups(page: number = 0, pageSize: number = 25, users: Group[] = []): Promise<Group[] | undefined> {
-    
-    try {
-
-      const request = await api
-        .get(`/groups.json`, {
-          params: {
-            limit: pageSize,
-            offset: page * pageSize,
-          }
-        })
-
-      if (request.data.total_count > (page + 1) * pageSize) {
-        users.push(...request.data.groups)
-        await getGroups(page + 1, pageSize,users)
-      } else {
-        users.push(...request.data.groups)
-      }      
-      
-      return users
-    } catch (error) {
-      console.error("Não foi possivel obter os grupos do Easy Project", error)
-      throw error
-    }    
-    
-  }
-
   async function onSubmit(data: any) {
     let user = data.Usuario;
     let password = data.Senha;
@@ -90,12 +35,11 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-
       const users = await getUsers();
       const groups = await getGroups();
       let foundUser = users!.find((e) => e.login == user);
       let foundGroup = groups!.find((e) => e.name == user);
-  
+
       if (foundUser == undefined && foundGroup == undefined) {
         setIsLoading(false);
         toast.error(
@@ -105,13 +49,13 @@ export default function LoginPage() {
         setIsLoading(false);
         history.push({
           pathname: "/atividades",
-          state: { user: foundUser ? foundUser : foundGroup },
+          state: { user: foundUser ? {...foundUser, type: 'user'} : {...foundGroup, type: 'group'} },
         });
       }
     } catch {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <Box
