@@ -105,3 +105,10 @@ export interface Easyusertype {
   id: number;
   name: string;
 }
+
+export interface Group {
+  id: number;
+  name: string;
+  easy_system_flag: boolean;
+  created_on: string;
+}

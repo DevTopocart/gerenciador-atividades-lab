@@ -13,7 +13,7 @@ import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
-import { User } from "../../interfaces";
+import { Group, User } from "../../interfaces";
 import api from "../../services/api";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
@@ -56,6 +56,33 @@ export default function LoginPage() {
     
   }
 
+  async function getGroups(page: number = 0, pageSize: number = 25, users: Group[] = []): Promise<Group[] | undefined> {
+    
+    try {
+
+      const request = await api
+        .get(`/groups.json`, {
+          params: {
+            limit: pageSize,
+            offset: page * pageSize,
+          }
+        })
+
+      if (request.data.total_count > (page + 1) * pageSize) {
+        users.push(...request.data.groups)
+        await getGroups(page + 1, pageSize,users)
+      } else {
+        users.push(...request.data.groups)
+      }      
+      
+      return users
+    } catch (error) {
+      console.error("Não foi possivel obter os grupos do Easy Project", error)
+      throw error
+    }    
+    
+  }
+
   async function onSubmit(data: any) {
     let user = data.Usuario;
     let password = data.Senha;
@@ -65,9 +92,11 @@ export default function LoginPage() {
     try {
 
       const users = await getUsers();
+      const groups = await getGroups();
       let foundUser = users!.find((e) => e.login == user);
+      let foundGroup = groups!.find((e) => e.name == user);
   
-      if (foundUser == undefined) {
+      if (foundUser == undefined && foundGroup == undefined) {
         setIsLoading(false);
         toast.error(
           `O usuário ${user} não foi encontrado no Easy Project, verifique com seu líder.`,
@@ -76,7 +105,7 @@ export default function LoginPage() {
         setIsLoading(false);
         history.push({
           pathname: "/atividades",
-          state: { user: foundUser },
+          state: { user: foundUser ? foundUser : foundGroup },
         });
       }
     } catch {
