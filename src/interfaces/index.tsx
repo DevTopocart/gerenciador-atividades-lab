@@ -120,3 +120,22 @@ export interface MinifiedUser {
   id: number;
   name: string;
 }
+
+export interface Timeentry {
+  id: number;
+  project: { id: number };
+  issue: { id: number };
+  user: { id: number };
+  activity: { id: number };
+  hours: number;
+  comments: string;
+  spent_on: string;
+  easy_external_id?: any;
+  entity_id: number;
+  entity_type: string;
+  created_on: string;
+  updated_on: string;
+  easy_is_billable: boolean;
+  easy_billed: boolean;
+  custom_fields: Customfield[];
+}

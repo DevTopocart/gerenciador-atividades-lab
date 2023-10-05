@@ -49,7 +49,11 @@ export default function LoginPage() {
         setIsLoading(false);
         history.push({
           pathname: "/atividades",
-          state: { user: foundUser ? {...foundUser, type: 'user'} : {...foundGroup, type: 'group'} },
+          state: {
+            user: foundUser
+              ? { ...foundUser, type: "user" }
+              : { ...foundGroup, type: "group" },
+          },
         });
       }
     } catch {

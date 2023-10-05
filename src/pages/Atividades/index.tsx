@@ -22,8 +22,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
 import { Issues } from "../../interfaces";
-import api from "../../repositories/api";
-import { getIssues } from "../../services/easy";
+import { createTimeEntryForGroup, createTimeEntryForUser, getCurrentActivityForGroup, getIssues } from "../../services/easy";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 
@@ -56,22 +55,18 @@ export default function Atividades() {
     const formattedDate = today.toLocaleDateString("en-CA");
     const hours = timer.elapsedTime / 3600000;
 
-    const time_json = {
-      time_entry: {
-        project_id: selectedIssue!.project.id,
-        issue_id: selectedIssue!.id,
-        user_id: selectedIssue!.assigned_to.id,
-        hours: hours.toFixed(3),
-        spent_on: formattedDate,
-        comments: "Atividade lançada pelo apontador de horas",
-      },
-    };
+    if (location.state.user.type === 'user') {
 
-    await api
-      .post(`/time_entries.json`, time_json)
-      .then((response) => {
-        setisLoading(false);
-
+      try {
+      
+        await createTimeEntryForUser(
+          location.state.user.id,
+          selectedIssue!.project.id,
+          selectedIssue!.id,
+          formattedDate,
+          hours.toFixed(3)
+        )
+        
         toast.success(
           `${
             Math.round(hours * 60 * 100) / 100
@@ -79,19 +74,51 @@ export default function Atividades() {
             issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
           }'`,
         );
-      })
-      .catch((error: any) => {
+        
+      } catch (error: any) {
         console.log(error);
-        setisLoading(false);
         if (error.response.status === 422) {
           toast.warn("Nenhum tempo foi registrado no Easy Project");
         } else {
           toast.error("Não foi possível registrar o tempo no Easy Project");
         }
-      });
+        
+      } finally {
 
-    setTimer((current) => ({ ...current, elapsedTime: 0 }));
-    setisLoading(false);
+        setisLoading(false);
+      }
+    } else {
+      try {
+      
+        await createTimeEntryForGroup(
+          location.state.user.id,
+          selectedIssue!.project.id,
+          selectedIssue!.id,
+          formattedDate,
+          hours.toFixed(3)
+        )
+        
+        toast.success(
+          `${
+            Math.round(hours * 60 * 100) / 100
+          } minutos registrados na atividade '${
+            issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
+          }'`,
+        );
+        
+      } catch (error: any) {
+        console.log(error);
+        if (error.response.status === 422) {
+          toast.warn("Nenhum tempo foi registrado no Easy Project");
+        } else {
+          toast.error("Não foi possível registrar o tempo no Easy Project");
+        }
+        
+      } finally {
+
+        setisLoading(false);
+      }
+    }
   }
 
   async function fetchIssues() {
@@ -118,6 +145,15 @@ export default function Atividades() {
 
   useEffect(() => {
     fetchIssues();
+
+    if (location.state.user.type === "group") {
+      getCurrentActivityForGroup(location.state.user.id).then((response) => {
+        if (response) {
+          setIssues([response]);
+          setSelectedIssue(response);
+        }
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -242,15 +278,19 @@ export default function Atividades() {
             alignItems: "center",
           }}
         >
-          <IconButton color="success">
-            <PersonIcon />
-          </IconButton>
-          <Divider orientation="vertical" flexItem />
-          <Tooltip title="Acessar interface de gestão da equipe">
-            <IconButton onClick={handleGoToGestor}>
-              <Groups2Icon />
-            </IconButton>
-          </Tooltip>
+          {location.state.user.type === "user" && (
+            <>
+              <IconButton color="success">
+                <PersonIcon />
+              </IconButton>
+              <Divider orientation="vertical" flexItem />
+              <Tooltip title="Acessar interface de gestão da equipe">
+                <IconButton onClick={handleGoToGestor}>
+                  <Groups2Icon />
+                </IconButton>
+              </Tooltip>
+            </>
+          )}
         </Box>
         <Box
           sx={{
@@ -261,8 +301,10 @@ export default function Atividades() {
           }}
         >
           <Typography variant="caption" gutterBottom>
-            Logado como {location.state.user.firstname}{" "}
-            {location.state.user.lastname}
+            Logado como{" "}
+            {location.state.user.type === "user"
+              ? `${location.state.user.firstname} ${location.state.user.lastname}`
+              : `${location.state.user.name} (usuário sem acesso ao Easy Project)`}
           </Typography>
           &nbsp;
           <IconButton size="small" onClick={() => history.push("/")}>

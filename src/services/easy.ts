@@ -128,3 +128,61 @@ export async function getCurrentActivityForGroup(id_group: number) {
     console.error(error);
   }
 }
+
+export async function createTimeEntryForGroup(
+  id_group: number,
+  id_project: number,
+  id_issue: number,
+  spentOn: string,
+  hours: number,
+) {
+  try {
+    const time_json = {
+      time_entry: {
+        project_id: id_project,
+        issue_id: id_issue,
+        user_id: 100,
+        hours: hours,
+        spent_on: spentOn,
+        comments: "Atividade lançada pelo apontador de horas",
+        custom_fields: [
+          {
+            id: 106,
+            value: id_group,
+          },
+        ],
+      },
+    };
+
+    const response = await api.post(`/time_entries.json`, time_json);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function createTimeEntryForUser(
+  id_user: number,
+  id_project: number,
+  id_issue: number,
+  spentOn: string,
+  hours: number,
+) {
+  try {
+    const time_json = {
+      time_entry: {
+        project_id: id_project,
+        issue_id: id_issue,
+        user_id: id_user,
+        hours: hours,
+        spent_on: spentOn,
+        comments: "Atividade lançada pelo apontador de horas",
+      },
+    };
+
+    const response = await api.post(`/time_entries.json`, time_json);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}

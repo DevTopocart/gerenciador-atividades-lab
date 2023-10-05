@@ -217,7 +217,9 @@ function SeletorAtividadeParaGrupos(props: {
     setSelectedIssue(issue);
   }
 
-  let issues = selectedIssue ? [selectedIssue, ...props.issues.filter(e => e.id !== selectedIssue.id)] : props.issues;
+  let issues = selectedIssue
+    ? [selectedIssue, ...props.issues.filter((e) => e.id !== selectedIssue.id)]
+    : props.issues;
 
   return (
     <Box
@@ -245,8 +247,7 @@ function SeletorAtividadeParaGrupos(props: {
           overflowY: "auto",
         }}
       >
-        {issues
-          .map((task, index) => {
+        {issues.map((task, index) => {
           return (
             <Box
               key={index}
