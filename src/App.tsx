@@ -2,6 +2,7 @@ import { Route, Switch } from "react-router-dom";
 import Atividades from "./pages/Atividades";
 import LoginPage from "./pages/login";
 import Theme from "./providers/Theme";
+import "./styles.css";
 
 function App() {
   return (
