@@ -163,6 +163,7 @@ export default function Atividades() {
       }
 
       setIssues(issues);
+      if (!selectedIssue) setSelectedIssue(issues[0])
       setisLoading(false);
       return response.data;
     } catch (error) {
@@ -450,9 +451,7 @@ export default function Atividades() {
                 >
                   <Card
                     sx={{
-                      width: "98%",
-                      padding: "1%",
-                      marginTop: "2%",
+                      width: "100%",
                       backgroundColor: "primary.main",
                     }}
                   >
