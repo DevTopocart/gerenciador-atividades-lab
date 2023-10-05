@@ -1,4 +1,5 @@
 import Groups2Icon from "@mui/icons-material/Groups2";
+import HelpIcon from "@mui/icons-material/Help";
 import LogoutIcon from "@mui/icons-material/Logout";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import PersonIcon from "@mui/icons-material/Person";
@@ -18,9 +19,9 @@ import { useHistory, useLocation } from "react-router-dom";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
 import { Group, Issues, MinifiedUser, User } from "../../interfaces";
 import {
+  getAllIssues,
   getCurrentActivityForGroup,
   getGroups,
-  getIssues,
   getUsers,
   setCurrentActivityForGroup,
 } from "../../services/easy";
@@ -32,8 +33,8 @@ export default function Gestor() {
   const history = useHistory();
   const theme = useTheme();
 
-  const [usersSubordinates, setUserSubordinates] = useState<User[]>([]);
-  const [groupSubordinates, setGroupSubordinates] = useState<Group[]>([]);
+  const [usersSubordinates, setUserSubordinates] = useState<User[]>();
+  const [groupSubordinates, setGroupSubordinates] = useState<Group[]>();
   const [issues, setIssues] = useState<Issues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -66,7 +67,8 @@ export default function Gestor() {
   }
 
   async function fetchIssues() {
-    const issues = await getIssues(location.state.user.id);
+    const issues = await getAllIssues();
+    console.log("🚀 ~ file: index.tsx:71 ~ fetchIssues ~ issues:", issues)
     setIssues(issues!);
   }
 
@@ -150,33 +152,62 @@ export default function Gestor() {
           flexWrap: "wrap",
           overflowY: "auto",
           alignContent: "flex-start",
+          justifyContent: "center",
         }}
       >
-        {/* {usersSubordinates.length > 0 &&
-          issues &&
-          usersSubordinates
-            .map((user) => {
-              return { name: user.firstname, id: user.id } as MinifiedUser;
-            })
-            .map((user, index) => {
-              return (
-                <SeletorAtividade key={index} user={user} issues={issues} />
-              );
-            })} */}
+        {!usersSubordinates && !groupSubordinates && (
+          <Typography
+            textAlign={"center"}
+            sx={{
+              marginTop: "20%",
+              width: "80%",
+            }}
+          >
+            Não existe nenhum colaborador que possua você cadastrado como
+            supervisor. Se for o caso, solicite a inclusão no EasyProject pela
+            TI - Produção enviando um email para <b>ti.prod@topocart.dev.br</b>
+          </Typography>
+        )}
 
-        {groupSubordinates.length > 0 &&
+        {groupSubordinates && groupSubordinates.length > 0 &&
           issues &&
           groupSubordinates.map((user, index) => {
             return (
               <SeletorAtividadeParaGrupos
                 key={index}
                 user={{ name: user.name, id: user.id }}
-                issues={issues}
+                issues={issues.filter(
+                  (issue) => {
+                    return issue.assigned_to && 
+                      issue.assigned_to.id 
+                      === location.state.user.id
+                  },
+                )}
                 currentActivity={
                   Number(
                     user.custom_fields?.find((e) => e.id === 125)?.value,
                   ) || 0
                 }
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+              />
+            );
+          })}
+
+        {usersSubordinates && usersSubordinates.length > 0 &&
+          issues &&
+          usersSubordinates.map((user, index) => {
+            return (
+              <SeletorAtividadeParaUsuarios
+                key={index}
+                user={user}
+                issues={issues.filter(
+                  (issue) => {
+                    return issue.assigned_to && 
+                      issue.assigned_to.id 
+                        === user.id
+                    }
+                )}
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}
               />
@@ -229,6 +260,16 @@ function SeletorAtividadeParaGrupos(props: {
       }}
     >
       <Typography variant="h5">{props.user.name}</Typography>
+      <Typography
+        variant="caption"
+        component={"div"}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        Usuário Interno da Topocart
+      </Typography>
 
       <Divider
         sx={{
@@ -268,6 +309,99 @@ function SeletorAtividadeParaGrupos(props: {
                   },
                 }}
                 onClick={() => handleTaskClick(index, task)}
+              >
+                <CardContent>
+                  <Typography sx={{ fontSize: 12 }} color="text.secondary">
+                    #{task.id} - {task.status.name}
+                  </Typography>
+                  <Typography variant="h5" gutterBottom>
+                    {task.subject}
+                  </Typography>
+                  <Typography variant="body2">{task.project.name}</Typography>
+                </CardContent>
+                <CardActions>
+                  <Tooltip title="Abrir tarefa no Easy Project">
+                    <IconButton
+                      size="small"
+                      target="_blank"
+                      href={`https://topocart.easyredmine.com/issues/${task.id}`}
+                    >
+                      <OpenInNewIcon />
+                    </IconButton>
+                  </Tooltip>
+                </CardActions>
+              </Card>
+            </Box>
+          );
+        })}
+      </Box>
+    </Box>
+  );
+}
+
+function SeletorAtividadeParaUsuarios(props: {
+  user: User;
+  issues: Issues[];
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        width: "50%",
+        padding: theme.spacing(1),
+      }}
+    >
+      <Typography variant="h5">
+        {props.user.firstname + " " + props.user.lastname}
+      </Typography>
+      <Typography
+        variant="caption"
+        component={"div"}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        Usuário do Easy Project &nbsp;
+        <Tooltip title="A alocação de tarefas de usuários do Easy Project deve ser realizada pelo próprio sistema, assinalando o usuário como Assignee de uma tarefa">
+          <HelpIcon sx={{ cursor: "help" }} fontSize="small" />
+        </Tooltip>
+      </Typography>
+
+      <Divider
+        sx={{
+          marginTop: theme.spacing(1),
+          marginBottom: theme.spacing(1),
+        }}
+      />
+
+      <Box
+        sx={{
+          maxHeight: "200px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75) inset",
+          overflowY: "auto",
+        }}
+      >
+        {props.issues.map((task, index) => {
+          return (
+            <Box
+              key={index}
+              sx={{
+                width: "100%",
+              }}
+            >
+              <Card
+                sx={{
+                  width: "98%",
+                  padding: "1%",
+                  marginTop: "2%",
+                }}
               >
                 <CardContent>
                   <Typography sx={{ fontSize: 12 }} color="text.secondary">

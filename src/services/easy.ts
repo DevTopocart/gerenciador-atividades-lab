@@ -88,6 +88,33 @@ export async function getIssues(id_user: number) {
   }
 }
 
+export async function getAllIssues(
+  page: number = 0,
+  pageSize: number = 100,
+  issues: Issues[] = [],
+): Promise<Issues[] | undefined> {
+  try {
+    const request = await api.get(`/issues.json`, {
+      params: {
+        limit: pageSize,
+        offset: page * pageSize,
+      },
+    });
+
+    if (request.data.total_count > (page + 1) * pageSize) {
+      issues.push(...request.data.issues);
+      await getAllIssues(page + 1, pageSize, issues);
+    } else {
+      issues.push(...request.data.issues);
+    }
+
+    return issues;
+  } catch (error) {
+    console.error("Não foi possivel obter as issues do Easy Project", error);
+    throw error;
+  }
+}
+
 export async function setCurrentActivityForGroup(
   id_group: number,
   id_activity: number,
@@ -134,7 +161,7 @@ export async function createTimeEntryForGroup(
   id_project: number,
   id_issue: number,
   spentOn: string,
-  hours: number,
+  hours: string,
 ) {
   try {
     const time_json = {
@@ -166,7 +193,7 @@ export async function createTimeEntryForUser(
   id_project: number,
   id_issue: number,
   spentOn: string,
-  hours: number,
+  hours: string,
 ) {
   try {
     const time_json = {

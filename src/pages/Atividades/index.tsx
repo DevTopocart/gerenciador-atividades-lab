@@ -22,7 +22,12 @@ import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
 import { Issues } from "../../interfaces";
-import { createTimeEntryForGroup, createTimeEntryForUser, getCurrentActivityForGroup, getIssues } from "../../services/easy";
+import {
+  createTimeEntryForGroup,
+  createTimeEntryForUser,
+  getCurrentActivityForGroup,
+  getIssues,
+} from "../../services/easy";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 
@@ -55,18 +60,16 @@ export default function Atividades() {
     const formattedDate = today.toLocaleDateString("en-CA");
     const hours = timer.elapsedTime / 3600000;
 
-    if (location.state.user.type === 'user') {
-
+    if (location.state.user.type === "user") {
       try {
-      
         await createTimeEntryForUser(
           location.state.user.id,
           selectedIssue!.project.id,
           selectedIssue!.id,
           formattedDate,
-          hours.toFixed(3)
-        )
-        
+          hours.toFixed(3),
+        );
+
         toast.success(
           `${
             Math.round(hours * 60 * 100) / 100
@@ -74,7 +77,6 @@ export default function Atividades() {
             issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
           }'`,
         );
-        
       } catch (error: any) {
         console.log(error);
         if (error.response.status === 422) {
@@ -82,22 +84,19 @@ export default function Atividades() {
         } else {
           toast.error("Não foi possível registrar o tempo no Easy Project");
         }
-        
       } finally {
-
         setisLoading(false);
       }
     } else {
       try {
-      
         await createTimeEntryForGroup(
           location.state.user.id,
           selectedIssue!.project.id,
           selectedIssue!.id,
           formattedDate,
-          hours.toFixed(3)
-        )
-        
+          hours.toFixed(3),
+        );
+
         toast.success(
           `${
             Math.round(hours * 60 * 100) / 100
@@ -105,7 +104,6 @@ export default function Atividades() {
             issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
           }'`,
         );
-        
       } catch (error: any) {
         console.log(error);
         if (error.response.status === 422) {
@@ -113,9 +111,7 @@ export default function Atividades() {
         } else {
           toast.error("Não foi possível registrar o tempo no Easy Project");
         }
-        
       } finally {
-
         setisLoading(false);
       }
     }
