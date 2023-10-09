@@ -29,14 +29,6 @@ export interface Issues {
   name_parent: string;
 }
 
-export interface Customfield {
-  id: number;
-  name: string;
-  internal_name?: any;
-  field_format: string;
-  value: string;
-}
-
 export interface Parent {
   id: number;
 }
@@ -100,7 +92,7 @@ export interface Customfield {
   name: string;
   internal_name?: any;
   field_format: string;
-  value: string;
+  value: any;
 }
 
 export interface Easyusertype {

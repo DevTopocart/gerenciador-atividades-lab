@@ -21,12 +21,14 @@ import { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
-import { Issues } from "../../interfaces";
+import { Issues, User } from "../../interfaces";
 import {
   createTimeEntryForGroup,
   createTimeEntryForUser,
   getCurrentActivityForGroup,
+  getGroup,
   getIssues,
+  getUser,
 } from "../../services/easy";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
@@ -37,6 +39,7 @@ export default function Atividades() {
   const [isLoading, setisLoading] = useState(false);
   const [issues, setIssues] = useState<Issues[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
+  const [supervisor, setSupervisor] = useState<User>();
 
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused";
@@ -139,13 +142,28 @@ export default function Atividades() {
     }
   }
 
+  async function fetchSupervisor() {
+    if (location.state.user.type === "user") {
+
+      const user = await getUser(location.state.user.id);
+      const user_supervisor = await getUser(user!.supervisor_user_id!)
+      setSupervisor(user_supervisor)
+    } else {
+
+      const group = await getGroup(location.state.user.id);
+      const supervisor_id: number = group!.custom_fields?.find((e) => e.id === 124)?.value
+      const group_supervisor = await getUser(supervisor_id);
+      setSupervisor(group_supervisor)
+    }
+  }
+
   useEffect(() => {
     console.log(selectedIssue);
   }, [selectedIssue]);
 
   useEffect(() => {
     fetchIssues();
-
+    fetchSupervisor()
     if (location.state.user.type === "group") {
       getCurrentActivityForGroup(location.state.user.id).then((response) => {
         if (response) {
@@ -291,6 +309,7 @@ export default function Atividades() {
               </Tooltip>
             </>
           )}
+          
         </Box>
         <Box
           sx={{
@@ -303,8 +322,8 @@ export default function Atividades() {
           <Typography variant="caption" gutterBottom>
             Logado como{" "}
             {location.state.user.type === "user"
-              ? `${location.state.user.firstname} ${location.state.user.lastname}`
-              : `${location.state.user.name} (usuário sem acesso ao Easy Project)`}
+              ? `${location.state.user.firstname} ${location.state.user.lastname} (Gestor: ${supervisor?.firstname} ${supervisor?.lastname})`
+              : `${location.state.user.name} (Gestor: ${supervisor?.firstname} ${supervisor?.lastname})`}
           </Typography>
           &nbsp;
           <IconButton size="small" onClick={() => history.push("/")}>

@@ -28,6 +28,16 @@ export async function getUsers(
   }
 }
 
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const response = await api.get(`/users/${id}.json`);
+    return response.data.user;
+  } catch (error) {
+    console.error("Não foi possivel obter o usuário do Easy Project", error);
+    throw error;
+  }
+}
+
 export async function getGroups(
   page: number = 0,
   pageSize: number = 25,
@@ -51,6 +61,16 @@ export async function getGroups(
     return users;
   } catch (error) {
     console.error("Não foi possivel obter os grupos do Easy Project", error);
+    throw error;
+  }
+}
+
+export async function getGroup(id: number): Promise<Group | undefined> {
+  try {
+    const response = await api.get(`/groups/${id}.json`);
+    return response.data.group;
+  } catch (error) {
+    console.error("Não foi possivel obter o grupo do Easy Project", error);
     throw error;
   }
 }
