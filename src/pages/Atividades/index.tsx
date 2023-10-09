@@ -51,14 +51,18 @@ export default function Atividades() {
   });
 
   function handleTaskClick(index: number, issue: Issues) {
+    if (location.state.user.type === 'group') {
+      toast.warn('Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador');
+      return
+    }
     setSelectedIssue(issue);
   }
 
-  async function logTime() {
+  async function logTime(elapsedTime: number) {
     setisLoading(true);
     const today = new Date();
     const formattedDate = today.toLocaleDateString("en-CA");
-    const hours = timer.elapsedTime / 3600000;
+    const hours = elapsedTime / 3600000;
 
     if (location.state.user.type === "user") {
       try {
@@ -145,8 +149,8 @@ export default function Atividades() {
     if (location.state.user.type === "group") {
       getCurrentActivityForGroup(location.state.user.id).then((response) => {
         if (response) {
-          setIssues([response]);
-          setSelectedIssue(response);
+          setIssues(response);
+          setSelectedIssue(response[0]);
         }
       });
     }
@@ -176,8 +180,8 @@ export default function Atividades() {
   }
 
   function stopTimer() {
-    setTimer((current) => ({ ...current, running: "stopped" }));
-    logTime();
+    logTime(timer.elapsedTime);
+    setTimer((current) => ({ ...current, elapsedTime: 0, running: "stopped" }));
   }
 
   function pauseTimer() {

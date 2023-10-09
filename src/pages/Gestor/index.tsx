@@ -16,14 +16,15 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
 import { Group, Issues, MinifiedUser, User } from "../../interfaces";
 import {
-  getAllIssues,
+  getAllIssuesFromSubordinates,
   getCurrentActivityForGroup,
   getGroups,
   getUsers,
-  setCurrentActivityForGroup,
+  setCurrentActivityForGroup
 } from "../../services/easy";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
@@ -41,8 +42,12 @@ export default function Gestor() {
   useEffect(() => {
     setIsLoading(true);
     fetchUsers();
-    fetchIssues().then(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!usersSubordinates || !groupSubordinates) return;
+    fetchIssues().then(() => setIsLoading(false));
+  }, [usersSubordinates, groupSubordinates])
 
   function handleGoToAtividades() {
     history.push("/atividades", location.state);
@@ -67,7 +72,10 @@ export default function Gestor() {
   }
 
   async function fetchIssues() {
-    const issues = await getAllIssues();
+    // const issues = await getAllIssues();
+    const subordinatesIds = [...usersSubordinates?.map(e => e.id)!, ...groupSubordinates?.map(e => e.id)! ]
+
+    const issues = await getAllIssuesFromSubordinates(subordinatesIds)
     console.log("🚀 ~ file: index.tsx:71 ~ fetchIssues ~ issues:", issues)
     setIssues(issues!);
   }
@@ -235,15 +243,16 @@ function SeletorAtividadeParaGrupos(props: {
 
   useEffect(() => {
     getCurrentActivityForGroup(props.user.id).then((data) =>
-      setSelectedIssue(data),
+      data && setSelectedIssue(data[0]),
     );
   }, []);
 
   function handleTaskClick(index: number, issue: Issues) {
     props.setIsLoading(true);
-    setCurrentActivityForGroup(props.user.id, issue.id).then(() =>
-      props.setIsLoading(false),
-    );
+    setCurrentActivityForGroup(props.user.id, issue.id).then(() =>{
+      props.setIsLoading(false)
+      toast.success(`A atividade "${issue.subject}" foi selecionada para o colaborador ${props.user.name}`);
+    });
 
     setSelectedIssue(issue);
   }

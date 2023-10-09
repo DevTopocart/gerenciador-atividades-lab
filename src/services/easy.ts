@@ -59,7 +59,8 @@ export async function getIssues(id_user: number) {
   try {
     const response = await api.get("/issues.json", {
       params: {
-        assigned_to_id: id_user,
+        set_filter: true,
+        query_string: `watcher_id = ${id_user} OR assigned_to_id = ${id_user}`,
       },
     });
 
@@ -115,6 +116,37 @@ export async function getAllIssues(
   }
 }
 
+export async function getAllIssuesFromSubordinates( 
+  subordinatesIds: number[],
+  page: number = 0,
+  pageSize: number = 100,
+  issues: Issues[] = [],
+): Promise<Issues[] | undefined> {
+  try {
+    const request = await api.get(`/issues.json`, {
+      params: {
+        limit: pageSize,
+        offset: page * pageSize,
+        set_filter: true,
+        query_string: `watcher_id = ${"[" + subordinatesIds.map(e => String(e)).join(",") + "]"} OR assigned_to_id = ${"[" + subordinatesIds.map(e => String(e)).join(",") + "]"}`,
+      },
+    });
+
+    if (request.data.total_count > (page + 1) * pageSize) {
+      issues.push(...request.data.issues);
+      await getAllIssues(page + 1, pageSize, issues);
+    } else {
+      issues.push(...request.data.issues);
+    }
+
+    return issues;
+  } catch (error) {
+    console.error("Não foi possivel obter as issues do Easy Project", error);
+    throw error;
+  }
+}
+
+
 export async function setCurrentActivityForGroup(
   id_group: number,
   id_activity: number,
@@ -144,13 +176,25 @@ export async function getCurrentActivityForGroup(id_group: number) {
 
     if (!group || !group.custom_fields) return;
 
-    const activity: Issues = (
+    const currentActivity: Issues = (
       await api.get(
         `/issues/${group.custom_fields?.find((e) => e.id === 125)?.value}.json`,
       )
     ).data.issue;
 
-    return activity;
+    const currentActivitiesAsCoworker: Issues[] = (
+      await api.get(
+        `/issues.json`,
+        {
+          params: {
+            set_filter: true,
+            query_string: `watcher_id = ${id_group} OR assigned_to_id = ${id_group}`,
+          }
+        }
+      )
+    ).data.issues;
+
+    return [currentActivity, ...currentActivitiesAsCoworker];
   } catch (error) {
     console.error(error);
   }
