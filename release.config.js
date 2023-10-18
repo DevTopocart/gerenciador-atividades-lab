@@ -1,5 +1,5 @@
 module.exports = {
-  branches: ["develop"],
+  branches: ["main"],
   repositoryUrl: "https://github.com/DevTopocart/apontador-horas",
   plugins: [
     "@semantic-release/commit-analyzer",
