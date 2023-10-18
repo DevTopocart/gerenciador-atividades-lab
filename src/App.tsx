@@ -1,18 +1,25 @@
-import "./App.css";
+import { Route, Switch } from "react-router-dom";
+import Atividades from "./pages/Atividades";
+import Gestor from "./pages/Gestor";
 import LoginPage from "./pages/login";
-import ActivitiesPage from "./pages/activities/index"
-import { Switch, Route } from "react-router-dom";
+import Theme from "./providers/Theme";
+import "./styles.css";
 
 function App() {
   return (
-    <Switch>
-      <Route path="/" exact>
-        <LoginPage/>
-      </Route>
-      <Route path="/activities/">
-        <ActivitiesPage/>  
-      </Route>
-    </Switch>
+    <Theme>
+      <Switch>
+        <Route path="/" exact>
+          <LoginPage />
+        </Route>
+        <Route path="/atividades/">
+          <Atividades />
+        </Route>
+        <Route path="/gestor/">
+          <Gestor />
+        </Route>
+      </Switch>
+    </Theme>
   );
 }
 

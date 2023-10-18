@@ -17,7 +17,7 @@
       "title": "Gerenciador de Atividades - Topocart"
     },
     "allowlist": {
-      "all": false,
+      "all": true,
       "http": {
         "all": true,
         "request": true,
@@ -43,6 +43,15 @@
       "shell": {
         "all": false,
         "open": true
+      },
+      "window": {
+        "all": true,
+        "maximize": true,
+        "unmaximize": true,
+        "minimize": true,
+        "unminimize": true,
+        "show": true,
+        "hide": true
       }
     },
     "bundle": {
@@ -70,7 +79,7 @@
         "title": "Gerenciador de Atividades - Topocart",
         "width": 800,
         "height": 600,
-        "visible": false,
+        "visible": true,
         "center": true
       }
     ]

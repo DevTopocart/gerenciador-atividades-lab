@@ -1,17 +1,19 @@
 import styled from "styled-components";
 
-export const LogoTopocart = styled.img`
-  align-self: flex-end;
-`;
-
-export const Version = styled.p`
-  color: white;
-  align-self: center;
-  font-size: 8pt;
-  margin: 0;
+export const FullPageLoader = styled.div`
+  position: absolute;
+  display: flex;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const Loader = styled.img`
+  height: 200px;
   animation-name: spin;
   animation-duration: 500ms;
   animation-iteration-count: infinite;
