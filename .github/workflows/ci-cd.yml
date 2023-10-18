@@ -6,30 +6,69 @@ on:
       - pipeline
 
 jobs:
-  test-tauri:
+  make-release:
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.release_version.outputs.version }}
+    steps:
+      - name: Copy data
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        if:  ${{ github.ref }} == 'refs/heads/main'
+        run: yarn add @semantic-release/git @semantic-release/github
+      
+      - name: Semantic Release
+        if:  ${{ github.ref }} == 'refs/heads/main'
+        run: npx semantic-release
+        env:
+          GH_TOKEN : ${{ secrets.GH_TOKEN }}
+      
+      - id: release_version
+        run: |
+          echo "version=$(cat api/package.json | jq -r '.version')" >> $GITHUB_OUTPUT
+
+
+  build-package:
     runs-on: windows-latest
+    needs: make-release
     steps:
       - uses: actions/checkout@v3
       - name: setup node
         uses: actions/setup-node@v3
         with:
           node-version: 20
+
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: install frontend dependencies
+      - name: install dependencies
         run: yarn install # change this to npm or pnpm depending on which one you use
 
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Upload file
+      - name: upload file with version
         uses: tomasbkk/action-ftp-upload@v1.0
         with:
           user: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           host: ${{ secrets.FTP_HOST }}
           src: D:\a\apontador-horas\apontador-horas\src-tauri\target\release\bundle\msi\apontador-horas_0.0.0_x64_en-US.msi
-          dest: /home/apontador-horas/apontador-horas_1.0.0.msi
-    
+          dest: /home/apontador-horas/apontador-horas-v${{ needs.make-release.outputs.VERSION }}.msi
+      
+      - name: Upload file with latest version
+        uses: tomasbkk/action-ftp-upload@v1.0
+        with:
+          user: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          host: ${{ secrets.FTP_HOST }}
+          src: D:\a\apontador-horas\apontador-horas\src-tauri\target\release\bundle\msi\apontador-horas_0.0.0_x64_en-US.msi
+          dest: /home/apontador-horas/apontador-horas-latest.msi
+  
