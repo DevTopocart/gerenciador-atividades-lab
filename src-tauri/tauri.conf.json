@@ -22,7 +22,7 @@
         "all": true,
         "request": true,
         "scope": [
-          "https://topocart.easyredmine.com/*"
+          "https://topocart.easyredmine.com/*", "http://localhost:3000/*", "https://ldap.topocart.dev.br/*"
         ]
       },
       "fs": {
