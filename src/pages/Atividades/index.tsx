@@ -78,10 +78,8 @@ export default function Atividades() {
         );
 
         toast.success(
-          `${
-            Math.round(hours * 60 * 100) / 100
-          } minutos registrados na atividade '${
-            issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
+          `${Math.round(hours * 60 * 100) / 100
+          } minutos registrados na atividade '${issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
           }'`,
         );
       } catch (error: any) {
@@ -105,10 +103,8 @@ export default function Atividades() {
         );
 
         toast.success(
-          `${
-            Math.round(hours * 60 * 100) / 100
-          } minutos registrados na atividade '${
-            issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
+          `${Math.round(hours * 60 * 100) / 100
+          } minutos registrados na atividade '${issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
           }'`,
         );
       } catch (error: any) {
@@ -129,8 +125,9 @@ export default function Atividades() {
 
     try {
       const newIssues = await getIssues(location.state.user.id);
+      const issuesFiltered = filterIssuesActive(newIssues)
 
-      setIssues(newIssues!);
+      setIssues(issuesFiltered!);
       if (!selectedIssue) setSelectedIssue(newIssues![0]);
       setisLoading(false);
     } catch (error) {
@@ -140,6 +137,10 @@ export default function Atividades() {
       );
       console.error(error);
     }
+  }
+
+  function filterIssuesActive(issues: Issues[]) {
+    return issues.filter((issue) => issue.status.id !== 2 && issue.status.id !== 4 && issue.status.id !== 11);
   }
 
   async function fetchSupervisor() {
@@ -309,7 +310,7 @@ export default function Atividades() {
               </Tooltip>
             </>
           )}
-          
+
         </Box>
         <Box
           sx={{
