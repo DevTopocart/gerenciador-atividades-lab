@@ -277,3 +277,21 @@ export async function createTimeEntryForUser(
     console.error(error);
   }
 }
+
+export async function updateStatusActivity(
+  id_issue: number,
+  id_status: number,
+) {
+  try {
+    const response = await api.put(`/issues/${id_issue}.json`, {
+      issue: {
+        id: id_issue,
+        status_id: id_status,
+      },
+    });
+    
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}
