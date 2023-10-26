@@ -55,9 +55,11 @@ export default function Atividades() {
   });
 
   function handleTaskClick(index: number, issue: Issues) {
-    if (location.state.user.type === 'group') {
-      toast.warn('Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador');
-      return
+    if (location.state.user.type === "group") {
+      toast.warn(
+        "Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador",
+      );
+      return;
     }
     setSelectedIssue(issue);
   }
@@ -79,8 +81,10 @@ export default function Atividades() {
         );
 
         toast.success(
-          `${Math.round(hours * 60 * 100) / 100
-          } minutos registrados na atividade '${issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
+          `${
+            Math.round(hours * 60 * 100) / 100
+          } minutos registrados na atividade '${
+            issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
           }'`,
         );
       } catch (error: any) {
@@ -104,8 +108,10 @@ export default function Atividades() {
         );
 
         toast.success(
-          `${Math.round(hours * 60 * 100) / 100
-          } minutos registrados na atividade '${issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
+          `${
+            Math.round(hours * 60 * 100) / 100
+          } minutos registrados na atividade '${
+            issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
           }'`,
         );
       } catch (error: any) {
@@ -126,7 +132,7 @@ export default function Atividades() {
 
     try {
       const newIssues = await getIssues(location.state.user.id);
-      const filteredIssues = filterActiveIssues(newIssues)
+      const filteredIssues = filterActiveIssues(newIssues);
 
       setIssues(filteredIssues!);
       if (!selectedIssue) setSelectedIssue(newIssues![0]);
@@ -142,21 +148,26 @@ export default function Atividades() {
 
   function filterActiveIssues(issues: Issues[]) {
     // Filtra as issues conforme o status, removendo da listagem aquelas com status New, Done e Canceled
-    return issues.filter((issue) => issue.status.id !== 2 && issue.status.id !== 4 && issue.status.id !== 11);
+    return issues.filter(
+      (issue) =>
+        issue.status.id !== 2 &&
+        issue.status.id !== 4 &&
+        issue.status.id !== 11,
+    );
   }
 
   async function fetchSupervisor() {
     if (location.state.user.type === "user") {
-
       const user = await getUser(location.state.user.id);
-      const user_supervisor = await getUser(user!.supervisor_user_id!)
-      setSupervisor(user_supervisor)
+      const user_supervisor = await getUser(user!.supervisor_user_id!);
+      setSupervisor(user_supervisor);
     } else {
-
       const group = await getGroup(location.state.user.id);
-      const supervisor_id: number = group!.custom_fields?.find((e) => e.id === 124)?.value
+      const supervisor_id: number = group!.custom_fields?.find(
+        (e) => e.id === 124,
+      )?.value;
       const group_supervisor = await getUser(supervisor_id);
-      setSupervisor(group_supervisor)
+      setSupervisor(group_supervisor);
     }
   }
 
@@ -166,7 +177,7 @@ export default function Atividades() {
 
   useEffect(() => {
     fetchIssues();
-    fetchSupervisor()
+    fetchSupervisor();
     if (location.state.user.type === "group") {
       getCurrentActivityForGroup(location.state.user.id).then((response) => {
         if (response) {
@@ -193,7 +204,7 @@ export default function Atividades() {
   }, [timer]);
 
   function startTimer() {
-    updateActivityStatus()
+    updateActivityStatus();
     setTimer((current) => ({
       ...current,
       running: "running",
@@ -202,8 +213,8 @@ export default function Atividades() {
   }
 
   function updateActivityStatus() {
-    if (selectedIssue!.status.id ==  17) {
-      updateStatusActivity(selectedIssue!.id, 3)
+    if (selectedIssue!.status.id == 17) {
+      updateStatusActivity(selectedIssue!.id, 3);
       selectedIssue!.status.id = 3;
       selectedIssue!.status.name = "In progress";
     }
@@ -321,7 +332,6 @@ export default function Atividades() {
               </Tooltip>
             </>
           )}
-
         </Box>
         <Box
           sx={{

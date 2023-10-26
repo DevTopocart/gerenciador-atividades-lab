@@ -136,7 +136,7 @@ export async function getAllIssues(
   }
 }
 
-export async function getAllIssuesFromSubordinates( 
+export async function getAllIssuesFromSubordinates(
   subordinatesIds: number[],
   page: number = 0,
   pageSize: number = 100,
@@ -148,7 +148,11 @@ export async function getAllIssuesFromSubordinates(
         limit: pageSize,
         offset: page * pageSize,
         set_filter: true,
-        query_string: `watcher_id = ${"[" + subordinatesIds.map(e => String(e)).join(",") + "]"} OR assigned_to_id = ${"[" + subordinatesIds.map(e => String(e)).join(",") + "]"}`,
+        query_string: `watcher_id = ${
+          "[" + subordinatesIds.map((e) => String(e)).join(",") + "]"
+        } OR assigned_to_id = ${
+          "[" + subordinatesIds.map((e) => String(e)).join(",") + "]"
+        }`,
       },
     });
 
@@ -165,7 +169,6 @@ export async function getAllIssuesFromSubordinates(
     throw error;
   }
 }
-
 
 export async function setCurrentActivityForGroup(
   id_group: number,
@@ -203,15 +206,12 @@ export async function getCurrentActivityForGroup(id_group: number) {
     ).data.issue;
 
     const currentActivitiesAsCoworker: Issues[] = (
-      await api.get(
-        `/issues.json`,
-        {
-          params: {
-            set_filter: true,
-            query_string: `watcher_id = ${id_group} OR assigned_to_id = ${id_group}`,
-          }
-        }
-      )
+      await api.get(`/issues.json`, {
+        params: {
+          set_filter: true,
+          query_string: `watcher_id = ${id_group} OR assigned_to_id = ${id_group}`,
+        },
+      })
     ).data.issues;
 
     return [currentActivity, ...currentActivitiesAsCoworker];
@@ -289,7 +289,7 @@ export async function updateStatusActivity(
         status_id: id_status,
       },
     });
-    
+
     return response;
   } catch (error) {
     console.error(error);
