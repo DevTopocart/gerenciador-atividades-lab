@@ -126,9 +126,9 @@ export default function Atividades() {
 
     try {
       const newIssues = await getIssues(location.state.user.id);
-      const issuesFiltered = filterIssuesActive(newIssues)
+      const filteredIssues = filterActiveIssues(newIssues)
 
-      setIssues(issuesFiltered!);
+      setIssues(filteredIssues!);
       if (!selectedIssue) setSelectedIssue(newIssues![0]);
       setisLoading(false);
     } catch (error) {
@@ -140,7 +140,8 @@ export default function Atividades() {
     }
   }
 
-  function filterIssuesActive(issues: Issues[]) {
+  function filterActiveIssues(issues: Issues[]) {
+    // Filtra as issues conforme o status, removendo da listagem aquelas com status New, Done e Canceled
     return issues.filter((issue) => issue.status.id !== 2 && issue.status.id !== 4 && issue.status.id !== 11);
   }
 
