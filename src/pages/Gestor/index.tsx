@@ -24,7 +24,7 @@ import {
   getCurrentActivityForGroup,
   getGroups,
   getUsers,
-  setCurrentActivityForGroup
+  setCurrentActivityForGroup,
 } from "../../services/easy";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
@@ -47,7 +47,7 @@ export default function Gestor() {
   useEffect(() => {
     if (!usersSubordinates || !groupSubordinates) return;
     fetchIssues().then(() => setIsLoading(false));
-  }, [usersSubordinates, groupSubordinates])
+  }, [usersSubordinates, groupSubordinates]);
 
   function handleGoToAtividades() {
     history.push("/atividades", location.state);
@@ -73,10 +73,13 @@ export default function Gestor() {
 
   async function fetchIssues() {
     // const issues = await getAllIssues();
-    const subordinatesIds = [...usersSubordinates?.map(e => e.id)!, ...groupSubordinates?.map(e => e.id)! ]
+    const subordinatesIds = [
+      ...usersSubordinates?.map((e) => e.id)!,
+      ...groupSubordinates?.map((e) => e.id)!,
+    ];
 
-    const issues = await getAllIssuesFromSubordinates(subordinatesIds)
-    console.log("🚀 ~ file: index.tsx:71 ~ fetchIssues ~ issues:", issues)
+    const issues = await getAllIssuesFromSubordinates(subordinatesIds);
+    console.log("🚀 ~ file: index.tsx:71 ~ fetchIssues ~ issues:", issues);
     setIssues(issues!);
   }
 
@@ -177,20 +180,20 @@ export default function Gestor() {
           </Typography>
         )}
 
-        {groupSubordinates && groupSubordinates.length > 0 &&
+        {groupSubordinates &&
+          groupSubordinates.length > 0 &&
           issues &&
           groupSubordinates.map((user, index) => {
             return (
               <SeletorAtividadeParaGrupos
                 key={index}
                 user={{ name: user.name, id: user.id }}
-                issues={issues.filter(
-                  (issue) => {
-                    return issue.assigned_to && 
-                      issue.assigned_to.id 
-                      === location.state.user.id
-                  },
-                )}
+                issues={issues.filter((issue) => {
+                  return (
+                    issue.assigned_to &&
+                    issue.assigned_to.id === location.state.user.id
+                  );
+                })}
                 currentActivity={
                   Number(
                     user.custom_fields?.find((e) => e.id === 125)?.value,
@@ -202,20 +205,17 @@ export default function Gestor() {
             );
           })}
 
-        {usersSubordinates && usersSubordinates.length > 0 &&
+        {usersSubordinates &&
+          usersSubordinates.length > 0 &&
           issues &&
           usersSubordinates.map((user, index) => {
             return (
               <SeletorAtividadeParaUsuarios
                 key={index}
                 user={user}
-                issues={issues.filter(
-                  (issue) => {
-                    return issue.assigned_to && 
-                      issue.assigned_to.id 
-                        === user.id
-                    }
-                )}
+                issues={issues.filter((issue) => {
+                  return issue.assigned_to && issue.assigned_to.id === user.id;
+                })}
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}
               />
@@ -242,16 +242,18 @@ function SeletorAtividadeParaGrupos(props: {
   );
 
   useEffect(() => {
-    getCurrentActivityForGroup(props.user.id).then((data) =>
-      data && setSelectedIssue(data[0]),
+    getCurrentActivityForGroup(props.user.id).then(
+      (data) => data && setSelectedIssue(data[0]),
     );
   }, []);
 
   function handleTaskClick(index: number, issue: Issues) {
     props.setIsLoading(true);
-    setCurrentActivityForGroup(props.user.id, issue.id).then(() =>{
-      props.setIsLoading(false)
-      toast.success(`A atividade "${issue.subject}" foi selecionada para o colaborador ${props.user.name}`);
+    setCurrentActivityForGroup(props.user.id, issue.id).then(() => {
+      props.setIsLoading(false);
+      toast.success(
+        `A atividade "${issue.subject}" foi selecionada para o colaborador ${props.user.name}`,
+      );
     });
 
     setSelectedIssue(issue);
