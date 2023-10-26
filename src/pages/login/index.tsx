@@ -36,8 +36,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-
-      const ldap = await authLdap(user, password)
+      const ldap = await authLdap(user, password);
 
       const users = await getUsers();
       const groups = await getGroups();
@@ -62,7 +61,7 @@ export default function LoginPage() {
       }
     } catch (e: any) {
       if (e.response && e.response.data && e.response.data.message) {
-        toast.error(e.response.data.message)
+        toast.error(e.response.data.message);
       }
       setIsLoading(false);
     }

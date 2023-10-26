@@ -29,6 +29,7 @@ import {
   getGroup,
   getIssues,
   getUser,
+  updateStatusActivity,
 } from "../../services/easy";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
@@ -54,9 +55,11 @@ export default function Atividades() {
   });
 
   function handleTaskClick(index: number, issue: Issues) {
-    if (location.state.user.type === 'group') {
-      toast.warn('Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador');
-      return
+    if (location.state.user.type === "group") {
+      toast.warn(
+        "Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador",
+      );
+      return;
     }
     setSelectedIssue(issue);
   }
@@ -129,8 +132,9 @@ export default function Atividades() {
 
     try {
       const newIssues = await getIssues(location.state.user.id);
+      const filteredIssues = filterActiveIssues(newIssues);
 
-      setIssues(newIssues!);
+      setIssues(filteredIssues!);
       if (!selectedIssue) setSelectedIssue(newIssues![0]);
       setisLoading(false);
     } catch (error) {
@@ -142,18 +146,28 @@ export default function Atividades() {
     }
   }
 
+  function filterActiveIssues(issues: Issues[]) {
+    // Filtra as issues conforme o status, removendo da listagem aquelas com status New, Done e Canceled
+    return issues.filter(
+      (issue) =>
+        issue.status.id !== 2 &&
+        issue.status.id !== 4 &&
+        issue.status.id !== 11,
+    );
+  }
+
   async function fetchSupervisor() {
     if (location.state.user.type === "user") {
-
       const user = await getUser(location.state.user.id);
-      const user_supervisor = await getUser(user!.supervisor_user_id!)
-      setSupervisor(user_supervisor)
+      const user_supervisor = await getUser(user!.supervisor_user_id!);
+      setSupervisor(user_supervisor);
     } else {
-
       const group = await getGroup(location.state.user.id);
-      const supervisor_id: number = group!.custom_fields?.find((e) => e.id === 124)?.value
+      const supervisor_id: number = group!.custom_fields?.find(
+        (e) => e.id === 124,
+      )?.value;
       const group_supervisor = await getUser(supervisor_id);
-      setSupervisor(group_supervisor)
+      setSupervisor(group_supervisor);
     }
   }
 
@@ -163,7 +177,7 @@ export default function Atividades() {
 
   useEffect(() => {
     fetchIssues();
-    fetchSupervisor()
+    fetchSupervisor();
     if (location.state.user.type === "group") {
       getCurrentActivityForGroup(location.state.user.id).then((response) => {
         if (response) {
@@ -190,11 +204,20 @@ export default function Atividades() {
   }, [timer]);
 
   function startTimer() {
+    updateActivityStatus();
     setTimer((current) => ({
       ...current,
       running: "running",
       nextCheck: new Date(Date.now() + generateRandomTime()),
     }));
+  }
+
+  function updateActivityStatus() {
+    if (selectedIssue!.status.id == 17) {
+      updateStatusActivity(selectedIssue!.id, 3);
+      selectedIssue!.status.id = 3;
+      selectedIssue!.status.name = "In progress";
+    }
   }
 
   function stopTimer() {
@@ -309,7 +332,6 @@ export default function Atividades() {
               </Tooltip>
             </>
           )}
-          
         </Box>
         <Box
           sx={{
