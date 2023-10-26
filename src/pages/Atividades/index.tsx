@@ -29,6 +29,7 @@ import {
   getGroup,
   getIssues,
   getUser,
+  updateStatusActivity,
 } from "../../services/easy";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
@@ -190,11 +191,20 @@ export default function Atividades() {
   }, [timer]);
 
   function startTimer() {
+    updateActivityStatus()
     setTimer((current) => ({
       ...current,
       running: "running",
       nextCheck: new Date(Date.now() + generateRandomTime()),
     }));
+  }
+
+  function updateActivityStatus() {
+    if (selectedIssue!.status.id ==  17) {
+      updateStatusActivity(selectedIssue!.id, 3)
+      selectedIssue!.status.id = 3;
+      selectedIssue!.status.name = "In progress";
+    }
   }
 
   function stopTimer() {
