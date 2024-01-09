@@ -1,4 +1,4 @@
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, PaletteMode } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {
@@ -15,12 +15,13 @@ declare module "@mui/material/styles" {
   }
 }
 
-export function getPreferredMode() {
+export function getPreferredMode(): PaletteMode {
   // Check if the user has set their system to prefer dark mode
-  const prefersDarkMode =
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches;
-  return prefersDarkMode ? "dark" : "light";
+  // const prefersDarkMode =
+  //   window.matchMedia &&
+  //   window.matchMedia("(prefers-color-scheme: dark)").matches;
+  // return prefersDarkMode ? "dark" : "light";
+  return 'dark'
 }
 
 const theme = createTheme({

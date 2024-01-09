@@ -87,13 +87,6 @@ export async function getIssues(id_user: number) {
     const issues: Issues[] = response.data.issues;
 
     for (let i = 0; i < issues.length; i++) {
-      const responseTimeIssues = await api.get("/time_entries.json", {
-        params: {
-          set_filter: true,
-          issue_id: issues[i].id,
-          user_id: issues[i].assigned_to.id,
-        },
-      });
       const id_parent = issues[i].parent;
       if (id_parent) {
         const responseIssues = await api.get(`/issues/${id_parent.id}.json`);

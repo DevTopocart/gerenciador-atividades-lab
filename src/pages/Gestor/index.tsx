@@ -72,14 +72,13 @@ export default function Gestor() {
   }
 
   async function fetchIssues() {
-    // const issues = await getAllIssues();
     const subordinatesIds = [
+      location.state.user.id,
       ...usersSubordinates?.map((e) => e.id)!,
       ...groupSubordinates?.map((e) => e.id)!,
     ];
 
     const issues = await getAllIssuesFromSubordinates(subordinatesIds);
-    console.log("🚀 ~ file: index.tsx:71 ~ fetchIssues ~ issues:", issues);
     setIssues(issues!);
   }
 
@@ -188,12 +187,14 @@ export default function Gestor() {
               <SeletorAtividadeParaGrupos
                 key={index}
                 user={{ name: user.name, id: user.id }}
-                issues={issues.filter((issue) => {
-                  return (
-                    issue.assigned_to &&
-                    issue.assigned_to.id === location.state.user.id
-                  );
-                })}
+                issues={issues
+                  // issues.filter((issue) => {
+                  //   return (
+                  //     issue.assigned_to &&
+                  //     issue.assigned_to.id === location.state.user.id
+                  //   );
+                  // })
+                }
                 currentActivity={
                   Number(
                     user.custom_fields?.find((e) => e.id === 125)?.value,
@@ -280,6 +281,10 @@ function SeletorAtividadeParaGrupos(props: {
         }}
       >
         Usuário Interno da Topocart
+        &nbsp;
+        <Tooltip title="Caso a tarefa que deseja não esteja sendo exibida aqui, certifique-se de que você ou o usuário esteja atribuido à ela como Responsável ou como Colaborador">
+          <HelpIcon sx={{ cursor: "help" }} fontSize="small" />
+        </Tooltip>
       </Typography>
 
       <Divider
