@@ -60,7 +60,7 @@ jobs:
           user: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           host: ${{ secrets.FTP_HOST }}
-          src: D:\a\apontador-horas\apontador-horas\src-tauri\target\release\bundle\msi\apontador-horas_0.0.0_x64_en-US.msi
+          src: D:\a\apontador-horas\apontador-horas\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi
           dest: /home/apontador-horas/apontador-horas-v${{ needs.make-release.outputs.VERSION }}.msi
       
       - name: Upload file with latest version
@@ -69,6 +69,6 @@ jobs:
           user: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           host: ${{ secrets.FTP_HOST }}
-          src: D:\a\apontador-horas\apontador-horas\src-tauri\target\release\bundle\msi\apontador-horas_0.0.0_x64_en-US.msi
+          src: D:\a\apontador-horas\apontador-horas\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi
           dest: /home/apontador-horas/apontador-horas-latest.msi
   
