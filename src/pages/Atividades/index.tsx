@@ -13,6 +13,7 @@ import {
   CardContent,
   Divider,
   IconButton,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -41,6 +42,7 @@ export default function Atividades() {
   const [issues, setIssues] = useState<Issues[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
   const [supervisor, setSupervisor] = useState<User>();
+  const [searchkey, setSearchkey] = useState("");
 
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused";
@@ -133,8 +135,11 @@ export default function Atividades() {
     try {
       const newIssues = await getIssues(location.state.user.id);
       const filteredIssues = filterActiveIssues(newIssues);
+      const uniqueIssues = Array.from(filteredIssues.reduce((map, item) => {
+        return map.has(item.id) ? map : map.set(item.id, item);
+      }, new Map()).values());
 
-      setIssues(filteredIssues!);
+      setIssues(uniqueIssues!);
       if (!selectedIssue) setSelectedIssue(newIssues![0]);
       setisLoading(false);
     } catch (error) {
@@ -144,16 +149,6 @@ export default function Atividades() {
       );
       console.error(error);
     }
-  }
-
-  function filterActiveIssues(issues: Issues[]) {
-    // Filtra as issues conforme o status, removendo da listagem aquelas com status New, Done e Canceled
-    return issues.filter(
-      (issue) =>
-        issue.status.id !== 2 &&
-        issue.status.id !== 4 &&
-        issue.status.id !== 11,
-    );
   }
 
   async function fetchSupervisor() {
@@ -230,6 +225,27 @@ export default function Atividades() {
   }
 
   const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
+
+  function filterIssuesBySearchKey(issue: Issues) {
+
+    if (searchkey === "") return true;
+
+    let containsSearchkey = issue.subject.toLowerCase().includes(searchkey.toLowerCase()) || 
+      issue.project.name.toLowerCase().includes(searchkey.toLowerCase()) 
+
+    return containsSearchkey
+  }
+
+  function filterActiveIssues(issues: Issues[]) {
+    // Filtra as issues conforme o status, removendo da listagem aquelas com status New, Done e Canceled
+    return issues.filter(
+      (issue) =>
+        issue.status.id !== 2 &&
+        issue.status.id !== 4 &&
+        issue.status.id !== 11,
+    );
+  }
+
 
   useEffect(() => {
     if (timer.running === "running") {
@@ -383,67 +399,88 @@ export default function Atividades() {
               flexDirection: "column",
               alignItems: "center",
               boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75) inset",
-              overflowY: "auto",
             }}
           >
-            {issues.map((task, index) => {
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    width: "100%",
-                  }}
-                >
-                  <Card
+            <Box
+              sx={{
+                width: "100%",
+                padding: "3%",
+              }}
+            >
+              <TextField
+                label="Pesquisar atividade"
+                variant="standard"
+                onChange={(e) => setSearchkey(e.target.value)}
+                sx={{
+                  width: "100%",
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                overflowY: "auto",
+              }}>
+              {issues
+                .filter(filterIssuesBySearchKey)
+                .map((task, index) => {
+                return (
+                  <Box
+                    key={index}
                     sx={{
-                      width: "98%",
-                      padding: "1%",
-                      marginTop: "2%",
-                      backgroundColor:
-                        selectedIssue?.id === task.id
-                          ? "primary.main"
-                          : "primary",
-                      ":hover": {
-                        backgroundColor: "primary.main",
-                        cursor: "pointer",
-                      },
+                      width: "100%",
                     }}
-                    onClick={() => handleTaskClick(index, task)}
                   >
-                    <CardContent>
-                      <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                        #{task.id} - {task.status.name}
-                      </Typography>
-                      <Typography variant="h5" gutterBottom>
-                        {task.subject}
-                      </Typography>
-                      <Typography variant="body2">
-                        {task.project.name}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Tooltip title="Abrir tarefa no Easy Project">
-                        <IconButton
-                          size="small"
-                          target="_blank"
-                          href={`https://topocart.easyredmine.com/issues/${task.id}`}
-                        >
-                          <OpenInNewIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Selecionar atividade para contabilizar tempo">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleTaskClick(index, task)}
-                        >
-                          <TimerIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </CardActions>
-                  </Card>
-                </Box>
-              );
-            })}
+                    <Card
+                      sx={{
+                        width: "98%",
+                        padding: "1%",
+                        marginTop: "2%",
+                        backgroundColor:
+                          selectedIssue?.id === task.id
+                            ? "primary.main"
+                            : "primary",
+                        ":hover": {
+                          backgroundColor: "primary.main",
+                          cursor: "pointer",
+                        },
+                      }}
+                      onClick={() => handleTaskClick(index, task)}
+                    >
+                      <CardContent>
+                        <Typography sx={{ fontSize: 14 }} color="text.secondary">
+                          #{task.id} - {task.status.name}
+                        </Typography>
+                        <Typography variant="h5" gutterBottom>
+                          {task.subject}
+                        </Typography>
+                        <Typography variant="body2">
+                          {task.project.name} 
+                        </Typography>
+                      </CardContent>
+                      <CardActions>
+                        <Tooltip title="Abrir tarefa no Easy Project">
+                          <IconButton
+                            size="small"
+                            target="_blank"
+                            href={`https://topocart.easyredmine.com/issues/${task.id}`}
+                          >
+                            <OpenInNewIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Selecionar atividade para contabilizar tempo">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleTaskClick(index, task)}
+                          >
+                            <TimerIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </CardActions>
+                    </Card>
+                  </Box>
+                );
+              })}
+            </Box>
           </Box>
           <Box
             id="container-direita"
