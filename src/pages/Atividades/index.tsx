@@ -13,10 +13,10 @@ import {
   CardContent,
   Divider,
   IconButton,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { invoke } from "@tauri-apps/api";
 import { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -31,6 +31,8 @@ import {
   getUser,
   updateStatusActivity,
 } from "../../services/easy";
+import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
+import { filterIssuesByStatus } from "../../utils/filterIssuesByStatus";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 
@@ -41,6 +43,7 @@ export default function Atividades() {
   const [issues, setIssues] = useState<Issues[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
   const [supervisor, setSupervisor] = useState<User>();
+  const [searchkey, setSearchkey] = useState("");
 
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused";
@@ -132,10 +135,13 @@ export default function Atividades() {
 
     try {
       const newIssues = await getIssues(location.state.user.id);
-      const filteredIssues = filterActiveIssues(newIssues);
+      const uniqueIssues = Array.from(newIssues.reduce((map, item) => {
+        return map.has(item.id) ? map : map.set(item.id, item);
+      }, new Map()).values());
+      const filteredIssues = uniqueIssues.filter(filterIssuesByStatus)
 
       setIssues(filteredIssues!);
-      if (!selectedIssue) setSelectedIssue(newIssues![0]);
+      if (!selectedIssue) setSelectedIssue(filteredIssues![0]);
       setisLoading(false);
     } catch (error) {
       setisLoading(false);
@@ -144,16 +150,6 @@ export default function Atividades() {
       );
       console.error(error);
     }
-  }
-
-  function filterActiveIssues(issues: Issues[]) {
-    // Filtra as issues conforme o status, removendo da listagem aquelas com status New, Done e Canceled
-    return issues.filter(
-      (issue) =>
-        issue.status.id !== 2 &&
-        issue.status.id !== 4 &&
-        issue.status.id !== 11,
-    );
   }
 
   async function fetchSupervisor() {
@@ -231,56 +227,57 @@ export default function Atividades() {
 
   const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    if (timer.running === "running") {
-      const now = new Date();
-      const targetDate = timer.nextCheck; // Set your exact date and time here
+  /* Timer de inatividade desabilitado temporariamente ate encontrarmos uma solucao mais elegante */
+  // useEffect(() => {
+  //   if (timer.running === "running") {
+  //     const now = new Date();
+  //     const targetDate = timer.nextCheck; // Set your exact date and time here
 
-      const delay = targetDate.getTime() - now.getTime();
-      console.log(
-        `Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms`,
-      );
+  //     const delay = targetDate.getTime() - now.getTime();
+  //     console.log(
+  //       `Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms`,
+  //     );
 
-      if (delay > 0) {
-        nextTimeoutCheckRef.current = setTimeout(() => {
-          setTimer((current) => ({
-            ...current,
-            expiredCheck: new Date(Date.now() + 300000),
-          }));
-          toast.warn(
-            "Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos",
-            { autoClose: 300000 },
-          );
-          invoke("popup_window");
-          pauseTimer();
-        }, delay);
-      }
-    }
+  //     if (delay > 0) {
+  //       nextTimeoutCheckRef.current = setTimeout(() => {
+  //         setTimer((current) => ({
+  //           ...current,
+  //           expiredCheck: new Date(Date.now() + 300000),
+  //         }));
+  //         toast.warn(
+  //           "Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos",
+  //           { autoClose: 300000 },
+  //         );
+  //         invoke("popup_window");
+  //         pauseTimer();
+  //       }, delay);
+  //     }
+  //   }
 
-    if (timer.running === "paused" && timer.expiredCheck) {
-      const now = new Date();
-      const targetDate = timer.expiredCheck; // Set your exact date and time here
+  //   if (timer.running === "paused" && timer.expiredCheck) {
+  //     const now = new Date();
+  //     const targetDate = timer.expiredCheck; // Set your exact date and time here
 
-      const delay = targetDate.getTime() - now.getTime();
-      console.log(
-        `Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms`,
-      );
+  //     const delay = targetDate.getTime() - now.getTime();
+  //     console.log(
+  //       `Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms`,
+  //     );
 
-      if (delay > 0) {
-        nextTimeoutCheckRef.current = setTimeout(() => {
-          stopTimer();
-          console.log("Salvando dados");
-        }, delay);
-      }
-    }
+  //     if (delay > 0) {
+  //       nextTimeoutCheckRef.current = setTimeout(() => {
+  //         stopTimer();
+  //         console.log("Salvando dados");
+  //       }, delay);
+  //     }
+  //   }
 
-    return () => {
-      // Clean up
-      if (nextTimeoutCheckRef.current) {
-        clearTimeout(nextTimeoutCheckRef.current);
-      }
-    };
-  }, [timer]);
+  //   return () => {
+  //     // Clean up
+  //     if (nextTimeoutCheckRef.current) {
+  //       clearTimeout(nextTimeoutCheckRef.current);
+  //     }
+  //   };
+  // }, [timer]);
 
   function handleGoToGestor() {
     history.push("/gestor", location.state);
@@ -383,67 +380,90 @@ export default function Atividades() {
               flexDirection: "column",
               alignItems: "center",
               boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75) inset",
-              overflowY: "auto",
             }}
           >
-            {issues.map((task, index) => {
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    width: "100%",
-                  }}
-                >
-                  <Card
+            <Box
+              sx={{
+                width: "100%",
+                padding: "3%",
+              }}
+            >
+              <TextField
+                label="Pesquisar atividade ou projeto"
+                variant="standard"
+                onChange={(e) => setSearchkey(e.target.value)}
+                autoFocus
+                sx={{
+                  width: "100%",
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                overflowY: "auto",
+              }}>
+              {issues
+                .filter(filterIssuesByStatus)
+                .filter(issues => filterIssuesBySearchKey(searchkey,issues))
+                .map((task, index) => {
+                return (
+                  <Box
+                    key={index}
                     sx={{
-                      width: "98%",
-                      padding: "1%",
-                      marginTop: "2%",
-                      backgroundColor:
-                        selectedIssue?.id === task.id
-                          ? "primary.main"
-                          : "primary",
-                      ":hover": {
-                        backgroundColor: "primary.main",
-                        cursor: "pointer",
-                      },
+                      width: "100%",
                     }}
-                    onClick={() => handleTaskClick(index, task)}
                   >
-                    <CardContent>
-                      <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                        #{task.id} - {task.status.name}
-                      </Typography>
-                      <Typography variant="h5" gutterBottom>
-                        {task.subject}
-                      </Typography>
-                      <Typography variant="body2">
-                        {task.project.name}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Tooltip title="Abrir tarefa no Easy Project">
-                        <IconButton
-                          size="small"
-                          target="_blank"
-                          href={`https://topocart.easyredmine.com/issues/${task.id}`}
-                        >
-                          <OpenInNewIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Selecionar atividade para contabilizar tempo">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleTaskClick(index, task)}
-                        >
-                          <TimerIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </CardActions>
-                  </Card>
-                </Box>
-              );
-            })}
+                    <Card
+                      sx={{
+                        width: "98%",
+                        padding: "1%",
+                        marginTop: "2%",
+                        backgroundColor:
+                          selectedIssue?.id === task.id
+                            ? "primary.main"
+                            : "primary",
+                        ":hover": {
+                          backgroundColor: "primary.main",
+                          cursor: "pointer",
+                        },
+                      }}
+                      onClick={() => handleTaskClick(index, task)}
+                    >
+                      <CardContent>
+                        <Typography sx={{ fontSize: 14 }} color="text.secondary">
+                          #{task.id} - {task.status.name}
+                        </Typography>
+                        <Typography variant="h5" gutterBottom>
+                          {task.subject}
+                        </Typography>
+                        <Typography variant="body2">
+                          {task.project.name} 
+                        </Typography>
+                      </CardContent>
+                      <CardActions>
+                        <Tooltip title="Abrir tarefa no Easy Project">
+                          <IconButton
+                            size="small"
+                            target="_blank"
+                            href={`https://topocart.easyredmine.com/issues/${task.id}`}
+                          >
+                            <OpenInNewIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Selecionar atividade para contabilizar tempo">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleTaskClick(index, task)}
+                          >
+                            <TimerIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </CardActions>
+                    </Card>
+                  </Box>
+                );
+              })}
+            </Box>
           </Box>
           <Box
             id="container-direita"

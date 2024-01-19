@@ -10,9 +10,10 @@ import {
   CardContent,
   Divider,
   IconButton,
+  TextField,
   Tooltip,
   Typography,
-  useTheme,
+  useTheme
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
@@ -26,6 +27,8 @@ import {
   getUsers,
   setCurrentActivityForGroup,
 } from "../../services/easy";
+import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
+import { filterIssuesByStatus } from "../../utils/filterIssuesByStatus";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 
@@ -37,6 +40,7 @@ export default function Gestor() {
   const [usersSubordinates, setUserSubordinates] = useState<User[]>();
   const [groupSubordinates, setGroupSubordinates] = useState<Group[]>();
   const [issues, setIssues] = useState<Issues[]>([]);
+  const [searchkey, setSearchkey] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -68,7 +72,10 @@ export default function Gestor() {
         location.state.user.id
       );
     });
-    setGroupSubordinates(groupsSubordinated || []);
+    let uniqueGroupSubordinated = Array.from(groupsSubordinated!.reduce((map, item) => {
+      return map.has(item.id) ? map : map.set(item.id, item);
+    }, new Map()).values());
+    setGroupSubordinates(uniqueGroupSubordinated || []);
   }
 
   async function fetchIssues() {
@@ -109,14 +116,12 @@ export default function Gestor() {
           width: "90%",
           height: "5%",
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "2%",
         }}
       >
         <Box
           sx={{
-            width: "50%",
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
@@ -134,7 +139,6 @@ export default function Gestor() {
         </Box>
         <Box
           sx={{
-            width: "50%",
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "center",
@@ -150,11 +154,28 @@ export default function Gestor() {
           </IconButton>
         </Box>
       </Box>
+      
+      <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "90%",
+            marginBottom: "3%",
+          }}
+        >
+          <TextField
+            fullWidth 
+            label="Pesquisar atividade ou projeto"
+            variant="standard"
+            onChange={(e) => setSearchkey(e.target.value)}
+          />
+        </Box>
 
       <Box
         sx={{
           width: "90%",
-          height: "85%",
+          height: "75%",
           maxHeight: "85%",
           borderRadius: "5px",
           display: "flex",
@@ -188,12 +209,8 @@ export default function Gestor() {
                 key={index}
                 user={{ name: user.name, id: user.id }}
                 issues={issues
-                  // issues.filter((issue) => {
-                  //   return (
-                  //     issue.assigned_to &&
-                  //     issue.assigned_to.id === location.state.user.id
-                  //   );
-                  // })
+                  .filter(issue => filterIssuesBySearchKey(searchkey, issue))
+                  .filter(issue => filterIssuesByStatus(issue))!
                 }
                 currentActivity={
                   Number(
@@ -214,9 +231,13 @@ export default function Gestor() {
               <SeletorAtividadeParaUsuarios
                 key={index}
                 user={user}
-                issues={issues.filter((issue) => {
-                  return issue.assigned_to && issue.assigned_to.id === user.id;
-                })}
+                issues={issues
+                  .filter((issue) => {
+                    return issue.assigned_to && issue.assigned_to.id === user.id;
+                  })
+                  .filter(issue => filterIssuesBySearchKey(searchkey, issue))
+                  .filter(issue => filterIssuesByStatus(issue))!
+                }
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}
               />
