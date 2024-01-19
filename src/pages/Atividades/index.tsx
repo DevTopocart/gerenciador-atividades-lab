@@ -139,9 +139,10 @@ export default function Atividades() {
       const uniqueIssues = Array.from(newIssues.reduce((map, item) => {
         return map.has(item.id) ? map : map.set(item.id, item);
       }, new Map()).values());
+      const filteredIssues = uniqueIssues.filter(filterIssuesByStatus)
 
-      setIssues(uniqueIssues!);
-      if (!selectedIssue) setSelectedIssue(uniqueIssues![0]);
+      setIssues(filteredIssues!);
+      if (!selectedIssue) setSelectedIssue(filteredIssues![0]);
       setisLoading(false);
     } catch (error) {
       setisLoading(false);

@@ -72,7 +72,10 @@ export default function Gestor() {
         location.state.user.id
       );
     });
-    setGroupSubordinates(groupsSubordinated || []);
+    let uniqueGroupSubordinated = Array.from(groupsSubordinated!.reduce((map, item) => {
+      return map.has(item.id) ? map : map.set(item.id, item);
+    }, new Map()).values());
+    setGroupSubordinates(uniqueGroupSubordinated || []);
   }
 
   async function fetchIssues() {
