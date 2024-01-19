@@ -134,13 +134,12 @@ export default function Atividades() {
 
     try {
       const newIssues = await getIssues(location.state.user.id);
-      const filteredIssues = filterActiveIssues(newIssues);
-      const uniqueIssues = Array.from(filteredIssues.reduce((map, item) => {
+      const uniqueIssues = Array.from(newIssues.reduce((map, item) => {
         return map.has(item.id) ? map : map.set(item.id, item);
       }, new Map()).values());
 
       setIssues(uniqueIssues!);
-      if (!selectedIssue) setSelectedIssue(newIssues![0]);
+      if (!selectedIssue) setSelectedIssue(uniqueIssues![0]);
       setisLoading(false);
     } catch (error) {
       setisLoading(false);
@@ -236,16 +235,9 @@ export default function Atividades() {
     return containsSearchkey
   }
 
-  function filterActiveIssues(issues: Issues[]) {
-    // Filtra as issues conforme o status, removendo da listagem aquelas com status New, Done e Canceled
-    return issues.filter(
-      (issue) =>
-        issue.status.id !== 2 &&
-        issue.status.id !== 4 &&
-        issue.status.id !== 11,
-    );
+  function filterIssuesByStatus(issue: Issues) {
+    return issue.status.id === 3 || issue.status.id === 20;
   }
-
 
   useEffect(() => {
     if (timer.running === "running") {
@@ -411,6 +403,7 @@ export default function Atividades() {
                 label="Pesquisar atividade"
                 variant="standard"
                 onChange={(e) => setSearchkey(e.target.value)}
+                autoFocus
                 sx={{
                   width: "100%",
                 }}
@@ -421,6 +414,7 @@ export default function Atividades() {
                 overflowY: "auto",
               }}>
               {issues
+                .filter(filterIssuesByStatus)
                 .filter(filterIssuesBySearchKey)
                 .map((task, index) => {
                 return (
