@@ -17,7 +17,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { invoke } from "@tauri-apps/api";
 import { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -228,57 +227,57 @@ export default function Atividades() {
 
   const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
 
+  /* Timer de inatividade desabilitado temporariamente ate encontrarmos uma solucao mais elegante */
+  // useEffect(() => {
+  //   if (timer.running === "running") {
+  //     const now = new Date();
+  //     const targetDate = timer.nextCheck; // Set your exact date and time here
 
-  useEffect(() => {
-    if (timer.running === "running") {
-      const now = new Date();
-      const targetDate = timer.nextCheck; // Set your exact date and time here
+  //     const delay = targetDate.getTime() - now.getTime();
+  //     console.log(
+  //       `Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms`,
+  //     );
 
-      const delay = targetDate.getTime() - now.getTime();
-      console.log(
-        `Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms`,
-      );
+  //     if (delay > 0) {
+  //       nextTimeoutCheckRef.current = setTimeout(() => {
+  //         setTimer((current) => ({
+  //           ...current,
+  //           expiredCheck: new Date(Date.now() + 300000),
+  //         }));
+  //         toast.warn(
+  //           "Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos",
+  //           { autoClose: 300000 },
+  //         );
+  //         invoke("popup_window");
+  //         pauseTimer();
+  //       }, delay);
+  //     }
+  //   }
 
-      if (delay > 0) {
-        nextTimeoutCheckRef.current = setTimeout(() => {
-          setTimer((current) => ({
-            ...current,
-            expiredCheck: new Date(Date.now() + 300000),
-          }));
-          toast.warn(
-            "Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos",
-            { autoClose: 300000 },
-          );
-          invoke("popup_window");
-          pauseTimer();
-        }, delay);
-      }
-    }
+  //   if (timer.running === "paused" && timer.expiredCheck) {
+  //     const now = new Date();
+  //     const targetDate = timer.expiredCheck; // Set your exact date and time here
 
-    if (timer.running === "paused" && timer.expiredCheck) {
-      const now = new Date();
-      const targetDate = timer.expiredCheck; // Set your exact date and time here
+  //     const delay = targetDate.getTime() - now.getTime();
+  //     console.log(
+  //       `Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms`,
+  //     );
 
-      const delay = targetDate.getTime() - now.getTime();
-      console.log(
-        `Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms`,
-      );
+  //     if (delay > 0) {
+  //       nextTimeoutCheckRef.current = setTimeout(() => {
+  //         stopTimer();
+  //         console.log("Salvando dados");
+  //       }, delay);
+  //     }
+  //   }
 
-      if (delay > 0) {
-        nextTimeoutCheckRef.current = setTimeout(() => {
-          stopTimer();
-          console.log("Salvando dados");
-        }, delay);
-      }
-    }
-
-    return () => {
-      // Clean up
-      if (nextTimeoutCheckRef.current) {
-        clearTimeout(nextTimeoutCheckRef.current);
-      }
-    };
-  }, [timer]);
+  //   return () => {
+  //     // Clean up
+  //     if (nextTimeoutCheckRef.current) {
+  //       clearTimeout(nextTimeoutCheckRef.current);
+  //     }
+  //   };
+  // }, [timer]);
 
   function handleGoToGestor() {
     history.push("/gestor", location.state);
