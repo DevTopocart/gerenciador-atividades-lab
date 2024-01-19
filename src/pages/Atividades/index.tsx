@@ -32,6 +32,8 @@ import {
   getUser,
   updateStatusActivity,
 } from "../../services/easy";
+import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
+import { filterIssuesByStatus } from "../../utils/filterIssuesByStatus";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 
@@ -225,19 +227,6 @@ export default function Atividades() {
 
   const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
 
-  function filterIssuesBySearchKey(issue: Issues) {
-
-    if (searchkey === "") return true;
-
-    let containsSearchkey = issue.subject.toLowerCase().includes(searchkey.toLowerCase()) || 
-      issue.project.name.toLowerCase().includes(searchkey.toLowerCase()) 
-
-    return containsSearchkey
-  }
-
-  function filterIssuesByStatus(issue: Issues) {
-    return issue.status.id === 3 || issue.status.id === 20;
-  }
 
   useEffect(() => {
     if (timer.running === "running") {
@@ -400,7 +389,7 @@ export default function Atividades() {
               }}
             >
               <TextField
-                label="Pesquisar atividade"
+                label="Pesquisar atividade ou projeto"
                 variant="standard"
                 onChange={(e) => setSearchkey(e.target.value)}
                 autoFocus
@@ -415,7 +404,7 @@ export default function Atividades() {
               }}>
               {issues
                 .filter(filterIssuesByStatus)
-                .filter(filterIssuesBySearchKey)
+                .filter(issues => filterIssuesBySearchKey(searchkey,issues))
                 .map((task, index) => {
                 return (
                   <Box
