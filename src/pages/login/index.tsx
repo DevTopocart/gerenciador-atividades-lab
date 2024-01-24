@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
+import VersionChecker from "../../components/VersionChecker";
 import { getGroups, getUsers } from "../../services/easy";
 import { authLdap } from "../../services/ldap";
 import loader from "./../../assets/loader.svg";
@@ -82,6 +83,8 @@ export default function LoginPage() {
         backgroundSize: "cover",
       }}
     >
+      <VersionChecker/>
+
       <Typography
         variant="h3"
         fontWeight={"bold"}
