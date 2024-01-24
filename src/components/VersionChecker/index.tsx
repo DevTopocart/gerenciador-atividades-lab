@@ -7,7 +7,7 @@ import { GithubRelease } from "../../interfaces";
 import { getLatestRelease } from "../../services/github";
 
 export default function VersionChecker() {
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(false)
     const [latestRelease, setLatestRelease] = useState<GithubRelease>()
     
     const linkColor = '#64B5F6' ;
