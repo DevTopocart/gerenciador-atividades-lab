@@ -1,3 +1,4 @@
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Groups2Icon from "@mui/icons-material/Groups2";
 import LogoutIcon from "@mui/icons-material/Logout";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -13,6 +14,7 @@ import {
   CardContent,
   Divider,
   IconButton,
+  Popover,
   TextField,
   Tooltip,
   Typography,
@@ -44,6 +46,7 @@ export default function Atividades() {
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
   const [supervisor, setSupervisor] = useState<User>();
   const [searchkey, setSearchkey] = useState("");
+  const [openFilter,setOpenFilter] = useState(false);
 
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused";
@@ -135,10 +138,14 @@ export default function Atividades() {
 
     try {
       const newIssues = await getIssues(location.state.user.id);
-      const uniqueIssues = Array.from(newIssues.reduce((map, item) => {
-        return map.has(item.id) ? map : map.set(item.id, item);
-      }, new Map()).values());
-      const filteredIssues = uniqueIssues.filter(filterIssuesByStatus)
+      const uniqueIssues = Array.from(
+        newIssues
+          .reduce((map, item) => {
+            return map.has(item.id) ? map : map.set(item.id, item);
+          }, new Map())
+          .values(),
+      );
+      const filteredIssues = uniqueIssues.filter(filterIssuesByStatus);
 
       setIssues(filteredIssues!);
       if (!selectedIssue) setSelectedIssue(filteredIssues![0]);
@@ -386,6 +393,8 @@ export default function Atividades() {
               sx={{
                 width: "100%",
                 padding: "3%",
+                display: "flex",
+                flexDirection: "row",
               }}
             >
               <TextField
@@ -393,76 +402,103 @@ export default function Atividades() {
                 variant="standard"
                 onChange={(e) => setSearchkey(e.target.value)}
                 autoFocus
-                sx={{
-                  width: "100%",
-                }}
+                fullWidth
               />
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                }}
+              >
+                <IconButton size="small" onClick={() => setOpenFilter(true)}>
+                  <FilterAltIcon />
+                </IconButton>
+              </Box>
+              <Popover 
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }} 
+                open={openFilter}       
+                onClose={() => setOpenFilter(false)}       
+              >
+                The content of the Popover.
+              </Popover>
             </Box>
             <Box
               sx={{
                 overflowY: "auto",
-              }}>
+              }}
+            >
               {issues
                 .filter(filterIssuesByStatus)
-                .filter(issues => filterIssuesBySearchKey(searchkey,issues))
+                .filter((issues) => filterIssuesBySearchKey(searchkey, issues))
                 .map((task, index) => {
-                return (
-                  <Box
-                    key={index}
-                    sx={{
-                      width: "100%",
-                    }}
-                  >
-                    <Card
+                  return (
+                    <Box
+                      key={index}
                       sx={{
-                        width: "98%",
-                        padding: "1%",
-                        marginTop: "2%",
-                        backgroundColor:
-                          selectedIssue?.id === task.id
-                            ? "primary.main"
-                            : "primary",
-                        ":hover": {
-                          backgroundColor: "primary.main",
-                          cursor: "pointer",
-                        },
+                        width: "100%",
                       }}
-                      onClick={() => handleTaskClick(index, task)}
                     >
-                      <CardContent>
-                        <Typography sx={{ fontSize: 14 }} color="text.secondary">
-                          #{task.id} - {task.status.name}
-                        </Typography>
-                        <Typography variant="h5" gutterBottom>
-                          {task.subject}
-                        </Typography>
-                        <Typography variant="body2">
-                          {task.project.name} 
-                        </Typography>
-                      </CardContent>
-                      <CardActions>
-                        <Tooltip title="Abrir tarefa no Easy Project">
-                          <IconButton
-                            size="small"
-                            target="_blank"
-                            href={`https://topocart.easyredmine.com/issues/${task.id}`}
+                      <Card
+                        sx={{
+                          width: "98%",
+                          padding: "1%",
+                          marginTop: "2%",
+                          backgroundColor:
+                            selectedIssue?.id === task.id
+                              ? "primary.main"
+                              : "primary",
+                          ":hover": {
+                            backgroundColor: "primary.main",
+                            cursor: "pointer",
+                          },
+                        }}
+                        onClick={() => handleTaskClick(index, task)}
+                      >
+                        <CardContent>
+                          <Typography
+                            sx={{ fontSize: 14 }}
+                            color="text.secondary"
                           >
-                            <OpenInNewIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Selecionar atividade para contabilizar tempo">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleTaskClick(index, task)}
-                          >
-                            <TimerIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </CardActions>
-                    </Card>
-                  </Box>
-                );
-              })}
+                            #{task.id} - {task.status.name}
+                          </Typography>
+                          <Typography variant="h5" gutterBottom>
+                            {task.subject}
+                          </Typography>
+                          <Typography variant="body2">
+                            {task.project.name}
+                          </Typography>
+                        </CardContent>
+                        <CardActions>
+                          <Tooltip title="Abrir tarefa no Easy Project">
+                            <IconButton
+                              size="small"
+                              target="_blank"
+                              href={`https://topocart.easyredmine.com/issues/${task.id}`}
+                            >
+                              <OpenInNewIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Selecionar atividade para contabilizar tempo">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleTaskClick(index, task)}
+                            >
+                              <TimerIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </CardActions>
+                      </Card>
+                    </Box>
+                  );
+                })}
             </Box>
           </Box>
           <Box

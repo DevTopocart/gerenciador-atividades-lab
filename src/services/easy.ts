@@ -225,10 +225,10 @@ export async function createTimeEntryForGroup(
       time_entry: {
         project_id: id_project,
         issue_id: id_issue,
-        user_id: 100,
+        user_id: 92,
         hours: hours,
         spent_on: spentOn,
-        comments: "Atividade lançada pelo apontador de horas",
+        comments: "Atividade lançada pelo Gerenciador de Atividades em nome de outro colaborador",
         custom_fields: [
           {
             id: 106,
@@ -260,7 +260,7 @@ export async function createTimeEntryForUser(
         user_id: id_user,
         hours: hours,
         spent_on: spentOn,
-        comments: "Atividade lançada pelo apontador de horas",
+        comments: "Atividade lançada pelo Gerenciador de Atividades",
       },
     };
 

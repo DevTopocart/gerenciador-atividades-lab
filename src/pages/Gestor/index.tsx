@@ -13,7 +13,7 @@ import {
   TextField,
   Tooltip,
   Typography,
-  useTheme
+  useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
@@ -72,9 +72,13 @@ export default function Gestor() {
         location.state.user.id
       );
     });
-    let uniqueGroupSubordinated = Array.from(groupsSubordinated!.reduce((map, item) => {
-      return map.has(item.id) ? map : map.set(item.id, item);
-    }, new Map()).values());
+    let uniqueGroupSubordinated = Array.from(
+      groupsSubordinated!
+        .reduce((map, item) => {
+          return map.has(item.id) ? map : map.set(item.id, item);
+        }, new Map())
+        .values(),
+    );
     setGroupSubordinates(uniqueGroupSubordinated || []);
   }
 
@@ -154,23 +158,23 @@ export default function Gestor() {
           </IconButton>
         </Box>
       </Box>
-      
+
       <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "90%",
-            marginBottom: "3%",
-          }}
-        >
-          <TextField
-            fullWidth 
-            label="Pesquisar atividade ou projeto"
-            variant="standard"
-            onChange={(e) => setSearchkey(e.target.value)}
-          />
-        </Box>
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "90%",
+          marginBottom: "3%",
+        }}
+      >
+        <TextField
+          fullWidth
+          label="Pesquisar atividade ou projeto"
+          variant="standard"
+          onChange={(e) => setSearchkey(e.target.value)}
+        />
+      </Box>
 
       <Box
         sx={{
@@ -208,9 +212,12 @@ export default function Gestor() {
               <SeletorAtividadeParaGrupos
                 key={index}
                 user={{ name: user.name, id: user.id }}
-                issues={issues
-                  .filter(issue => filterIssuesBySearchKey(searchkey, issue))
-                  .filter(issue => filterIssuesByStatus(issue))!
+                issues={
+                  issues
+                    .filter((issue) =>
+                      filterIssuesBySearchKey(searchkey, issue),
+                    )
+                    .filter((issue) => filterIssuesByStatus(issue))!
                 }
                 currentActivity={
                   Number(
@@ -231,12 +238,17 @@ export default function Gestor() {
               <SeletorAtividadeParaUsuarios
                 key={index}
                 user={user}
-                issues={issues
-                  .filter((issue) => {
-                    return issue.assigned_to && issue.assigned_to.id === user.id;
-                  })
-                  .filter(issue => filterIssuesBySearchKey(searchkey, issue))
-                  .filter(issue => filterIssuesByStatus(issue))!
+                issues={
+                  issues
+                    .filter((issue) => {
+                      return (
+                        issue.assigned_to && issue.assigned_to.id === user.id
+                      );
+                    })
+                    .filter((issue) =>
+                      filterIssuesBySearchKey(searchkey, issue),
+                    )
+                    .filter((issue) => filterIssuesByStatus(issue))!
                 }
                 isLoading={isLoading}
                 setIsLoading={setIsLoading}
@@ -301,8 +313,7 @@ function SeletorAtividadeParaGrupos(props: {
           alignItems: "center",
         }}
       >
-        Usuário Interno da Topocart
-        &nbsp;
+        Usuário Interno da Topocart &nbsp;
         <Tooltip title="Caso a tarefa que deseja não esteja sendo exibida aqui, certifique-se de que você ou o usuário esteja atribuido à ela como Responsável ou como Colaborador">
           <HelpIcon sx={{ cursor: "help" }} fontSize="small" />
         </Tooltip>
