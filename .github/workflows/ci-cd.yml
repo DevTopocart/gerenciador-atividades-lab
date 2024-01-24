@@ -58,7 +58,7 @@ jobs:
       - name: rename apk
         run: |
           mkdir .\src-tauri\target\release\bundle\msi\pkg
-          mv .\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi ./src-tauri/target/release/bundle/msi/pkg/gerenciador-atividades.msi
+          mv ".\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi" ./src-tauri/target/release/bundle/msi/pkg/gerenciador-atividades.msi
 
       - uses: shallwefootball/s3-upload-action@master
         name: Upload S3
