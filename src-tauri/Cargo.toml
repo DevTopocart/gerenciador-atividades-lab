@@ -2,9 +2,9 @@
 target = "x86_64-pc-windows-msvc"
 
 [package]
-name = "apontador-horas"
+name = "gerenciador-atividades"
 version = "0.0.0"
-description = "A Tauri App"
+description = "Gerenciador de Atividades da Topocart"
 authors = ["you"]
 license = ""
 repository = ""
