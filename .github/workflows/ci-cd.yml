@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feature/#25092
 
 jobs:
   make-release:
@@ -53,22 +54,32 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: upload file with version
-        uses: tomasbkk/action-ftp-upload@v1.0
+
+      - uses: shallwefootball/s3-upload-action@master
+        name: Upload S3
+        id: S3
         with:
-          user: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          host: ${{ secrets.FTP_HOST }}
-          src: D:\a\apontador-horas\apontador-horas\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi
-          dest: /home/apontador-horas/apontador-horas-v${{ needs.make-release.outputs.VERSION }}.msi
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: "topocart"
+          destination_dir: 'gerenciador-de-atividades'
+          source_dir: '.\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi'
       
-      - name: Upload file with latest version
-        uses: tomasbkk/action-ftp-upload@v1.0
-        with:
-          user: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          host: ${{ secrets.FTP_HOST }}
-          src: D:\a\apontador-horas\apontador-horas\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi
-          dest: /home/apontador-horas/apontador-horas-latest.msi
+      # - name: upload file with version
+      #   uses: tomasbkk/action-ftp-upload@v1.0
+      #   with:
+      #     user: ${{ secrets.FTP_USER }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     host: ${{ secrets.FTP_HOST }}
+      #     src: .\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi
+      #     dest: /home/apontador-horas/apontador-horas-v${{ needs.make-release.outputs.VERSION }}.msi
+      
+      # - name: Upload file with latest version
+      #   uses: tomasbkk/action-ftp-upload@v1.0
+      #   with:
+      #     user: ${{ secrets.FTP_USER }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     host: ${{ secrets.FTP_HOST }}
+      #     src: .\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi
+      #     dest: /home/apontador-horas/apontador-horas-latest.msi
   
