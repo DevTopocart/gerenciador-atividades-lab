@@ -2,6 +2,8 @@
 
 Esta aplicação é construída com Tauri + React + Typescript
 
+[![pipeline](https://github.com/DevTopocart/gerenciador-atividades/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/DevTopocart/gerenciador-atividades/actions/workflows/ci-cd.yml)
+
 ## Para desenvolver
 
 ### Setup recomendado
@@ -18,6 +20,6 @@ Esta aplicação é construída com Tauri + React + Typescript
 
 ### Build & disponibilização em produção
 
-A aplicação é disponibilizada automaticamente via [![pipeline](https://github.com/DevTopocart/gerenciador-atividades/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/DevTopocart/gerenciador-atividades/actions/workflows/ci-cd.yml)
+A aplicação é disponibilizada automaticamente via pipeline na S3 e no FTP da Topocart.
 
 O download da versão de produçao pode ser realizado através do [link](https://topocart.s3.amazonaws.com/gerenciador-de-atividades/gerenciador-atividades.msi) ou através da instalação via GPO nas máquinas da rede da Topocart 
