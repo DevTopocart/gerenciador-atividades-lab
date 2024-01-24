@@ -12,23 +12,23 @@ jobs:
     outputs:
       VERSION: ${{ steps.release_version.outputs.version }}
     steps:
-      - name: Copy data
-        uses: actions/checkout@v2
+      # - name: Copy data
+      #   uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 20
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v2.1.5
+      #   with:
+      #     node-version: 20
 
-      - name: Install dependencies
-        if:  ${{ github.ref }} == 'refs/heads/main'
-        run: yarn add @semantic-release/git @semantic-release/github
+      # - name: Install dependencies
+      #   if:  ${{ github.ref }} == 'refs/heads/main'
+      #   run: yarn add @semantic-release/git @semantic-release/github
       
-      - name: Semantic Release
-        if:  ${{ github.ref }} == 'refs/heads/main'
-        run: npx semantic-release
-        env:
-          GH_TOKEN : ${{ secrets.GH_TOKEN }}
+      # - name: Semantic Release
+      #   if:  ${{ github.ref }} == 'refs/heads/main'
+      #   run: npx semantic-release
+      #   env:
+      #     GH_TOKEN : ${{ secrets.GH_TOKEN }}
       
       - id: release_version
         run: |
@@ -45,15 +45,15 @@ jobs:
         with:
           node-version: 20
 
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+      # - name: install Rust stable
+      #   uses: dtolnay/rust-toolchain@stable
 
-      - name: install dependencies
-        run: npm install
+      # - name: install dependencies
+      #   run: npm install
 
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - uses: tauri-apps/tauri-action@v0
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: rename apk
         run: |
