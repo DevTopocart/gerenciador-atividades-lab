@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - pipeline
 
 jobs:
   make-release:
@@ -33,21 +34,22 @@ jobs:
         run: |
           echo "version=$(cat ./package.json | jq -r '.version')" >> $GITHUB_OUTPUT
 
-
   build-package:
     runs-on: windows-latest
     needs: make-release
     steps:
-      - uses: actions/checkout@v3
-      - name: setup node
+      - name: Copy data
+        uses: actions/checkout@v2
+
+      - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: install Rust stable
+      - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: install dependencies
+      - name: Install dependencies
         run: npm install
 
       - uses: tauri-apps/tauri-action@v0
@@ -57,7 +59,7 @@ jobs:
       - name: rename apk
         run: |
           mkdir .\src-tauri\target\release\bundle\msi\pkg
-          mv ".\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_0.0.0_x64_en-US.msi" ./src-tauri/target/release/bundle/msi/pkg/gerenciador-atividades.msi
+          mv ".\src-tauri\target\release\bundle\msi\Gerenciador de Atividades - Topocart_${{ needs.make-release.outputs.VERSION }}_x64_en-US.msi" ./src-tauri/target/release/bundle/msi/pkg/gerenciador-atividades.msi
 
       - uses: shallwefootball/s3-upload-action@master
         name: Upload S3
