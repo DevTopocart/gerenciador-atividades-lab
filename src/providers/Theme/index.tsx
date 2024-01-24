@@ -21,7 +21,7 @@ export function getPreferredMode(): PaletteMode {
   //   window.matchMedia &&
   //   window.matchMedia("(prefers-color-scheme: dark)").matches;
   // return prefersDarkMode ? "dark" : "light";
-  return 'dark'
+  return "dark";
 }
 
 const theme = createTheme({

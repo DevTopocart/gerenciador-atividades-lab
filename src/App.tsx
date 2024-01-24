@@ -9,7 +9,7 @@ import "./styles.css";
 function App() {
   return (
     <Theme>
-      <VersionChecker/>
+      <VersionChecker />
       <Switch>
         <Route path="/" exact>
           <LoginPage />
