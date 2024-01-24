@@ -82,6 +82,7 @@ export default function LoginPage() {
         backgroundSize: "cover",
       }}
     >
+
       <Typography
         variant="h3"
         fontWeight={"bold"}

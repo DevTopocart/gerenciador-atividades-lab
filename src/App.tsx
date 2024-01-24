@@ -1,4 +1,5 @@
 import { Route, Switch } from "react-router-dom";
+import VersionChecker from "./components/VersionChecker";
 import Atividades from "./pages/Atividades";
 import Gestor from "./pages/Gestor";
 import LoginPage from "./pages/login";
@@ -8,6 +9,7 @@ import "./styles.css";
 function App() {
   return (
     <Theme>
+      <VersionChecker />
       <Switch>
         <Route path="/" exact>
           <LoginPage />
