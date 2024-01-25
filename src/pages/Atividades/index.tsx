@@ -540,8 +540,6 @@ export default function Atividades() {
                 textAlign={"center"}
               >
                 {formatMs(timer.startTime ? now.getTime() - timer.startTime.getTime() : 0)}
-                <br></br>
-                {formatMs(timer.elapsedTime)}
               </Typography>
 
               <Divider
