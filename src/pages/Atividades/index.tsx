@@ -1,4 +1,3 @@
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Groups2Icon from "@mui/icons-material/Groups2";
 import LogoutIcon from "@mui/icons-material/Logout";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -14,10 +13,10 @@ import {
   CardContent,
   Divider,
   IconButton,
-  Popover,
   TextField,
   Tooltip,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
@@ -35,18 +34,21 @@ import {
 } from "../../services/easy";
 import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
 import { filterIssuesByStatus } from "../../utils/filterIssuesByStatus";
+import { formatMs } from "../../utils/formatMs";
+import { generateRandomTime } from "../../utils/generateRandomTime";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 
 export default function Atividades() {
   const location: any = useLocation();
   const history = useHistory();
+  const theme = useTheme();
   const [isLoading, setisLoading] = useState(false);
   const [issues, setIssues] = useState<Issues[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
   const [supervisor, setSupervisor] = useState<User>();
   const [searchkey, setSearchkey] = useState("");
-  const [openFilter,setOpenFilter] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
 
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused";
@@ -202,7 +204,7 @@ export default function Atividades() {
       nextCheck: new Date(Date.now() + generateRandomTime()),
     }));
   }
-  
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -212,7 +214,9 @@ export default function Atividades() {
       interval = setInterval(() => {
         setTimer((current) => ({
           ...current,
-          elapsedTime: current.startTime?.getTime() ? now.getTime() - current.startTime.getTime() : 0,
+          elapsedTime: current.startTime?.getTime()
+            ? now.getTime() - current.startTime.getTime()
+            : 0,
         }));
       }, 1000);
     }
@@ -231,7 +235,12 @@ export default function Atividades() {
   function stopTimer() {
     let stopTime = new Date();
     logTime(stopTime.getTime() - timer.startTime!.getTime());
-    setTimer((current) => ({ ...current, elapsedTime: 0, startTime: null, running: "stopped" }));
+    setTimer((current) => ({
+      ...current,
+      elapsedTime: 0,
+      startTime: null,
+      running: "stopped",
+    }));
   }
 
   // function pauseTimer() {
@@ -412,7 +421,7 @@ export default function Atividades() {
                 autoFocus
                 fullWidth
               />
-              <Box
+              {/* <Box
                 sx={{
                   display: "flex",
                   justifyContent: "flex-end",
@@ -423,20 +432,20 @@ export default function Atividades() {
                   <FilterAltIcon />
                 </IconButton>
               </Box>
-              <Popover 
+              <Popover
                 anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
+                  vertical: "bottom",
+                  horizontal: "right",
                 }}
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }} 
-                open={openFilter}       
-                onClose={() => setOpenFilter(false)}       
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={openFilter}
+                onClose={() => setOpenFilter(false)}
               >
                 The content of the Popover.
-              </Popover>
+              </Popover> */}
             </Box>
             <Box
               sx={{
@@ -480,8 +489,27 @@ export default function Atividades() {
                           <Typography variant="h5" gutterBottom>
                             {task.subject}
                           </Typography>
+                          {task.name_parent && (
+                            <>
+                              <Divider
+                                sx={{
+                                  marginTop: theme.spacing(1),
+                                  marginBottom: theme.spacing(1),
+                                }}
+                              />
+                              <Typography variant="body2" gutterBottom>
+                                Subtarefa de {task.name_parent}
+                              </Typography>
+                            </>
+                          )}
+                          <Divider
+                            sx={{
+                              marginTop: theme.spacing(1),
+                              marginBottom: theme.spacing(1),
+                            }}
+                          />
                           <Typography variant="body2">
-                            {task.project.name}
+                            Projeto {task.project.name}
                           </Typography>
                         </CardContent>
                         <CardActions>
@@ -521,12 +549,14 @@ export default function Atividades() {
           >
             <Box
               sx={{
-                width: "80%",
+                width: "90%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 marginTop: "10%",
                 marginBottom: "10%",
+                maxHeight: "100%",
+                overflowY: "auto",
               }}
             >
               <Typography variant="h6" gutterBottom textAlign={"center"}>
@@ -539,7 +569,11 @@ export default function Atividades() {
                 gutterBottom
                 textAlign={"center"}
               >
-                {formatMs(timer.startTime ? now.getTime() - timer.startTime.getTime() : 0)}
+                {formatMs(
+                  timer.startTime
+                    ? now.getTime() - timer.startTime.getTime()
+                    : 0,
+                )}
               </Typography>
 
               <Divider
@@ -567,8 +601,27 @@ export default function Atividades() {
                       <Typography variant="h5" gutterBottom>
                         {selectedIssue.subject}
                       </Typography>
+                      {selectedIssue.name_parent && (
+                        <>
+                          <Divider
+                            sx={{
+                              marginTop: theme.spacing(1),
+                              marginBottom: theme.spacing(1),
+                            }}
+                          />
+                          <Typography variant="body2" gutterBottom>
+                            Subtarefa de {selectedIssue.name_parent}
+                          </Typography>
+                        </>
+                      )}
+                      <Divider
+                        sx={{
+                          marginTop: theme.spacing(1),
+                          marginBottom: theme.spacing(1),
+                        }}
+                      />
                       <Typography variant="body2">
-                        {selectedIssue.project.name}
+                        Projeto {selectedIssue.project.name}
                       </Typography>
                     </CardContent>
                   </Card>
@@ -627,44 +680,4 @@ export default function Atividades() {
       </Card>
     </Box>
   );
-}
-
-function generateRandomTime() {
-  const minTime = 30;
-  const maxTime = 60;
-  const randomTime =
-    Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
-  return randomTime * 60 * 1000;
-}
-
-function padStart(num: number) {
-  return num.toString().padStart(2, "0");
-}
-
-function formatMs(milliseconds: number) {
-  let seconds = Math.floor(milliseconds / 1000);
-  let minutes = Math.floor(seconds / 60);
-  let hours = Math.floor(minutes / 60);
-
-  minutes = minutes % 60;
-  seconds = seconds % 60;
-
-  const ms = Math.floor((milliseconds % 1000) / 10);
-
-  let str = `${padStart(hours)}:${padStart(minutes)}:${padStart(seconds)}`;
-
-  return str;
-}
-
-function addHours(json: any) {
-  let totalHoras = 0;
-
-  if (json.time_entries && Array.isArray(json.time_entries)) {
-    for (const entry of json.time_entries) {
-      if (entry.hours && typeof entry.hours === "number") {
-        totalHoras += entry.hours;
-      }
-    }
-  }
-  return totalHoras.toFixed(2);
 }

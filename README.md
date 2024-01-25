@@ -22,4 +22,4 @@ Esta aplicação é construída com Tauri + React + Typescript
 
 A aplicação é disponibilizada automaticamente via pipeline na S3 e no FTP da Topocart.
 
-O download da versão de produçao pode ser realizado através do [link](https://topocart.s3.amazonaws.com/gerenciador-de-atividades/gerenciador-atividades.msi) ou através da instalação via GPO nas máquinas da rede da Topocart 
+O download da versão de produçao pode ser realizado através do [link](https://topocart.s3.amazonaws.com/gerenciador-de-atividades/gerenciador-atividades.msi) ou através da instalação via GPO nas máquinas da rede da Topocart

@@ -92,7 +92,7 @@ export async function getIssues(id_user: number) {
         const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
         issues[i].name_parent = responseIssues.data.issue.subject;
       } else {
-        issues[i].name_parent = "-";
+        issues[i].name_parent = undefined;
       }
     }
 
@@ -228,7 +228,8 @@ export async function createTimeEntryForGroup(
         user_id: 92,
         hours: hours,
         spent_on: spentOn,
-        comments: "Atividade lançada pelo Gerenciador de Atividades em nome de outro colaborador",
+        comments:
+          "Atividade lançada pelo Gerenciador de Atividades em nome de outro colaborador",
         custom_fields: [
           {
             id: 106,

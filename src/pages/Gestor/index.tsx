@@ -1,13 +1,9 @@
 import Groups2Icon from "@mui/icons-material/Groups2";
 import HelpIcon from "@mui/icons-material/Help";
 import LogoutIcon from "@mui/icons-material/Logout";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import PersonIcon from "@mui/icons-material/Person";
 import {
   Box,
-  Card,
-  CardActions,
-  CardContent,
   Divider,
   IconButton,
   TextField,
@@ -19,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
+import { useLoading } from "../../components/FullPageLoader/hook";
 import { Group, Issues, MinifiedUser, User } from "../../interfaces";
 import {
   getAllIssuesFromSubordinates,
@@ -31,26 +28,27 @@ import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
 import { filterIssuesByStatus } from "../../utils/filterIssuesByStatus";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
+import GestorCard from "./GestorCard";
 
 export default function Gestor() {
   const location: any = useLocation();
   const history = useHistory();
   const theme = useTheme();
+  const { loading, setLoading } = useLoading();
 
   const [usersSubordinates, setUserSubordinates] = useState<User[]>();
   const [groupSubordinates, setGroupSubordinates] = useState<Group[]>();
   const [issues, setIssues] = useState<Issues[]>([]);
   const [searchkey, setSearchkey] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    setLoading(true);
     fetchUsers();
   }, []);
 
   useEffect(() => {
     if (!usersSubordinates || !groupSubordinates) return;
-    fetchIssues().then(() => setIsLoading(false));
+    fetchIssues().then(() => setLoading(false));
   }, [usersSubordinates, groupSubordinates]);
 
   function handleGoToAtividades() {
@@ -109,7 +107,7 @@ export default function Gestor() {
         backgroundAttachment: "fixed",
       }}
     >
-      {isLoading && (
+      {loading && (
         <FullPageLoader>
           <Loader src={loader}></Loader>
         </FullPageLoader>
@@ -180,28 +178,35 @@ export default function Gestor() {
         sx={{
           width: "90%",
           height: "75%",
-          maxHeight: "85%",
+          maxHeight: "75%",
           borderRadius: "5px",
           display: "flex",
           flexDirection: "row",
-          flexWrap: "wrap",
-          overflowY: "auto",
-          alignContent: "flex-start",
-          justifyContent: "center",
+          overflowX: "auto",
         }}
       >
         {!usersSubordinates && !groupSubordinates && (
-          <Typography
-            textAlign={"center"}
+          <Box
             sx={{
-              marginTop: "20%",
-              width: "80%",
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            Não existe nenhum colaborador que possua você cadastrado como
-            supervisor. Se for o caso, solicite a inclusão no EasyProject pela
-            TI - Produção enviando um email para <b>ti.prod@topocart.dev.br</b>
-          </Typography>
+            <Typography
+              textAlign={"center"}
+              sx={{
+                marginTop: "20%",
+                width: "80%",
+              }}
+            >
+              Não existe nenhum colaborador que possua você cadastrado como
+              supervisor. Se for o caso, solicite a inclusão no EasyProject pela
+              TI - Produção enviando um email para{" "}
+              <b>ti.prod@topocart.dev.br</b>
+            </Typography>
+          </Box>
         )}
 
         {groupSubordinates &&
@@ -224,8 +229,6 @@ export default function Gestor() {
                     user.custom_fields?.find((e) => e.id === 125)?.value,
                   ) || 0
                 }
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
               />
             );
           })}
@@ -250,8 +253,8 @@ export default function Gestor() {
                     )
                     .filter((issue) => filterIssuesByStatus(issue))!
                 }
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
+                loading={loading}
+                setLoading={setLoading}
               />
             );
           })}
@@ -264,10 +267,9 @@ function SeletorAtividadeParaGrupos(props: {
   user: MinifiedUser;
   issues: Issues[];
   currentActivity?: number;
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const theme = useTheme();
+  const { loading, setLoading } = useLoading();
 
   const [selectedIssue, setSelectedIssue] = useState<Issues | undefined>(
     props.currentActivity
@@ -282,9 +284,9 @@ function SeletorAtividadeParaGrupos(props: {
   }, []);
 
   function handleTaskClick(index: number, issue: Issues) {
-    props.setIsLoading(true);
+    setLoading(true);
     setCurrentActivityForGroup(props.user.id, issue.id).then(() => {
-      props.setIsLoading(false);
+      setLoading(false);
       toast.success(
         `A atividade "${issue.subject}" foi selecionada para o colaborador ${props.user.name}`,
       );
@@ -300,7 +302,8 @@ function SeletorAtividadeParaGrupos(props: {
   return (
     <Box
       sx={{
-        width: "50%",
+        width: "100%",
+        minWidth: "300px",
         padding: theme.spacing(1),
       }}
     >
@@ -328,58 +331,22 @@ function SeletorAtividadeParaGrupos(props: {
 
       <Box
         sx={{
-          maxHeight: "200px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75) inset",
+          maxHeight: "85%",
           overflowY: "auto",
         }}
       >
         {issues.map((task, index) => {
           return (
-            <Box
+            <GestorCard
               key={index}
-              sx={{
-                width: "100%",
-              }}
-            >
-              <Card
-                sx={{
-                  width: "98%",
-                  padding: "1%",
-                  marginTop: "2%",
-                  backgroundColor:
-                    selectedIssue?.id === task.id ? "primary.main" : "primary",
-                  ":hover": {
-                    backgroundColor: "primary.main",
-                    cursor: "pointer",
-                  },
-                }}
-                onClick={() => handleTaskClick(index, task)}
-              >
-                <CardContent>
-                  <Typography sx={{ fontSize: 12 }} color="text.secondary">
-                    #{task.id} - {task.status.name}
-                  </Typography>
-                  <Typography variant="h5" gutterBottom>
-                    {task.subject}
-                  </Typography>
-                  <Typography variant="body2">{task.project.name}</Typography>
-                </CardContent>
-                <CardActions>
-                  <Tooltip title="Abrir tarefa no Easy Project">
-                    <IconButton
-                      size="small"
-                      target="_blank"
-                      href={`https://topocart.easyredmine.com/issues/${task.id}`}
-                    >
-                      <OpenInNewIcon />
-                    </IconButton>
-                  </Tooltip>
-                </CardActions>
-              </Card>
-            </Box>
+              selectedIssue={selectedIssue}
+              handleTaskClick={() => handleTaskClick(index, task)}
+              task={task}
+            />
           );
         })}
       </Box>
@@ -390,15 +357,22 @@ function SeletorAtividadeParaGrupos(props: {
 function SeletorAtividadeParaUsuarios(props: {
   user: User;
   issues: Issues[];
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const theme = useTheme();
+
+  function handleTaskClick() {
+    toast.warning(
+      "Você não pode selecionar uma atividade para um usuário do Easy Project, apenas para usuários internos da Topocart",
+    );
+  }
 
   return (
     <Box
       sx={{
-        width: "50%",
+        width: "100%",
+        minWidth: "300px",
         padding: theme.spacing(1),
       }}
     >
@@ -428,51 +402,22 @@ function SeletorAtividadeParaUsuarios(props: {
 
       <Box
         sx={{
-          maxHeight: "200px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75) inset",
+          maxHeight: "85%",
           overflowY: "auto",
         }}
       >
         {props.issues.map((task, index) => {
           return (
-            <Box
+            <GestorCard
               key={index}
-              sx={{
-                width: "100%",
-              }}
-            >
-              <Card
-                sx={{
-                  width: "98%",
-                  padding: "1%",
-                  marginTop: "2%",
-                }}
-              >
-                <CardContent>
-                  <Typography sx={{ fontSize: 12 }} color="text.secondary">
-                    #{task.id} - {task.status.name}
-                  </Typography>
-                  <Typography variant="h5" gutterBottom>
-                    {task.subject}
-                  </Typography>
-                  <Typography variant="body2">{task.project.name}</Typography>
-                </CardContent>
-                <CardActions>
-                  <Tooltip title="Abrir tarefa no Easy Project">
-                    <IconButton
-                      size="small"
-                      target="_blank"
-                      href={`https://topocart.easyredmine.com/issues/${task.id}`}
-                    >
-                      <OpenInNewIcon />
-                    </IconButton>
-                  </Tooltip>
-                </CardActions>
-              </Card>
-            </Box>
+              selectedIssue={undefined}
+              handleTaskClick={handleTaskClick}
+              task={task}
+            />
           );
         })}
       </Box>
