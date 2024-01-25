@@ -92,7 +92,7 @@ export async function getIssues(id_user: number) {
         const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
         issues[i].name_parent = responseIssues.data.issue.subject;
       } else {
-        issues[i].name_parent = "-";
+        issues[i].name_parent = undefined;
       }
     }
 

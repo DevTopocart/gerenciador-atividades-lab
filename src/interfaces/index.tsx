@@ -26,7 +26,7 @@ export interface Issues {
   updated_on: string;
   closed_on?: any;
   time: string;
-  name_parent: string;
+  name_parent: string | undefined;
 }
 
 export interface Parent {
