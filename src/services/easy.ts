@@ -228,7 +228,8 @@ export async function createTimeEntryForGroup(
         user_id: 92,
         hours: hours,
         spent_on: spentOn,
-        comments: "Atividade lançada pelo Gerenciador de Atividades em nome de outro colaborador",
+        comments:
+          "Atividade lançada pelo Gerenciador de Atividades em nome de outro colaborador",
         custom_fields: [
           {
             id: 106,

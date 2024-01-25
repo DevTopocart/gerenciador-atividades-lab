@@ -46,7 +46,7 @@ export default function Atividades() {
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
   const [supervisor, setSupervisor] = useState<User>();
   const [searchkey, setSearchkey] = useState("");
-  const [openFilter,setOpenFilter] = useState(false);
+  const [openFilter, setOpenFilter] = useState(false);
 
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused";
@@ -202,7 +202,7 @@ export default function Atividades() {
       nextCheck: new Date(Date.now() + generateRandomTime()),
     }));
   }
-  
+
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -212,7 +212,9 @@ export default function Atividades() {
       interval = setInterval(() => {
         setTimer((current) => ({
           ...current,
-          elapsedTime: current.startTime?.getTime() ? now.getTime() - current.startTime.getTime() : 0,
+          elapsedTime: current.startTime?.getTime()
+            ? now.getTime() - current.startTime.getTime()
+            : 0,
         }));
       }, 1000);
     }
@@ -231,7 +233,12 @@ export default function Atividades() {
   function stopTimer() {
     let stopTime = new Date();
     logTime(stopTime.getTime() - timer.startTime!.getTime());
-    setTimer((current) => ({ ...current, elapsedTime: 0, startTime: null, running: "stopped" }));
+    setTimer((current) => ({
+      ...current,
+      elapsedTime: 0,
+      startTime: null,
+      running: "stopped",
+    }));
   }
 
   // function pauseTimer() {
@@ -423,17 +430,17 @@ export default function Atividades() {
                   <FilterAltIcon />
                 </IconButton>
               </Box>
-              <Popover 
+              <Popover
                 anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
+                  vertical: "bottom",
+                  horizontal: "right",
                 }}
                 transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }} 
-                open={openFilter}       
-                onClose={() => setOpenFilter(false)}       
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={openFilter}
+                onClose={() => setOpenFilter(false)}
               >
                 The content of the Popover.
               </Popover>
@@ -539,7 +546,11 @@ export default function Atividades() {
                 gutterBottom
                 textAlign={"center"}
               >
-                {formatMs(timer.startTime ? now.getTime() - timer.startTime.getTime() : 0)}
+                {formatMs(
+                  timer.startTime
+                    ? now.getTime() - timer.startTime.getTime()
+                    : 0,
+                )}
               </Typography>
 
               <Divider
