@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
+import { useLoading } from "../../components/FullPageLoader/hook";
 import { Issues, User } from "../../interfaces";
 import {
   createTimeEntryForGroup,
@@ -43,7 +44,7 @@ export default function Atividades() {
   const location: any = useLocation();
   const history = useHistory();
   const theme = useTheme();
-  const [isLoading, setisLoading] = useState(false);
+  const {loading,setLoading} = useLoading()
   const [issues, setIssues] = useState<Issues[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
   const [supervisor, setSupervisor] = useState<User>();
@@ -75,7 +76,7 @@ export default function Atividades() {
   }
 
   async function logTime(elapsedTime: number) {
-    setisLoading(true);
+    setLoading(true);
     const today = new Date();
     const formattedDate = today.toLocaleDateString("en-CA");
     const hours = elapsedTime / 3600000;
@@ -105,7 +106,7 @@ export default function Atividades() {
           toast.error("Não foi possível registrar o tempo no Easy Project");
         }
       } finally {
-        setisLoading(false);
+        setLoading(false);
       }
     } else {
       try {
@@ -132,13 +133,13 @@ export default function Atividades() {
           toast.error("Não foi possível registrar o tempo no Easy Project");
         }
       } finally {
-        setisLoading(false);
+        setLoading(false);
       }
     }
   }
 
   async function fetchIssues() {
-    setisLoading(true);
+    setLoading(true);
 
     try {
       const newIssues = await getIssues(location.state.user.id);
@@ -153,9 +154,9 @@ export default function Atividades() {
 
       setIssues(filteredIssues!);
       if (!selectedIssue) setSelectedIssue(filteredIssues![0]);
-      setisLoading(false);
+      setLoading(false);
     } catch (error) {
-      setisLoading(false);
+      setLoading(false);
       toast.error(
         "Não foi possível obter a lista de atividades do Easy Project",
       );
@@ -375,7 +376,7 @@ export default function Atividades() {
         </Box>
       </Box>
 
-      {isLoading && (
+      {loading && (
         <FullPageLoader>
           <Loader src={loader}></Loader>
         </FullPageLoader>
