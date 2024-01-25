@@ -67,7 +67,7 @@ export default function Atividades() {
   function handleTaskClick(index: number, issue: Issues) {
     if (location.state.user.type === "group") {
       toast.warn(
-        "Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador"
+        "Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador",
       );
       return;
     }
@@ -87,7 +87,7 @@ export default function Atividades() {
           selectedIssue!.project.id,
           selectedIssue!.id,
           formattedDate,
-          hours.toFixed(3)
+          hours.toFixed(3),
         );
 
         toast.success(
@@ -95,7 +95,7 @@ export default function Atividades() {
             Math.round(hours * 60 * 100) / 100
           } minutos registrados na atividade '${
             issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
-          }'`
+          }'`,
         );
       } catch (error: any) {
         console.log(error);
@@ -114,7 +114,7 @@ export default function Atividades() {
           selectedIssue!.project.id,
           selectedIssue!.id,
           formattedDate,
-          hours.toFixed(3)
+          hours.toFixed(3),
         );
 
         toast.success(
@@ -122,7 +122,7 @@ export default function Atividades() {
             Math.round(hours * 60 * 100) / 100
           } minutos registrados na atividade '${
             issues!.filter((e: any) => e.id === selectedIssue!.id)[0].subject
-          }'`
+          }'`,
         );
       } catch (error: any) {
         console.log(error);
@@ -147,7 +147,7 @@ export default function Atividades() {
           .reduce((map, item) => {
             return map.has(item.id) ? map : map.set(item.id, item);
           }, new Map())
-          .values()
+          .values(),
       );
       const filteredIssues = uniqueIssues.filter(filterIssuesByStatus);
 
@@ -157,7 +157,7 @@ export default function Atividades() {
     } catch (error) {
       setisLoading(false);
       toast.error(
-        "Não foi possível obter a lista de atividades do Easy Project"
+        "Não foi possível obter a lista de atividades do Easy Project",
       );
       console.error(error);
     }
@@ -171,7 +171,7 @@ export default function Atividades() {
     } else {
       const group = await getGroup(location.state.user.id);
       const supervisor_id: number = group!.custom_fields?.find(
-        (e) => e.id === 124
+        (e) => e.id === 124,
       )?.value;
       const group_supervisor = await getUser(supervisor_id);
       setSupervisor(group_supervisor);
@@ -572,7 +572,7 @@ export default function Atividades() {
                 {formatMs(
                   timer.startTime
                     ? now.getTime() - timer.startTime.getTime()
-                    : 0
+                    : 0,
                 )}
               </Typography>
 
@@ -602,27 +602,27 @@ export default function Atividades() {
                         {selectedIssue.subject}
                       </Typography>
                       {selectedIssue.name_parent && (
-                          <>
-                            <Divider
-                              sx={{
-                                marginTop: theme.spacing(1),
-                                marginBottom: theme.spacing(1),
-                              }}
-                            />
-                            <Typography variant="body2" gutterBottom>
-                              Subtarefa de {selectedIssue.name_parent}
-                            </Typography>
-                          </>
-                        )}
-                        <Divider
-                          sx={{
-                            marginTop: theme.spacing(1),
-                            marginBottom: theme.spacing(1),
-                          }}
-                        />
-                        <Typography variant="body2">
-                          Projeto {selectedIssue.project.name}
-                        </Typography>
+                        <>
+                          <Divider
+                            sx={{
+                              marginTop: theme.spacing(1),
+                              marginBottom: theme.spacing(1),
+                            }}
+                          />
+                          <Typography variant="body2" gutterBottom>
+                            Subtarefa de {selectedIssue.name_parent}
+                          </Typography>
+                        </>
+                      )}
+                      <Divider
+                        sx={{
+                          marginTop: theme.spacing(1),
+                          marginBottom: theme.spacing(1),
+                        }}
+                      />
+                      <Typography variant="body2">
+                        Projeto {selectedIssue.project.name}
+                      </Typography>
                     </CardContent>
                   </Card>
                 </Box>

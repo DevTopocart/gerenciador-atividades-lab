@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export function useLoading() {
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    return {loading: loading, setLoading: setLoading}
+  return { loading: loading, setLoading: setLoading };
 }

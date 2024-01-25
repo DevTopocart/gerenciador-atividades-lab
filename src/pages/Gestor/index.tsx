@@ -9,7 +9,7 @@ import {
   TextField,
   Tooltip,
   Typography,
-  useTheme
+  useTheme,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
@@ -34,7 +34,7 @@ export default function Gestor() {
   const location: any = useLocation();
   const history = useHistory();
   const theme = useTheme();
-  const {loading, setLoading} = useLoading();
+  const { loading, setLoading } = useLoading();
 
   const [usersSubordinates, setUserSubordinates] = useState<User[]>();
   const [groupSubordinates, setGroupSubordinates] = useState<Group[]>();
@@ -75,7 +75,7 @@ export default function Gestor() {
         .reduce((map, item) => {
           return map.has(item.id) ? map : map.set(item.id, item);
         }, new Map())
-        .values()
+        .values(),
     );
     setGroupSubordinates(uniqueGroupSubordinated || []);
   }
@@ -186,26 +186,27 @@ export default function Gestor() {
         }}
       >
         {!usersSubordinates && !groupSubordinates && (
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            textAlign={"center"}
+          <Box
             sx={{
-              marginTop: "20%",
-              width: "80%",
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            Não existe nenhum colaborador que possua você cadastrado como
-            supervisor. Se for o caso, solicite a inclusão no EasyProject pela
-            TI - Produção enviando um email para <b>ti.prod@topocart.dev.br</b>
-          </Typography>
-        </Box>
+            <Typography
+              textAlign={"center"}
+              sx={{
+                marginTop: "20%",
+                width: "80%",
+              }}
+            >
+              Não existe nenhum colaborador que possua você cadastrado como
+              supervisor. Se for o caso, solicite a inclusão no EasyProject pela
+              TI - Produção enviando um email para{" "}
+              <b>ti.prod@topocart.dev.br</b>
+            </Typography>
+          </Box>
         )}
 
         {groupSubordinates &&
@@ -219,13 +220,13 @@ export default function Gestor() {
                 issues={
                   issues
                     .filter((issue) =>
-                      filterIssuesBySearchKey(searchkey, issue)
+                      filterIssuesBySearchKey(searchkey, issue),
                     )
                     .filter((issue) => filterIssuesByStatus(issue))!
                 }
                 currentActivity={
                   Number(
-                    user.custom_fields?.find((e) => e.id === 125)?.value
+                    user.custom_fields?.find((e) => e.id === 125)?.value,
                   ) || 0
                 }
               />
@@ -268,17 +269,17 @@ function SeletorAtividadeParaGrupos(props: {
   currentActivity?: number;
 }) {
   const theme = useTheme();
-  const {loading, setLoading} = useLoading();
+  const { loading, setLoading } = useLoading();
 
   const [selectedIssue, setSelectedIssue] = useState<Issues | undefined>(
     props.currentActivity
       ? props.issues.find((e) => e.id == props.currentActivity)
-      : undefined
+      : undefined,
   );
 
   useEffect(() => {
     getCurrentActivityForGroup(props.user.id).then(
-      (data) => data && setSelectedIssue(data[0])
+      (data) => data && setSelectedIssue(data[0]),
     );
   }, []);
 
@@ -287,7 +288,7 @@ function SeletorAtividadeParaGrupos(props: {
     setCurrentActivityForGroup(props.user.id, issue.id).then(() => {
       setLoading(false);
       toast.success(
-        `A atividade "${issue.subject}" foi selecionada para o colaborador ${props.user.name}`
+        `A atividade "${issue.subject}" foi selecionada para o colaborador ${props.user.name}`,
       );
     });
 
@@ -339,12 +340,14 @@ function SeletorAtividadeParaGrupos(props: {
         }}
       >
         {issues.map((task, index) => {
-          return <GestorCard 
-            key={index}
-            selectedIssue={selectedIssue}
-            handleTaskClick={() => handleTaskClick(index, task)}
-            task={task}
-          />;
+          return (
+            <GestorCard
+              key={index}
+              selectedIssue={selectedIssue}
+              handleTaskClick={() => handleTaskClick(index, task)}
+              task={task}
+            />
+          );
         })}
       </Box>
     </Box>
@@ -360,7 +363,9 @@ function SeletorAtividadeParaUsuarios(props: {
   const theme = useTheme();
 
   function handleTaskClick() {
-    toast.warning("Você não pode selecionar uma atividade para um usuário do Easy Project, apenas para usuários internos da Topocart");
+    toast.warning(
+      "Você não pode selecionar uma atividade para um usuário do Easy Project, apenas para usuários internos da Topocart",
+    );
   }
 
   return (
@@ -407,16 +412,15 @@ function SeletorAtividadeParaUsuarios(props: {
       >
         {props.issues.map((task, index) => {
           return (
-            <GestorCard 
+            <GestorCard
               key={index}
               selectedIssue={undefined}
               handleTaskClick={handleTaskClick}
               task={task}
-          />
+            />
           );
         })}
       </Box>
     </Box>
   );
 }
-
