@@ -49,7 +49,9 @@ jobs:
       - name: Update package.json with latest version
         run: |
           $VERSION = "${{ needs.make-release.outputs.VERSION }}"
-          jq --arg ver "$VERSION" '.version = $ver' package.json > temp.json && mv temp.json package.json
+          jq --arg ver "$VERSION" '.version = $ver' package.json > temp.json
+          Remove-Item -Path package.json -Force
+          Move-Item -Path temp.json -Destination package.json
 
       - name: Install Rust 
         uses: dtolnay/rust-toolchain@stable
