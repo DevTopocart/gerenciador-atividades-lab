@@ -19,7 +19,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
@@ -50,11 +50,13 @@ export default function Atividades() {
 
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused";
+    startTime: Date | null;
     elapsedTime: number;
     nextCheck: Date;
     expiredCheck: Date | null;
   }>({
     running: "stopped",
+    startTime: null,
     elapsedTime: 0,
     nextCheck: new Date(),
     expiredCheck: null,
@@ -191,29 +193,32 @@ export default function Atividades() {
     }
   }, []);
 
+  function startTimer() {
+    updateActivityStatus();
+    setTimer((current) => ({
+      ...current,
+      running: "running",
+      startTime: new Date(),
+      nextCheck: new Date(Date.now() + generateRandomTime()),
+    }));
+  }
+  
   useEffect(() => {
     let interval: NodeJS.Timeout;
+
+    let now = new Date();
 
     if (timer.running === "running") {
       interval = setInterval(() => {
         setTimer((current) => ({
           ...current,
-          elapsedTime: current.elapsedTime + 1000,
+          elapsedTime: current.startTime?.getTime() ? now.getTime() - current.startTime.getTime() : 0,
         }));
       }, 1000);
     }
 
     return () => clearInterval(interval);
   }, [timer]);
-
-  function startTimer() {
-    updateActivityStatus();
-    setTimer((current) => ({
-      ...current,
-      running: "running",
-      nextCheck: new Date(Date.now() + generateRandomTime()),
-    }));
-  }
 
   function updateActivityStatus() {
     if (selectedIssue!.status.id == 17) {
@@ -224,15 +229,16 @@ export default function Atividades() {
   }
 
   function stopTimer() {
-    logTime(timer.elapsedTime);
-    setTimer((current) => ({ ...current, elapsedTime: 0, running: "stopped" }));
+    let stopTime = new Date();
+    logTime(stopTime.getTime() - timer.startTime!.getTime());
+    setTimer((current) => ({ ...current, elapsedTime: 0, startTime: null, running: "stopped" }));
   }
 
-  function pauseTimer() {
-    setTimer((current) => ({ ...current, running: "paused" }));
-  }
+  // function pauseTimer() {
+  //   setTimer((current) => ({ ...current, running: "paused" }));
+  // }
 
-  const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
+  // const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
 
   /* Timer de inatividade desabilitado temporariamente ate encontrarmos uma solucao mais elegante */
   // useEffect(() => {
@@ -289,6 +295,8 @@ export default function Atividades() {
   function handleGoToGestor() {
     history.push("/gestor", location.state);
   }
+
+  let now = new Date();
 
   return (
     <Box
@@ -531,6 +539,8 @@ export default function Atividades() {
                 gutterBottom
                 textAlign={"center"}
               >
+                {formatMs(timer.startTime ? now.getTime() - timer.startTime.getTime() : 0)}
+                <br></br>
                 {formatMs(timer.elapsedTime)}
               </Typography>
 
