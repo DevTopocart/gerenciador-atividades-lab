@@ -134,6 +134,7 @@ export async function getAllIssuesFromSubordinates(
   page: number = 0,
   pageSize: number = 100,
   issues: Issues[] = [],
+  issuesIds?: number[]
 ): Promise<Issues[] | undefined> {
   try {
     const request = await api.get(`/issues.json`, {
@@ -145,7 +146,7 @@ export async function getAllIssuesFromSubordinates(
           "[" + subordinatesIds.map((e) => String(e)).join(",") + "]"
         } OR assigned_to_id = ${
           "[" + subordinatesIds.map((e) => String(e)).join(",") + "]"
-        }`,
+        } ${issuesIds?.map(e => `OR issue_id = ${e}`).join(" ") ?? ""}`,
       },
     });
 
@@ -163,52 +164,61 @@ export async function getAllIssuesFromSubordinates(
   }
 }
 
-export async function setCurrentActivityForGroup(
-  id_group: number,
-  id_activity: number,
+export async function removeIssueFromGroup(
+  group_id: number,
+  issue_id: number
 ) {
   try {
-    await api.put(`/groups/${id_group}.json`, {
+    let group = (await api.get(`/groups/${group_id}.json`)).data.group as Group
+
+    let workedIssues = group.custom_fields?.find(e => e.id === 130)?.value as (number | string)[]
+    
+    const issueIdToRemove = issue_id;
+    const indexToRemove = workedIssues.indexOf(issueIdToRemove);
+
+    if (indexToRemove !== -1) {
+      workedIssues.splice(indexToRemove - 1, 3);
+    }
+
+    await api.put(`/groups/${group_id}.json`, {
       group: {
-        id: id_group,
+        id: group_id,
         custom_fields: [
           {
-            // 125 é o ID do campo customizado "Tarefa Atual"
-            id: 125,
-            name: "Tarefa Atual",
-            value: id_activity,
+            id: 130,
+            value: workedIssues,
           },
         ],
       },
     });
   } catch (error) {
+    throw error
     console.error(error);
   }
 }
 
-export async function getCurrentActivityForGroup(id_group: number) {
+export async function addIssueToGroup(
+  group_id: number,
+  issue_id: number
+) {
   try {
-    const group: Group = (await api.get(`/groups/${id_group}.json`)).data.group;
+    let group = (await api.get(`/groups/${group_id}.json`)).data.group as Group
 
-    if (!group || !group.custom_fields) return;
-
-    const currentActivity: Issues = (
-      await api.get(
-        `/issues/${group.custom_fields?.find((e) => e.id === 125)?.value}.json`,
-      )
-    ).data.issue;
-
-    const currentActivitiesAsCoworker: Issues[] = (
-      await api.get(`/issues.json`, {
-        params: {
-          set_filter: true,
-          query_string: `watcher_id = ${id_group} OR assigned_to_id = ${id_group}`,
-        },
-      })
-    ).data.issues;
-
-    return [currentActivity, ...currentActivitiesAsCoworker];
+    let workedIssues = group.custom_fields?.find(e => e.id === 130)?.value as (number | string)[]
+    
+    await api.put(`/groups/${group_id}.json`, {
+      group: {
+        id: group_id,
+        custom_fields: [
+          {
+            id: 130,
+            value: [...workedIssues,issue_id],
+          },
+        ],
+      },
+    });
   } catch (error) {
+    throw error
     console.error(error);
   }
 }

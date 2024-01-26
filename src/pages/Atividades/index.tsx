@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
-import { useLoading } from "../../components/FullPageLoader/hook";
+import { useLoading } from "../../hooks/useLoading";
 import { Issues, User } from "../../interfaces";
 import {
   createTimeEntryForGroup,
@@ -303,7 +303,7 @@ export default function Atividades() {
   // }, [timer]);
 
   function handleGoToGestor() {
-    history.push("/gestor", location.state);
+    history.push("/painel-gestor", location.state);
   }
 
   let now = new Date();

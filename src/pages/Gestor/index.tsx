@@ -4,31 +4,43 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import {
   Box,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogContent,
   Divider,
   IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Slide,
   TextField,
   Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { TransitionProps } from "react-transition-group/Transition";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
-import { useLoading } from "../../components/FullPageLoader/hook";
+import { useLoading } from "../../hooks/useLoading";
 import { Group, Issues, MinifiedUser, User } from "../../interfaces";
 import {
   getAllIssuesFromSubordinates,
   getCurrentActivityForGroup,
   getGroups,
   getUsers,
-  setCurrentActivityForGroup,
+  setCurrentActivityForGroup
 } from "../../services/easy";
 import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
 import { filterIssuesByStatus } from "../../utils/filterIssuesByStatus";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 import GestorCard from "./GestorCard";
+import { useGestor } from "./hooks";
 
 export default function Gestor() {
   const location: any = useLocation();
@@ -38,18 +50,26 @@ export default function Gestor() {
 
   const [usersSubordinates, setUserSubordinates] = useState<User[]>();
   const [groupSubordinates, setGroupSubordinates] = useState<Group[]>();
+  const {groupSelector,setGroupSelector} = useGestor()
   const [issues, setIssues] = useState<Issues[]>([]);
   const [searchkey, setSearchkey] = useState<string>("");
 
   useEffect(() => {
     setLoading(true);
     fetchUsers();
+    toast.info('Pressione SHIFT para selecionar uma atividade para vários usuários')
   }, []);
 
   useEffect(() => {
     if (!usersSubordinates || !groupSubordinates) return;
     fetchIssues().then(() => setLoading(false));
   }, [usersSubordinates, groupSubordinates]);
+
+  useEffect(() => {
+    if (!groupSelector.isOpen) return;
+    setLoading(true);
+    fetchIssues().then(() => setLoading(false));
+  },[groupSelector])
 
   function handleGoToAtividades() {
     history.push("/atividades", location.state);
@@ -217,17 +237,13 @@ export default function Gestor() {
               <SeletorAtividadeParaGrupos
                 key={index}
                 user={{ name: user.name, id: user.id }}
+                users={groupSubordinates!}
                 issues={
                   issues
                     .filter((issue) =>
                       filterIssuesBySearchKey(searchkey, issue),
                     )
                     .filter((issue) => filterIssuesByStatus(issue))!
-                }
-                currentActivity={
-                  Number(
-                    user.custom_fields?.find((e) => e.id === 125)?.value,
-                  ) || 0
                 }
               />
             );
@@ -265,17 +281,13 @@ export default function Gestor() {
 
 function SeletorAtividadeParaGrupos(props: {
   user: MinifiedUser;
+  users: Group[];
   issues: Issues[];
-  currentActivity?: number;
 }) {
   const theme = useTheme();
   const { loading, setLoading } = useLoading();
-
-  const [selectedIssue, setSelectedIssue] = useState<Issues | undefined>(
-    props.currentActivity
-      ? props.issues.find((e) => e.id == props.currentActivity)
-      : undefined,
-  );
+  const {groupSelector,setGroupSelector} = useGestor()
+  const [selectedIssue, setSelectedIssue] = useState<Issues>();
 
   useEffect(() => {
     getCurrentActivityForGroup(props.user.id).then(
@@ -283,16 +295,56 @@ function SeletorAtividadeParaGrupos(props: {
     );
   }, []);
 
-  function handleTaskClick(index: number, issue: Issues) {
+  async function handleUserSelectionClose() {
+    
     setLoading(true);
-    setCurrentActivityForGroup(props.user.id, issue.id).then(() => {
-      setLoading(false);
-      toast.success(
-        `A atividade "${issue.subject}" foi selecionada para o colaborador ${props.user.name}`,
-      );
-    });
 
-    setSelectedIssue(issue);
+    let groupsToUnassign = props.users.filter(foo => !groupSelector.groupsToAssign.map(bar => bar.id).includes(foo.id))
+    
+    groupSelector.groupsToAssign.forEach(async (group) => {
+
+      await setCurrentActivityForGroup(group.id, groupSelector.selectedIssue!.id).then(() => {
+        setLoading(false);
+        toast.success(
+          `A atividade "${selectedIssue!.subject}" foi selecionada para o colaborador ${group.name}`,
+        );
+      });
+    })
+
+    groupsToUnassign.forEach(async (group) => {
+
+      if (props.users.find(e => e.id === group.id)!.custom_fields?.find(e => e.id === 125)!.value !== groupSelector.selectedIssue!.id) return // nao remove a atividade se nao for a sua atual
+
+      await removeCurrentActivityForGroup(group.id).then(() => {
+        setLoading(false);
+        toast.success(
+          `A atividade "${selectedIssue!.subject}" foi removida do colaborador ${group.name}`,
+        );
+      });
+    })
+    
+    setSelectedIssue(groupSelector.selectedIssue);
+    setGroupSelector({isOpen: false, selectedIssue: undefined, groupsToAssign: []});
+  }
+
+  async function handleTaskClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>, issue: Issues) {
+    
+    if (e.shiftKey) {
+  
+      setGroupSelector({isOpen: true, selectedIssue: issue, groupsToAssign: props.users.filter(user => user.custom_fields?.find(e => e.id === 125)!.value === issue.id)});
+    } else {
+      
+      setLoading(true);
+
+      await setCurrentActivityForGroup(props.user.id, issue.id).then(() => {
+        setLoading(false);
+        toast.success(
+          `A atividade "${issue.subject}" foi selecionada para o colaborador ${props.user.name}`,
+        );
+      });
+  
+      setSelectedIssue(issue);
+    }
   }
 
   let issues = selectedIssue
@@ -307,6 +359,48 @@ function SeletorAtividadeParaGrupos(props: {
         padding: theme.spacing(1),
       }}
     >
+      <Dialog
+        open={groupSelector.isOpen}
+        onClose={() => handleUserSelectionClose()}
+        TransitionComponent={Transition}
+        fullWidth={true}
+        maxWidth="sm"
+      >
+        <DialogContent>
+          <Typography variant="h5" gutterBottom>Selecione os usuários que executarão esta tarefa</Typography>
+          <Divider/>
+          <List>
+            {props.users.map((user, index) => {
+              return (
+                <ListItem key={index}>
+                  <ListItemButton dense>
+                      <ListItemIcon>
+                        <Checkbox
+                          edge="start"
+                          disableRipple
+                          checked={groupSelector.groupsToAssign.map(e => e.id).includes(user.id)}
+                          sx={{
+                            "&.Mui-checked": {
+                              color: theme.palette.success.light,
+                            }
+                          }}
+                          onChange={e => e.target.checked ? setGroupSelector((current) => ({...current, groupsToAssign: [...current.groupsToAssign, user]})) : setGroupSelector((current) => ({...current, groupsToAssign: [...current.groupsToAssign.filter(e => e.id !== user.id)]}))}
+                        />
+                      </ListItemIcon>
+                      <ListItemText  primary={user.name} secondary={`Atividade atual: ${user.custom_fields?.find(e => e.id === 125)?.name}`} />
+                    </ListItemButton>
+                </ListItem>)
+            })}
+          </List>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}>
+            <Button variant="contained" color="success" sx={{width: '100px'}} onClick={() => handleUserSelectionClose()}>OK</Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
+
       <Typography variant="h5">{props.user.name}</Typography>
       <Typography
         variant="caption"
@@ -344,7 +438,7 @@ function SeletorAtividadeParaGrupos(props: {
             <GestorCard
               key={index}
               selectedIssue={selectedIssue}
-              handleTaskClick={() => handleTaskClick(index, task)}
+              handleTaskClick={e => handleTaskClick(e, task)}
               task={task}
             />
           );
@@ -424,3 +518,12 @@ function SeletorAtividadeParaUsuarios(props: {
     </Box>
   );
 }
+
+const Transition = forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
