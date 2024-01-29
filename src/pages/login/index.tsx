@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
 import { useLoading } from "../../hooks/useLoading";
 import { getGroups, getUsers } from "../../services/easy";
+import { authLdap } from "../../services/ldap";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 import logoTopocart from "./../../assets/logo_topocart.png";
@@ -35,7 +36,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // const ldap = await authLdap(user, password);
+      const ldap = await authLdap(user, password);
 
       const users = await getUsers();
       const groups = await getGroups();
