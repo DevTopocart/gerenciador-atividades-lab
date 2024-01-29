@@ -212,8 +212,8 @@ export default function PainelGestor() {
         id="content"
         sx={{
           width: "90%",
-          height: "100%",
-          maxHeight: "88%",
+          height: "80%",
+          maxHeight: "80%",
           display: "flex",
           flexDirection: "row",
           overflowX: "auto",

@@ -102,33 +102,6 @@ export async function getIssues(id_user: number) {
   }
 }
 
-export async function getAllIssues(
-  page: number = 0,
-  pageSize: number = 100,
-  issues: Issues[] = [],
-): Promise<Issues[] | undefined> {
-  try {
-    const request = await api.get(`/issues.json`, {
-      params: {
-        limit: pageSize,
-        offset: page * pageSize,
-      },
-    });
-
-    if (request.data.total_count > (page + 1) * pageSize) {
-      issues.push(...request.data.issues);
-      await getAllIssues(page + 1, pageSize, issues);
-    } else {
-      issues.push(...request.data.issues);
-    }
-
-    return issues;
-  } catch (error) {
-    console.error("Não foi possivel obter as issues do Easy Project", error);
-    throw error;
-  }
-}
-
 export async function getAllIssuesFromSubordinates(
   subordinatesIds: number[],
   page: number = 0,
@@ -152,7 +125,7 @@ export async function getAllIssuesFromSubordinates(
 
     if (request.data.total_count > (page + 1) * pageSize) {
       issues.push(...request.data.issues);
-      await getAllIssues(page + 1, pageSize, issues);
+      await getAllIssuesFromSubordinates(subordinatesIds, page + 1, pageSize, issues);
     } else {
       issues.push(...request.data.issues);
     }
