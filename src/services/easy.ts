@@ -1,5 +1,6 @@
 import { Group, Issues, User } from "../interfaces";
 import api from "../repositories/api";
+import { filter2ndElementFrom3PartsArray } from "../utils/filter2ndElementFrom3PartsArray";
 
 export async function getUsers(
   page: number = 0,
@@ -98,6 +99,7 @@ export async function getIssues(id_user: number) {
 
     return issues;
   } catch (error) {
+    console.error(error)
     throw error;
   }
 }
@@ -165,8 +167,8 @@ export async function removeIssueFromGroup(
       },
     });
   } catch (error) {
-    throw error
     console.error(error);
+    throw error
   }
 }
 
@@ -191,8 +193,8 @@ export async function addIssueToGroup(
       },
     });
   } catch (error) {
-    throw error
     console.error(error);
+    throw error
   }
 }
 
@@ -226,6 +228,7 @@ export async function createTimeEntryForGroup(
     return response;
   } catch (error) {
     console.error(error);
+    throw error
   }
 }
 
@@ -252,6 +255,7 @@ export async function createTimeEntryForUser(
     return response;
   } catch (error) {
     console.error(error);
+    throw error
   }
 }
 
@@ -270,5 +274,43 @@ export async function updateStatusActivity(
     return response;
   } catch (error) {
     console.error(error);
+    throw error
   }
 }
+
+export async function getIssuesFromGroupUser(
+  id_group: number,
+  id_supervisor: number
+ ) {
+  try {
+    const issuesFromSupervisor = await api.get("/issues.json", {
+      params: {
+        set_filter: true,
+        query_string: `watcher_id = ${id_supervisor} OR assigned_to_id = ${id_supervisor}`,
+      },
+    });
+
+    const issues: Issues[] = issuesFromSupervisor.data.issues;
+
+    for (let i = 0; i < issues.length; i++) {
+      const id_parent = issues[i].parent;
+      if (id_parent) {
+        const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
+        issues[i].name_parent = responseIssues.data.issue.subject;
+      } else {
+        issues[i].name_parent = undefined;
+      }
+    }
+
+    const groupUser = (await api.get(`/groups/${id_group}.json`)).data.group as Group;
+
+    let issuesIdsFromGroupUser = filter2ndElementFrom3PartsArray( groupUser.custom_fields?.find(e => e.id === 130)?.value as (number | string)[])
+
+    let issuesFromGroupUser = issues.filter(e => issuesIdsFromGroupUser.includes(e.id))
+
+    return issuesFromGroupUser;
+  } catch (error) {
+    console.error(error);
+    throw  error
+  }
+ }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { GroupsWithIssues, Issues, UsersWithIssues } from "../interfaces";
+import { filterIssuesByStatus } from "../utils/filterIssuesByStatus";
 
 export default function usePainelGestor() {
     const [groups,setGroups] = useState<GroupsWithIssues[] >();
@@ -17,6 +18,8 @@ export default function usePainelGestor() {
           }, new Map())
           .values(),
       ) : []) as Issues[];
+
+    let filteredIssues = uniqueIssues.filter(filterIssuesByStatus);
 
     
     let uniqueUsers = ((users && users.length > 0) ? Array.from(
@@ -36,7 +39,7 @@ export default function usePainelGestor() {
       ) : []) as GroupsWithIssues[];
 
     return {
-        issues: uniqueIssues,
+        issues: filteredIssues,
         groups: uniqueGroups,
         setGroups,
         users: uniqueUsers,

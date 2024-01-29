@@ -27,9 +27,9 @@ import { Issues, User } from "../../interfaces";
 import {
   createTimeEntryForGroup,
   createTimeEntryForUser,
-  getCurrentActivityForGroup,
   getGroup,
   getIssues,
+  getIssuesFromGroupUser,
   getUser,
   updateStatusActivity,
 } from "../../services/easy";
@@ -66,12 +66,12 @@ export default function Atividades() {
   });
 
   function handleTaskClick(index: number, issue: Issues) {
-    if (location.state.user.type === "group") {
-      toast.warn(
-        "Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador",
-      );
-      return;
-    }
+    // if (location.state.user.type === "group") {
+    //   toast.warn(
+    //     "Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador",
+    //   );
+    //   return;
+    // }
     setSelectedIssue(issue);
   }
 
@@ -138,44 +138,65 @@ export default function Atividades() {
     }
   }
 
-  async function fetchIssues() {
+  async function fetchIssues(): Promise<Issues[] | undefined> {
     setLoading(true);
 
     try {
-      const newIssues = await getIssues(location.state.user.id);
+
+      let issues: Issues[] = [];
+
+      if (location.state.user.type === "group") {
+        const freshSupervisor = await fetchSupervisor();
+        issues = await getIssuesFromGroupUser(location.state.user.id,freshSupervisor?.id!);
+      } else {
+        issues = await getIssues(location.state.user.id);
+      }
+
       const uniqueIssues = Array.from(
-        newIssues
+        issues
           .reduce((map, item) => {
             return map.has(item.id) ? map : map.set(item.id, item);
           }, new Map())
           .values(),
       );
       const filteredIssues = uniqueIssues.filter(filterIssuesByStatus);
-
-      setIssues(filteredIssues!);
+      
+      setIssues(filteredIssues);
       if (!selectedIssue) setSelectedIssue(filteredIssues![0]);
-      setLoading(false);
+
+      return filteredIssues;
     } catch (error) {
-      setLoading(false);
       toast.error(
         "Não foi possível obter a lista de atividades do Easy Project",
-      );
-      console.error(error);
+        );
+        console.error(error);
+    } finally {
+      setLoading(false);
     }
   }
 
-  async function fetchSupervisor() {
-    if (location.state.user.type === "user") {
-      const user = await getUser(location.state.user.id);
-      const user_supervisor = await getUser(user!.supervisor_user_id!);
-      setSupervisor(user_supervisor);
-    } else {
-      const group = await getGroup(location.state.user.id);
-      const supervisor_id: number = group!.custom_fields?.find(
-        (e) => e.id === 124,
-      )?.value;
-      const group_supervisor = await getUser(supervisor_id);
-      setSupervisor(group_supervisor);
+  async function fetchSupervisor(): Promise<User | undefined> {
+    try {
+      setLoading(true);
+      
+      if (location.state.user.type === "user") {
+        const user = await getUser(location.state.user.id);
+        const user_supervisor = await getUser(user!.supervisor_user_id!);
+        setSupervisor(user_supervisor);
+        return user_supervisor!;
+      } else {
+        const group = await getGroup(location.state.user.id);
+        const supervisor_id: number = group!.custom_fields?.find(
+          (e) => e.id === 124,
+        )?.value! as number;
+        const group_supervisor = await getUser(supervisor_id);
+        setSupervisor(group_supervisor);
+        return group_supervisor!;
+      }
+    } catch (error) {
+      toast.error("Não foi possível obter o gestor do usuário");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -184,16 +205,7 @@ export default function Atividades() {
   }, [selectedIssue]);
 
   useEffect(() => {
-    fetchIssues();
-    fetchSupervisor();
-    if (location.state.user.type === "group") {
-      getCurrentActivityForGroup(location.state.user.id).then((response) => {
-        if (response) {
-          setIssues(response);
-          setSelectedIssue(response[0]);
-        }
-      });
-    }
+    fetchIssues()
   }, []);
 
   function startTimer() {
