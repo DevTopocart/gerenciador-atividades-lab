@@ -12,7 +12,7 @@ import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
-import { useLoading } from "../../components/FullPageLoader/hook";
+import { useLoading } from "../../hooks/useLoading";
 import { getGroups, getUsers } from "../../services/easy";
 import { authLdap } from "../../services/ldap";
 import loader from "./../../assets/loader.svg";
