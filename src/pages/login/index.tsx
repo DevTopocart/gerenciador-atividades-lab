@@ -7,12 +7,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
+import { useLoading } from "../../hooks/useLoading";
 import { getGroups, getUsers } from "../../services/easy";
 import { authLdap } from "../../services/ldap";
 import loader from "./../../assets/loader.svg";
@@ -27,13 +27,13 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm();
   const history = useHistory();
-  const [isLoading, setIsLoading] = useState(false);
+  const {loading,setLoading} = useLoading()
 
   async function onSubmit(data: any) {
     let user = data.Usuario;
     let password = data.Senha;
 
-    setIsLoading(true);
+    setLoading(true);
 
     try {
       const ldap = await authLdap(user, password);
@@ -44,12 +44,12 @@ export default function LoginPage() {
       let foundGroup = groups!.find((e) => e.name == user);
 
       if (foundUser == undefined && foundGroup == undefined) {
-        setIsLoading(false);
+        setLoading(false);
         toast.error(
           `O usuário ${user} não foi encontrado no Easy Project, verifique com seu líder.`,
         );
       } else {
-        setIsLoading(false);
+        setLoading(false);
         history.push({
           pathname: "/atividades",
           state: {
@@ -63,7 +63,7 @@ export default function LoginPage() {
       if (e.response && e.response.data && e.response.data.message) {
         toast.error(e.response.data.message);
       }
-      setIsLoading(false);
+      setLoading(false);
     }
   }
 
@@ -82,7 +82,6 @@ export default function LoginPage() {
         backgroundSize: "cover",
       }}
     >
-
       <Typography
         variant="h3"
         fontWeight={"bold"}
@@ -141,11 +140,12 @@ export default function LoginPage() {
                 type="submit"
                 variant="contained"
                 color="secondary"
+                disabled={loading}
                 sx={{
                   padding: "1rem",
                 }}
               >
-                {!isLoading ? (
+                {!loading ? (
                   "Acessar"
                 ) : (
                   <>
