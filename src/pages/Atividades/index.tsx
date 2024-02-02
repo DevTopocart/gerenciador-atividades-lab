@@ -147,7 +147,6 @@ export default function Atividades() {
 
       const freshSupervisor = await fetchSupervisor();
       setSupervisor(freshSupervisor);
-      console.log("🚀 ~ fetchIssues ~ freshSupervisor:", freshSupervisor)
       
       if (location.state.user.type === "group") {
         issues = await getIssuesFromGroupUser(location.state.user.id,freshSupervisor?.id!);

@@ -10,8 +10,8 @@ export default function CardPainelGestor(props: {
   return (
     <Box
       sx={{
-        width: "100%",
-        minWidth: "100%",
+        width: "98%",
+        minWidth: "98%",
       }}
     >
       <Card
@@ -44,8 +44,9 @@ export default function CardPainelGestor(props: {
             #{props.issue.id} - {props.issue.status.name}
           </Typography>
           <Typography variant="h6">{props.issue.subject}</Typography>
-          {props.issue.name_parent && <Typography variant="caption">{props.issue.name_parent}</Typography>}
-          <Typography variant="caption">{props.issue.project.name}</Typography>
+          {props.issue.name_parent && <Typography variant="caption">Subtarefa de {props.issue.name_parent}</Typography>}
+          <br></br>
+          <Typography variant="caption">Projeto {props.issue.project.name}</Typography>
         </CardContent>
       </Card>
     </Box>

@@ -85,19 +85,21 @@ export async function getIssues(id_user: number) {
       },
     });
 
-    const issues: Issues[] = response.data.issues;
+    let issues: Issues[] = response.data.issues;
 
-    for (let i = 0; i < issues.length; i++) {
-      const id_parent = issues[i].parent;
+    let issuesWithParents = await Promise.all(issues.map(async (issue) => {
+      const id_parent = issue.parent;
       if (id_parent) {
         const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
-        issues[i].name_parent = responseIssues.data.issue.subject;
+        issue.name_parent = responseIssues.data.issue.subject;
+        return issue
       } else {
-        issues[i].name_parent = undefined;
+        issue.name_parent = undefined;
+        return issue
       }
-    }
+    }))
 
-    return issues;
+    return issuesWithParents;
   } catch (error) {
     console.error(error)
     throw error;
