@@ -145,8 +145,11 @@ export default function Atividades() {
 
       let issues: Issues[] = [];
 
+      const freshSupervisor = await fetchSupervisor();
+      setSupervisor(freshSupervisor);
+      console.log("🚀 ~ fetchIssues ~ freshSupervisor:", freshSupervisor)
+      
       if (location.state.user.type === "group") {
-        const freshSupervisor = await fetchSupervisor();
         issues = await getIssuesFromGroupUser(location.state.user.id,freshSupervisor?.id!);
       } else {
         issues = await getIssues(location.state.user.id);
@@ -463,6 +466,7 @@ export default function Atividades() {
             <Box
               sx={{
                 overflowY: "auto",
+                width: "98%",
               }}
             >
               {issues
@@ -494,7 +498,7 @@ export default function Atividades() {
                       >
                         <CardContent>
                           <Typography
-                            sx={{ fontSize: 14 }}
+                            sx={{ fontSize: 14}}
                             color="text.secondary"
                           >
                             #{task.id} - {task.status.name}
