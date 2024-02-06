@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
 import { useLoading } from "../../hooks/useLoading";
 import { getGroups, getUsers } from "../../services/easy";
+import { authLdap } from "../../services/ldap";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 import logoTopocart from "./../../assets/logo_topocart.png";
@@ -35,7 +36,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // const ldap = await authLdap(user, password);
+      const ldap = await authLdap(user, password);
+
+      if (ldap.ok === false) {
+        ldap.status === 401 ? toast.error("Usuário ou senha inválidos") : toast.error("Erro ao autenticar usuário")
+        throw new Error("Erro ao autenticar usuário")
+      }
+      toast.info("Usuário autenticado com sucesso, recuperando informações do Easy Project. Por favor, aguarde...")
 
       const users = await getUsers();
       const groups = await getGroups();
