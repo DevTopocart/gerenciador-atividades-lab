@@ -99,6 +99,12 @@ export default function PainelGestor() {
   }
 
   async function handleTaskClickOnGroup(event: React.MouseEvent<HTMLDivElement, MouseEvent>, issue: Issues, group: GroupsWithIssues) {
+
+    if(event.shiftKey) {
+      console.log(event)
+      return
+    }
+
     setLoading(true)
     if (group.issues?.map(e => e.id).includes(issue.id)) {
       try {
