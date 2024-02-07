@@ -18,7 +18,7 @@ function App() {
           <Atividades />
         </Route>
         <Route path="/painel-gestor/">
-          <PainelGestor/>
+          <PainelGestor />
         </Route>
       </Switch>
     </Theme>

@@ -92,19 +92,21 @@ export async function getIssues(
       },
     });
 
-    let issuesToGetParents: Issues[] = request.data.issues
+    let issuesToGetParents: Issues[] = request.data.issues;
 
-    let issuesWithParents = await Promise.all(issuesToGetParents.map(async (issue) => {
+    let issuesWithParents = await Promise.all(
+      issuesToGetParents.map(async (issue) => {
         const id_parent = issue.parent;
         if (id_parent) {
           const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
           issue.name_parent = responseIssues.data.issue.subject;
-          return issue
+          return issue;
         } else {
           issue.name_parent = undefined;
-          return issue
+          return issue;
         }
-      }))
+      }),
+    );
 
     if (request.data.total_count > (page + 1) * pageSize) {
       issues.push(...issuesWithParents);
@@ -125,7 +127,7 @@ export async function getAllIssuesFromSubordinates(
   page: number = 0,
   pageSize: number = 100,
   issues: Issues[] = [],
-  issuesIds?: number[]
+  issuesIds?: number[],
 ): Promise<Issues[] | undefined> {
   try {
     const request = await api.get(`/issues.json`, {
@@ -137,13 +139,18 @@ export async function getAllIssuesFromSubordinates(
           "[" + subordinatesIds.map((e) => String(e)).join(",") + "]"
         } OR assigned_to_id = ${
           "[" + subordinatesIds.map((e) => String(e)).join(",") + "]"
-        } ${issuesIds?.map(e => `OR issue_id = ${e}`).join(" ") ?? ""}`,
+        } ${issuesIds?.map((e) => `OR issue_id = ${e}`).join(" ") ?? ""}`,
       },
     });
 
     if (request.data.total_count > (page + 1) * pageSize) {
       issues.push(...request.data.issues);
-      await getAllIssuesFromSubordinates(subordinatesIds, page + 1, pageSize, issues);
+      await getAllIssuesFromSubordinates(
+        subordinatesIds,
+        page + 1,
+        pageSize,
+        issues,
+      );
     } else {
       issues.push(...request.data.issues);
     }
@@ -155,15 +162,13 @@ export async function getAllIssuesFromSubordinates(
   }
 }
 
-export async function removeIssueFromGroup(
-  group_id: number,
-  issue_id: number
-) {
+export async function removeIssueFromGroup(group_id: number, issue_id: number) {
   try {
-    let group = (await api.get(`/groups/${group_id}.json`)).data.group as Group
+    let group = (await api.get(`/groups/${group_id}.json`)).data.group as Group;
 
-    let workedIssues = group.custom_fields?.find(e => e.id === 130)?.value as (number | string)[]
-    
+    let workedIssues = group.custom_fields?.find((e) => e.id === 130)
+      ?.value as (number | string)[];
+
     const issueIdToRemove = issue_id;
     const indexToRemove = workedIssues.indexOf(issueIdToRemove);
 
@@ -184,33 +189,31 @@ export async function removeIssueFromGroup(
     });
   } catch (error) {
     console.error(error);
-    throw error
+    throw error;
   }
 }
 
-export async function addIssueToGroup(
-  group_id: number,
-  issue_id: number
-) {
+export async function addIssueToGroup(group_id: number, issue_id: number) {
   try {
-    let group = (await api.get(`/groups/${group_id}.json`)).data.group as Group
+    let group = (await api.get(`/groups/${group_id}.json`)).data.group as Group;
 
-    let workedIssues = group.custom_fields?.find(e => e.id === 130)?.value as (number | string)[]
-    
+    let workedIssues = group.custom_fields?.find((e) => e.id === 130)
+      ?.value as (number | string)[];
+
     await api.put(`/groups/${group_id}.json`, {
       group: {
         id: group_id,
         custom_fields: [
           {
             id: 130,
-            value: [...workedIssues,issue_id],
+            value: [...workedIssues, issue_id],
           },
         ],
       },
     });
   } catch (error) {
     console.error(error);
-    throw error
+    throw error;
   }
 }
 
@@ -244,7 +247,7 @@ export async function createTimeEntryForGroup(
     return response;
   } catch (error) {
     console.error(error);
-    throw error
+    throw error;
   }
 }
 
@@ -271,7 +274,7 @@ export async function createTimeEntryForUser(
     return response;
   } catch (error) {
     console.error(error);
-    throw error
+    throw error;
   }
 }
 
@@ -290,14 +293,14 @@ export async function updateStatusActivity(
     return response;
   } catch (error) {
     console.error(error);
-    throw error
+    throw error;
   }
 }
 
 export async function getIssuesFromGroupUser(
   id_group: number,
-  id_supervisor: number
- ) {
+  id_supervisor: number,
+) {
   try {
     const issuesFromSupervisor = await api.get("/issues.json", {
       params: {
@@ -318,15 +321,23 @@ export async function getIssuesFromGroupUser(
       }
     }
 
-    const groupUser = (await api.get(`/groups/${id_group}.json`)).data.group as Group;
+    const groupUser = (await api.get(`/groups/${id_group}.json`)).data
+      .group as Group;
 
-    let issuesIdsFromGroupUser = filter2ndElementFrom3PartsArray( groupUser.custom_fields?.find(e => e.id === 130)?.value as (number | string)[])
+    let issuesIdsFromGroupUser = filter2ndElementFrom3PartsArray(
+      groupUser.custom_fields?.find((e) => e.id === 130)?.value as (
+        | number
+        | string
+      )[],
+    );
 
-    let issuesFromGroupUser = issues.filter(e => issuesIdsFromGroupUser.includes(e.id))
+    let issuesFromGroupUser = issues.filter((e) =>
+      issuesIdsFromGroupUser.includes(e.id),
+    );
 
     return issuesFromGroupUser;
   } catch (error) {
     console.error(error);
-    throw  error
+    throw error;
   }
- }
+}
