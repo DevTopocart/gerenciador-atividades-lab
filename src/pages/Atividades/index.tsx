@@ -167,7 +167,9 @@ export default function Atividades() {
       if (!selectedIssue) setSelectedIssue(filteredIssues![0]);
 
       return filteredIssues;
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response.status === 429) toast.error("Muitas requisições ao Easy Project, por favor, notifique à TI Produção e tente novamente em alguns segundos", {autoClose: 60000})
+      
       toast.error(
         "Não foi possível obter a lista de atividades do Easy Project",
         );
