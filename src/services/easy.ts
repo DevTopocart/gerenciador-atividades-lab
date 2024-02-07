@@ -76,32 +76,46 @@ export async function getGroup(id: number): Promise<Group | undefined> {
   }
 }
 
-export async function getIssues(id_user: number) {
+export async function getIssues(
+  id_user: number,
+  page: number = 0,
+  pageSize: number = 25,
+  issues: Issues[] = [],
+): Promise<Issues[]> {
   try {
-    const response = await api.get("/issues.json", {
+    const request = await api.get(`/issues.json`, {
       params: {
+        limit: pageSize,
+        offset: page * pageSize,
         set_filter: true,
-        query_string: `watcher_id = ${id_user} OR assigned_to_id = ${id_user}`,
+        query_string: `watcher_id = ${id_user} OR assigned_to_id = ${id_user} AND (status_id = 3 OR status_id = 20)`,
       },
     });
 
-    let issues: Issues[] = response.data.issues;
+    let issuesToGetParents: Issues[] = request.data.issues
 
-    let issuesWithParents = await Promise.all(issues.map(async (issue) => {
-      const id_parent = issue.parent;
-      if (id_parent) {
-        const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
-        issue.name_parent = responseIssues.data.issue.subject;
-        return issue
-      } else {
-        issue.name_parent = undefined;
-        return issue
-      }
-    }))
+    let issuesWithParents = await Promise.all(issuesToGetParents.map(async (issue) => {
+        const id_parent = issue.parent;
+        if (id_parent) {
+          const responseIssues = await api.get(`/issues/${id_parent.id}.json`);
+          issue.name_parent = responseIssues.data.issue.subject;
+          return issue
+        } else {
+          issue.name_parent = undefined;
+          return issue
+        }
+      }))
 
-    return issuesWithParents;
+    if (request.data.total_count > (page + 1) * pageSize) {
+      issues.push(...issuesWithParents);
+      await getIssues(id_user, page + 1, pageSize, issues);
+    } else {
+      issues.push(...issuesWithParents);
+    }
+
+    return issues;
   } catch (error) {
-    console.error(error)
+    console.error("Não foi possivel obter os usuários do Easy Project", error);
     throw error;
   }
 }

@@ -41,57 +41,67 @@ export default function PainelGestor() {
   const gestor = usePainelGestor()
 
   useEffect(() => {
-    setLoading(true)
-    fetchSubordinatesAndIssues().then(() => setLoading(false))
+    fetchSubordinatesAndIssues()
   },[])
 
   async function fetchSubordinatesAndIssues() {
-    const allGroups = await getGroups()
-    const allUsers = await getUsers()
-
-    let groupsSupervised: GroupsWithIssues[] = allGroups?.filter(e => e.custom_fields?.find(e => e.id === 124)?.value === user.id)!
-    let usersSupervised: UsersWithIssues[] = allUsers?.filter(e => e.supervisor_user_id === user.id || e.id === user.id)!
-
-    let issuesIdsCurrentlyWorkedByGroups = new Set()
-
-    groupsSupervised?.forEach((e,i,a) => {
-      let issuesIds = filter2ndElementFrom3PartsArray(e.custom_fields!.find(e => e.id === 130)?.value as Array<string>)
+    setLoading(true)
+    try {
       
-      issuesIds.forEach(e => issuesIdsCurrentlyWorkedByGroups.add(e))
-    })
-
-    const issuesFromSubordinates = await getAllIssuesFromSubordinates(
-      [...usersSupervised!.map(e => e.id), ...groupsSupervised!.map(e => e.id)],
-      0, 
-      25, 
-      [],
-      Array.from(issuesIdsCurrentlyWorkedByGroups) as Array<number>
-    )
-    if (!issuesFromSubordinates || issuesFromSubordinates.length === 0) toast.info("Nenhuma atividade encontrada")
-
-    issuesFromSubordinates?.forEach((issue,i,a) => {
-      groupsSupervised?.forEach((group) => {
-        let issuesIdsFromGroup = filter2ndElementFrom3PartsArray(group.custom_fields?.find(e => e.id === 130 && e.field_format === 'easy_lookup')?.value as Array<number | string>) 
-
-        if (issuesIdsFromGroup.includes(issue.id)) {
-          group.issues ? group.issues.push(issue) : group.issues = [issue]               
-        }
+      const allGroups = await getGroups()
+      const allUsers = await getUsers()
+  
+      let groupsSupervised: GroupsWithIssues[] = allGroups?.filter(e => e.custom_fields?.find(e => e.id === 124)?.value === user.id)!
+      let usersSupervised: UsersWithIssues[] = allUsers?.filter(e => e.supervisor_user_id === user.id || e.id === user.id)!
+  
+      let issuesIdsCurrentlyWorkedByGroups = new Set()
+  
+      groupsSupervised?.forEach((e,i,a) => {
+        let issuesIds = filter2ndElementFrom3PartsArray(e.custom_fields!.find(e => e.id === 130)?.value as Array<string>)
+        
+        issuesIds.forEach(e => issuesIdsCurrentlyWorkedByGroups.add(e))
       })
-
-      if (i === a.length - 1) gestor.setGroups(groupsSupervised)
-    })
-
-    const issuesFromGestor = await getIssues(user.id)
-    
-    const gestorIndex = usersSupervised.findIndex(e => e.id === user.id);
-
-    if (gestorIndex !== -1) {
-      const updatedGestor = { ...usersSupervised[gestorIndex] };
-      updatedGestor.issues = issuesFromGestor || [];
-      usersSupervised[gestorIndex] = updatedGestor;
+  
+      const issuesFromSubordinates = await getAllIssuesFromSubordinates(
+        [...usersSupervised!.map(e => e.id), ...groupsSupervised!.map(e => e.id)],
+        0, 
+        25, 
+        [],
+        Array.from(issuesIdsCurrentlyWorkedByGroups) as Array<number>
+      )
+      if (!issuesFromSubordinates || issuesFromSubordinates.length === 0) toast.info("Nenhuma atividade encontrada")
+  
+      issuesFromSubordinates?.forEach((issue,i,a) => {
+        groupsSupervised?.forEach((group) => {
+          let issuesIdsFromGroup = filter2ndElementFrom3PartsArray(group.custom_fields?.find(e => e.id === 130 && e.field_format === 'easy_lookup')?.value as Array<number | string>) 
+  
+          if (issuesIdsFromGroup.includes(issue.id)) {
+            group.issues ? group.issues.push(issue) : group.issues = [issue]               
+          }
+        })
+  
+        if (i === a.length - 1) gestor.setGroups(groupsSupervised)
+      })
+  
+      const issuesFromGestor = await getIssues(user.id)
+      
+      const gestorIndex = usersSupervised.findIndex(e => e.id === user.id);
+  
+      if (gestorIndex !== -1) {
+        const updatedGestor = { ...usersSupervised[gestorIndex] };
+        updatedGestor.issues = issuesFromGestor || [];
+        usersSupervised[gestorIndex] = updatedGestor;
+      }
+  
+      gestor.setUsers(usersSupervised|| [])
+    } catch (error: any) {
+      
+      if (error.response.status === 429) toast.error("Muitas requisições ao Easy Project, por favor, notifique à TI Produção e tente novamente em alguns segundos", {autoClose: 60000})
+      
+      toast.error("Houve um erro ao buscar as atividades dos subordinados")
+    } finally {
+      setLoading(false)
     }
-
-    gestor.setUsers(usersSupervised|| [])
   }
 
   function handleGoToAtividades() {
