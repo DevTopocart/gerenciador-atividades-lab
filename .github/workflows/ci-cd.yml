@@ -63,6 +63,7 @@ jobs:
 
       - name: Create Manifest
         run: |
+          mkdir .\src-tauri\target\release\bundle\manifest
           $VERSION = "${{ needs.make-release.outputs.VERSION }}"
           $DATE = Get-Date -Format "yyyy-MM-dd"
           $S3_URL = "https://topocart.s3.amazonaws.com/gerenciador-de-atividades/gerenciador-atividades.msi" # Modify as necessary
