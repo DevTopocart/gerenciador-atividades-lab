@@ -44,7 +44,7 @@ export default function Atividades() {
   const location: any = useLocation();
   const history = useHistory();
   const theme = useTheme();
-  const {loading,setLoading} = useLoading()
+  const { loading, setLoading } = useLoading();
   const [issues, setIssues] = useState<Issues[]>([]);
   const [selectedIssue, setSelectedIssue] = useState<Issues>();
   const [supervisor, setSupervisor] = useState<User>();
@@ -142,14 +142,16 @@ export default function Atividades() {
     setLoading(true);
 
     try {
-
       let issues: Issues[] = [];
 
       const freshSupervisor = await fetchSupervisor();
       setSupervisor(freshSupervisor);
-      
+
       if (location.state.user.type === "group") {
-        issues = await getIssuesFromGroupUser(location.state.user.id,freshSupervisor?.id!);
+        issues = await getIssuesFromGroupUser(
+          location.state.user.id,
+          freshSupervisor?.id!,
+        );
       } else {
         issues = await getIssues(location.state.user.id);
       }
@@ -162,18 +164,22 @@ export default function Atividades() {
           .values(),
       );
       const filteredIssues = uniqueIssues.filter(filterIssuesByStatus);
-      
+
       setIssues(filteredIssues);
       if (!selectedIssue) setSelectedIssue(filteredIssues![0]);
 
       return filteredIssues;
     } catch (error: any) {
-      if (error.response.status === 429) toast.error("Muitas requisições ao Easy Project, por favor, notifique à TI Produção e tente novamente em alguns segundos", {autoClose: 60000})
-      
+      if (error.response.status === 429)
+        toast.error(
+          "Muitas requisições ao Easy Project, por favor, notifique à TI Produção e tente novamente em alguns segundos",
+          { autoClose: 60000 },
+        );
+
       toast.error(
         "Não foi possível obter a lista de atividades do Easy Project",
-        );
-        console.error(error);
+      );
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -182,7 +188,7 @@ export default function Atividades() {
   async function fetchSupervisor(): Promise<User | undefined> {
     try {
       setLoading(true);
-      
+
       if (location.state.user.type === "user") {
         const user = await getUser(location.state.user.id);
         const user_supervisor = await getUser(user!.supervisor_user_id!);
@@ -209,7 +215,7 @@ export default function Atividades() {
   }, [selectedIssue]);
 
   useEffect(() => {
-    fetchIssues()
+    fetchIssues();
   }, []);
 
   function startTimer() {
@@ -499,7 +505,7 @@ export default function Atividades() {
                       >
                         <CardContent>
                           <Typography
-                            sx={{ fontSize: 14}}
+                            sx={{ fontSize: 14 }}
                             color="text.secondary"
                           >
                             #{task.id} - {task.status.name}

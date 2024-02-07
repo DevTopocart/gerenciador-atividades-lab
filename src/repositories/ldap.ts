@@ -1,4 +1,4 @@
-import { http as Http } from '@tauri-apps/api';
+import { http as Http } from "@tauri-apps/api";
 import axios from "axios";
 import axiosTauriApiAdapter from "axios-tauri-api-adapter";
 
@@ -8,28 +8,32 @@ const ldap = axios.create({
   baseURL: "https://ldap.topocart.dev.br",
 });
 
-export default async function fetchLdap(endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET', body?: any) {
-  const url = new URL(endpoint, 'https://ldap.topocart.dev.br');
+export default async function fetchLdap(
+  endpoint: string,
+  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
+  body?: any,
+) {
+  const url = new URL(endpoint, "https://ldap.topocart.dev.br");
 
   const options = {
     method: method,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: body ? body : undefined,
   };
 
   try {
-    const client = await Http.getClient()
+    const client = await Http.getClient();
 
     const response = await client.post(url.toString(), {
       payload: options.body,
-      type: 'Json',
-    })
+      type: "Json",
+    });
 
-    return response
+    return response;
   } catch (error) {
-    console.error('Tauri Http.Fetch API error:', error);
+    console.error("Tauri Http.Fetch API error:", error);
     throw error;
   }
-};
+}

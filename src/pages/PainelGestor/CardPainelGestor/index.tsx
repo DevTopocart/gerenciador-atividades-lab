@@ -18,15 +18,13 @@ export default function CardPainelGestor(props: {
         sx={{
           width: "100%",
           marginTop: "2%",
-          backgroundColor:
-            props.isSelected
-              ? theme.palette.success.dark
-              : theme.palette.primary.dark,
+          backgroundColor: props.isSelected
+            ? theme.palette.success.dark
+            : theme.palette.primary.dark,
           ":hover": {
-            backgroundColor:
-              props.isSelected
-                ? theme.palette.success.light
-                : theme.palette.primary.main,
+            backgroundColor: props.isSelected
+              ? theme.palette.success.light
+              : theme.palette.primary.main,
             color: theme.palette.primary.contrastText,
             cursor: "pointer",
           },
@@ -44,9 +42,15 @@ export default function CardPainelGestor(props: {
             #{props.issue.id} - {props.issue.status.name}
           </Typography>
           <Typography variant="h6">{props.issue.subject}</Typography>
-          {props.issue.name_parent && <Typography variant="caption">Subtarefa de {props.issue.name_parent}</Typography>}
+          {props.issue.name_parent && (
+            <Typography variant="caption">
+              Subtarefa de {props.issue.name_parent}
+            </Typography>
+          )}
           <br></br>
-          <Typography variant="caption">Projeto {props.issue.project.name}</Typography>
+          <Typography variant="caption">
+            Projeto {props.issue.project.name}
+          </Typography>
         </CardContent>
       </Card>
     </Box>
