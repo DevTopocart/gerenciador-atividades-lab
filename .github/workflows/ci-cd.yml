@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/self-update
       - pipeline
 
 jobs:
@@ -59,9 +60,41 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+
+      - name: Create Manifest
+        run: |
+          $VERSION = "${{ needs.make-release.outputs.VERSION }}"
+          $DATE = Get-Date -Format "yyyy-MM-dd"
+          $S3_URL = "https://topocart.s3.amazonaws.com/gerenciador-de-atividades/gerenciador-atividades.msi" # Modify as necessary
+    
+          $manifest = @{
+            version = $VERSION
+            notes = $VERSION
+            pub_date = $DATE
+            platforms = @{
+              "windows-x86_64" = @{
+                signature = $VERSION
+                url = $S3_URL
+              }
+            }
+          }
+    
+          $manifest | ConvertTo-Json -Depth 10 > .\src-tauri\target\release\bundle\msi\pkg\manifest\manifest.json
+  
+      - uses: shallwefootball/s3-upload-action@master
+        name: Upload manifest to S3
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: "topocart"
+          destination_dir: 'gerenciador-de-atividades'
+          source_dir: '.\src-tauri\target\release\bundle\msi\pkg\manifest'
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 
       - name: Rename app
         run: |
