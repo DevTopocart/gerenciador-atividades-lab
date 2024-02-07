@@ -79,7 +79,7 @@ export interface User {
   supervisor_user_id?: number;
 }
 
-export type UsersWithIssues = User & { issues?: Issues[]}
+export type UsersWithIssues = User & { issues?: Issues[] };
 
 export interface Workingtimecalendar {
   id: number;
@@ -89,24 +89,23 @@ export interface Workingtimecalendar {
   time_to: string;
 }
 
-
 type CustomFieldMultipleLookup = {
-  field_format: 'easy_lookup';
+  field_format: "easy_lookup";
   multiple: boolean;
   value: Array<number | string>;
-}
+};
 
 type CustomFieldGenericFormat = {
   field_format: string;
-  value: number | string
-}
+  value: number | string;
+};
 
 export type Customfield = {
   id: number;
   name: string;
   internal_name?: any;
   field_format: string;
-} & (CustomFieldMultipleLookup | CustomFieldGenericFormat)
+} & (CustomFieldMultipleLookup | CustomFieldGenericFormat);
 
 export interface Easyusertype {
   id: number;
@@ -121,7 +120,7 @@ export interface Group {
   custom_fields?: Customfield[];
 }
 
-export type GroupsWithIssues = Group & { issues?: Issues[]}
+export type GroupsWithIssues = Group & { issues?: Issues[] };
 
 export interface MinifiedUser {
   id: number;
