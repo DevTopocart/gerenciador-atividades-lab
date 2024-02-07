@@ -1,9 +1,9 @@
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
-* {
+/* * {
   scrollbar-width: auto;
   scrollbar-color: #ffffff #ffffff;
-}
+} */
 
 /* Chrome, Edge, and Safari */
 *::-webkit-scrollbar {

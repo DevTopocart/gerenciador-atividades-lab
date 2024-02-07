@@ -1,7 +1,10 @@
 import {
   Box,
+  Dialog,
+  DialogContent,
   Divider,
   IconButton,
+  Slide,
   TextField,
   Tooltip,
   Typography,
@@ -12,13 +15,16 @@ import { FullPageLoader } from "../../components/FullPageLoader";
 import { useLoading } from "../../hooks/useLoading";
 import { Loader } from "../login/styles";
 
+import AddTaskIcon from '@mui/icons-material/AddTask';
 import Groups2Icon from "@mui/icons-material/Groups2";
 import HelpIcon from "@mui/icons-material/Help";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { TransitionProps } from "react-transition-group/Transition";
 import loader from "../../assets/loader.svg";
 import background from "../../assets/login-background.jpg";
 import usePainelGestor from "../../hooks/usePainelGestor";
@@ -35,6 +41,9 @@ export default function PainelGestor() {
   const history = useHistory();
   const theme = useTheme();
   const { loading, setLoading } = useLoading();
+
+  const [openUserSelector,setOpenUserSelector] = useState(false)
+  const [issueToAssign,setIssueToAssign] = useState<Issues>()
 
   const [searchKey,setSearchKey] = useState("")
 
@@ -98,10 +107,12 @@ export default function PainelGestor() {
     history.push("/atividades", location.state);
   }
 
-  async function handleTaskClickOnGroup(event: React.MouseEvent<HTMLDivElement, MouseEvent>, issue: Issues, group: GroupsWithIssues) {
+  async function handleTaskClickOnGroup(event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>, issue: Issues, group: GroupsWithIssues) {
 
     if(event.shiftKey) {
       console.log(event)
+      setOpenUserSelector(true)
+      setIssueToAssign(issue)
       return
     }
 
@@ -152,6 +163,29 @@ export default function PainelGestor() {
           <Loader src={loader}></Loader>
         </FullPageLoader>
       )}
+      
+      <Dialog
+        open={openUserSelector}
+        onClose={() => setOpenUserSelector(false)}
+        TransitionComponent={Transition}
+        fullWidth={true}
+        maxWidth="lg"
+      >
+        {issueToAssign && <DialogContent>
+          <Typography variant="h6">Selecione os usuários para atribuir à esta tarefa:</Typography>
+          <Divider></Divider>
+          {
+            gestor.groups?.map((group,i) => 
+              <Box key={i} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Typography variant="h6">{group.name}</Typography>
+                <IconButton onClick={(event) => handleTaskClickOnGroup(event,issueToAssign!,group)}>
+                  {group.issues?.map(e => e.id).includes(issueToAssign.id) ? <RemoveCircleIcon color="warning" /> : <AddTaskIcon color="success" /> }
+                </IconButton>
+              </Box>
+            )
+          }
+        </DialogContent>}
+      </Dialog>
 
       <Box
         id="header"
@@ -322,7 +356,23 @@ export default function PainelGestor() {
             )
           }
 
+
       </Box>
+      <Typography
+        variant="caption"
+      >
+        DICA: Pressione <b>SHIFT</b> e selecione uma tarefa para atribui-la a multiplos usuários
+      </Typography>
     </Box>
   );
 }
+
+const Transition = forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+  
