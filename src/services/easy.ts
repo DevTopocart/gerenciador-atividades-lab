@@ -302,14 +302,7 @@ export async function getIssuesFromGroupUser(
   id_supervisor: number,
 ) {
   try {
-    const issuesFromSupervisor = await api.get("/issues.json", {
-      params: {
-        set_filter: true,
-        query_string: `watcher_id = ${id_supervisor} OR assigned_to_id = ${id_supervisor}`,
-      },
-    });
-
-    const issues: Issues[] = issuesFromSupervisor.data.issues;
+    const issues = await getIssues(id_supervisor);
 
     for (let i = 0; i < issues.length; i++) {
       const id_parent = issues[i].parent;
