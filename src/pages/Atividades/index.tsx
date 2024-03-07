@@ -60,7 +60,7 @@ export default function Atividades() {
     nextCheck: Date;
     expiredCheck: Date | null;
   }>({
-    running: "checking",
+    running: "stopped",
     startTime: null,
     pausedTime: null,
     elapsedTime: 0,
