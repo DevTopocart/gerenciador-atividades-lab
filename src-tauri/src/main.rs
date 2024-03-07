@@ -35,6 +35,11 @@ fn main() {
 
     let _app = tauri::Builder::default()    
         .system_tray(tray)
+        .setup(|app| {
+            let window = app.get_window("main").unwrap(); // Substitua "main" pelo nome da sua janela
+            window.set_always_on_top(true).unwrap();
+            Ok(())
+        })
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
               position: _,

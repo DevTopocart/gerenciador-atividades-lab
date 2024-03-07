@@ -18,7 +18,8 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api";
+import { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
@@ -35,6 +36,7 @@ import {
 } from "../../services/easy";
 import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
 import { filterIssuesByStatus } from "../../utils/filterIssuesByStatus";
+import { formatDate } from "../../utils/formatDate";
 import { formatMs } from "../../utils/formatMs";
 import { generateRandomTime } from "../../utils/generateRandomTime";
 import loader from "./../../assets/loader.svg";
@@ -52,30 +54,30 @@ export default function Atividades() {
   const [openFilter, setOpenFilter] = useState(false);
 
   const [timer, setTimer] = useState<{
-    running: "stopped" | "running" | "paused";
+    running: "stopped" | "running" | "paused" | "checking";
     startTime: Date | null;
+    pausedTime: Date | null;
     elapsedTime: number;
     nextCheck: Date;
     expiredCheck: Date | null;
   }>({
     running: "stopped",
     startTime: null,
+    pausedTime: null,
     elapsedTime: 0,
     nextCheck: new Date(),
     expiredCheck: null,
   });
 
   function handleTaskClick(index: number, issue: Issues) {
-    // if (location.state.user.type === "group") {
-    //   toast.warn(
-    //     "Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador",
-    //   );
-    //   return;
-    // }
-    setSelectedIssue(issue);
+    if (timer.running === "stopped") {
+      setSelectedIssue(issue);
+    } else {
+      toast.warn("Pare a atividade atual antes de selecionar outra");
+    }
   }
 
-  async function logTime(elapsedTime: number) {
+  async function logTime(elapsedTime: number, startTime: Date, endTime: Date) {
     setLoading(true);
     const today = new Date();
     const formattedDate = today.toLocaleDateString("en-CA");
@@ -89,6 +91,8 @@ export default function Atividades() {
           selectedIssue!.id,
           formattedDate,
           hours.toFixed(3),
+          startTime,
+          endTime,
         );
 
         toast.success(
@@ -116,6 +120,8 @@ export default function Atividades() {
           selectedIssue!.id,
           formattedDate,
           hours.toFixed(3),
+          startTime,
+          endTime,
         );
 
         toast.success(
@@ -255,9 +261,13 @@ export default function Atividades() {
     }
   }
 
-  function stopTimer() {
-    let stopTime = new Date();
-    logTime(stopTime.getTime() - timer.startTime!.getTime());
+  function stopTimer(pausedTime?: Date) {
+    let stopTime = pausedTime || new Date();
+    logTime(
+      stopTime.getTime() - timer.startTime!.getTime(),
+      timer.startTime!,
+      stopTime,
+    );
     setTimer((current) => ({
       ...current,
       elapsedTime: 0,
@@ -266,63 +276,68 @@ export default function Atividades() {
     }));
   }
 
-  // function pauseTimer() {
-  //   setTimer((current) => ({ ...current, running: "paused" }));
-  // }
+  function pauseTimer() {
+    let pausedTime = new Date();
+    setTimer((current) => ({
+      ...current,
+      running: "paused",
+      pausedTime: pausedTime,
+    }));
+  }
 
-  // const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
+  const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
 
-  /* Timer de inatividade desabilitado temporariamente ate encontrarmos uma solucao mais elegante */
-  // useEffect(() => {
-  //   if (timer.running === "running") {
-  //     const now = new Date();
-  //     const targetDate = timer.nextCheck; // Set your exact date and time here
+  useEffect(() => {
+    if (timer.running === "running") {
+      const now = new Date();
+      const targetDate = timer.nextCheck; // Set your exact date and time here
 
-  //     const delay = targetDate.getTime() - now.getTime();
-  //     console.log(
-  //       `Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms`,
-  //     );
+      const delay = targetDate.getTime() - now.getTime();
+      console.log(
+        `Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms`,
+      );
 
-  //     if (delay > 0) {
-  //       nextTimeoutCheckRef.current = setTimeout(() => {
-  //         setTimer((current) => ({
-  //           ...current,
-  //           expiredCheck: new Date(Date.now() + 300000),
-  //         }));
-  //         toast.warn(
-  //           "Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos",
-  //           { autoClose: 300000 },
-  //         );
-  //         invoke("popup_window");
-  //         pauseTimer();
-  //       }, delay);
-  //     }
-  //   }
+      if (delay > 0) {
+        nextTimeoutCheckRef.current = setTimeout(() => {
+          invoke("popup_window");
+          setTimer((current) => ({
+            ...current,
+            running: "checking",
+            expiredCheck: new Date(Date.now() + 300000),
+          }));
+          toast.warn(
+            "Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos",
+            { autoClose: 300000 },
+          );
+          pauseTimer();
+        }, delay);
+      }
+    }
 
-  //   if (timer.running === "paused" && timer.expiredCheck) {
-  //     const now = new Date();
-  //     const targetDate = timer.expiredCheck; // Set your exact date and time here
+    if (timer.running === "paused" && timer.expiredCheck) {
+      const now = new Date();
+      const targetDate = timer.expiredCheck; // Set your exact date and time here
 
-  //     const delay = targetDate.getTime() - now.getTime();
-  //     console.log(
-  //       `Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms`,
-  //     );
+      const delay = targetDate.getTime() - now.getTime();
+      console.log(
+        `Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms`,
+      );
 
-  //     if (delay > 0) {
-  //       nextTimeoutCheckRef.current = setTimeout(() => {
-  //         stopTimer();
-  //         console.log("Salvando dados");
-  //       }, delay);
-  //     }
-  //   }
+      if (delay > 0) {
+        nextTimeoutCheckRef.current = setTimeout(() => {
+          stopTimer(timer.pausedTime!);
+          console.log("Salvando dados");
+        }, delay);
+      }
+    }
 
-  //   return () => {
-  //     // Clean up
-  //     if (nextTimeoutCheckRef.current) {
-  //       clearTimeout(nextTimeoutCheckRef.current);
-  //     }
-  //   };
-  // }, [timer]);
+    return () => {
+      // Clean up
+      if (nextTimeoutCheckRef.current) {
+        clearTimeout(nextTimeoutCheckRef.current);
+      }
+    };
+  }, [timer]);
 
   function handleGoToGestor() {
     history.push("/painel-gestor", location.state);
@@ -615,11 +630,25 @@ export default function Atividades() {
                   <Card
                     sx={{
                       width: "100%",
-                      backgroundColor: "primary.main",
+                      backgroundColor:
+                        timer.running === "checking"
+                          ? "warning.main"
+                          : "primary.main",
+                      color:
+                        timer.running === "checking"
+                          ? "warning.contrastText"
+                          : "primary.contrastText",
                     }}
                   >
                     <CardContent>
-                      <Typography sx={{ fontSize: 14 }} color="text.secondary">
+                      <Typography
+                        sx={{ fontSize: 14 }}
+                        color={
+                          timer.running === "checking"
+                            ? "warning.contrastText"
+                            : "primary.secondary"
+                        }
+                      >
                         #{selectedIssue.id}
                       </Typography>
                       <Typography variant="h5" gutterBottom>
@@ -671,32 +700,43 @@ export default function Atividades() {
                   flexDirection: "column",
                 }}
               >
-                <Box id="box-button-start">
-                  <Button
-                    startIcon={<PlayCircleFilledWhiteIcon />}
-                    color="success"
-                    fullWidth
-                    variant="contained"
-                    disabled={!selectedIssue || timer.running === "running"}
-                    onClick={startTimer}
+                <Button
+                  startIcon={<PlayCircleFilledWhiteIcon />}
+                  color="success"
+                  fullWidth
+                  variant="contained"
+                  disabled={!selectedIssue || timer.running === "running"}
+                  onClick={startTimer}
+                  sx={{
+                    marginBottom: "2%",
+                  }}
+                >
+                  Iniciar Atividade
+                </Button>
+
+                {timer.running !== "stopped" && (
+                  <Typography
+                    variant="subtitle2"
                     sx={{
-                      marginBottom: "2%",
+                      fontSize: "xx-small",
+                      fontStyle: "italic",
+                      paddingBottom: theme.spacing(1),
                     }}
                   >
-                    Iniciar Atividade
-                  </Button>
+                    Iniciada em {formatDate(timer.startTime!)}
+                  </Typography>
+                )}
 
-                  <Button
-                    startIcon={<StopCircleIcon />}
-                    color="success"
-                    fullWidth
-                    variant="contained"
-                    disabled={!selectedIssue || timer.running === "stopped"}
-                    onClick={stopTimer}
-                  >
-                    Parar Atividade
-                  </Button>
-                </Box>
+                <Button
+                  startIcon={<StopCircleIcon />}
+                  color="success"
+                  fullWidth
+                  variant="contained"
+                  disabled={!selectedIssue || timer.running === "stopped"}
+                  onClick={() => stopTimer()}
+                >
+                  Parar Atividade
+                </Button>
               </Box>
             </Box>
           </Box>

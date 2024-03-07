@@ -27,7 +27,7 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm();
   const history = useHistory();
-  const {loading,setLoading} = useLoading()
+  const { loading, setLoading } = useLoading();
 
   async function onSubmit(data: any) {
     let user = data.Usuario;
@@ -36,13 +36,22 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const ldap = await authLdap(user, password);
+      if (import.meta.env.VITE_APP_DEVELOPMENT_MODE != "TRUE") { 
 
-      if (ldap.ok === false) {
-        ldap.status === 401 ? toast.error("Usuário ou senha inválidos") : toast.error("Erro ao autenticar usuário")
-        throw new Error("Erro ao autenticar usuário")
+        const ldap = await authLdap(user, password);
+  
+        if (ldap.ok === false) {
+          ldap.status === 401 ? toast.error("Usuário ou senha inválidos") : toast.error("Erro ao autenticar usuário")
+          throw new Error("Erro ao autenticar usuário")
+        }
+        toast.info(
+          "Usuário autenticado com sucesso, recuperando informações do Easy Project. Por favor, aguarde...",
+        );
+      } else {
+        toast.info(
+          "Modo de desenvolvedor ativado, autenticação LDAP desativada. Recuperando informações do Easy Project. Por favor, aguarde...",
+        );
       }
-      toast.info("Usuário autenticado com sucesso, recuperando informações do Easy Project. Por favor, aguarde...")
 
       const users = await getUsers();
       const groups = await getGroups();
@@ -66,11 +75,14 @@ export default function LoginPage() {
         });
       }
     } catch (e: any) {
-      console.log("Erro no login:", e)
+      console.log("Erro no login:", e);
       if (e.response && e.response.data && e.response.data.message) {
         toast.error(e.response.data.message);
       } else {
-        toast.error(e)
+        toast.error(
+          "Ocorreu um erro desconhecido, tente novamente mais tarde.",
+        );
+        toast.error(e);
       }
       setLoading(false);
     }
