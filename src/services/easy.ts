@@ -1,3 +1,4 @@
+import pj from "../../package.json";
 import { Group, Issues, User } from "../interfaces";
 import api from "../repositories/api";
 import { filter2ndElementFrom3PartsArray } from "../utils/filter2ndElementFrom3PartsArray";
@@ -228,7 +229,7 @@ export async function createTimeEntryForGroup(
 ) {
   startTime.setHours(startTime.getHours() - 3);
   endTime.setHours(endTime.getHours() - 3);
-  
+
   try {
     const time_json = {
       time_entry: {
@@ -240,7 +241,7 @@ export async function createTimeEntryForGroup(
         easy_time_from: startTime.toISOString(),
         easy_time_to: endTime.toISOString(),
         comments:
-          "Atividade lançada pelo Gerenciador de Atividades em nome de outro colaborador",
+          `Atividade lançada pelo Gerenciador de Atividades (${pj.version}) em nome de outro colaborador`,
         custom_fields: [
           {
             id: 106,
@@ -280,7 +281,8 @@ export async function createTimeEntryForUser(
         easy_time_from: startTime.toISOString(),
         easy_time_to: endTime.toISOString(),
         spent_on: spentOn,
-        comments: "Atividade lançada pelo Gerenciador de Atividades",
+        comments:
+          `Atividade lançada pelo Gerenciador de Atividades (${pj.version}) em nome de outro colaborador`,
       },
     };
 
