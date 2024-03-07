@@ -53,14 +53,14 @@ export default function Atividades() {
   const [openFilter, setOpenFilter] = useState(false);
 
   const [timer, setTimer] = useState<{
-    running: "stopped" | "running" | "paused";
+    running: "stopped" | "running" | "paused" | "checking";
     startTime: Date | null;
     pausedTime: Date | null;
     elapsedTime: number;
     nextCheck: Date;
     expiredCheck: Date | null;
   }>({
-    running: "stopped",
+    running: "checking",
     startTime: null,
     pausedTime: null,
     elapsedTime: 0,
@@ -69,10 +69,15 @@ export default function Atividades() {
   });
 
   function handleTaskClick(index: number, issue: Issues) {
-    setSelectedIssue(issue);
+
+    if (timer.running === "stopped") {
+      setSelectedIssue(issue);
+    } else {
+      toast.warn("Pare a atividade atual antes de selecionar outra");
+    }
   }
 
-  async function logTime(elapsedTime: number) {
+  async function logTime(elapsedTime: number, startTime: Date, endTime: Date) {
     setLoading(true);
     const today = new Date();
     const formattedDate = today.toLocaleDateString("en-CA");
@@ -86,6 +91,8 @@ export default function Atividades() {
           selectedIssue!.id,
           formattedDate,
           hours.toFixed(3),
+          startTime,
+          endTime
         );
 
         toast.success(
@@ -113,6 +120,8 @@ export default function Atividades() {
           selectedIssue!.id,
           formattedDate,
           hours.toFixed(3),
+          startTime,
+          endTime
         );
 
         toast.success(
@@ -254,7 +263,7 @@ export default function Atividades() {
 
   function stopTimer(pausedTime?: Date) {
     let stopTime = pausedTime || new Date();
-    logTime(stopTime.getTime() - timer.startTime!.getTime());
+    logTime(stopTime.getTime() - timer.startTime!.getTime(), timer.startTime!, stopTime);
     setTimer((current) => ({
       ...current,
       elapsedTime: 0,
@@ -285,6 +294,7 @@ export default function Atividades() {
           invoke("popup_window");
           setTimer((current) => ({
             ...current,
+            running: "checking",
             expiredCheck: new Date(Date.now() + 300000),
           }));
           toast.warn(
@@ -612,11 +622,12 @@ export default function Atividades() {
                   <Card
                     sx={{
                       width: "100%",
-                      backgroundColor: "primary.main",
+                      backgroundColor: timer.running === 'checking' ? "warning.main" : "primary.main",
+                      color: timer.running === 'checking' ? "warning.contrastText" : "primary.contrastText",
                     }}
                   >
                     <CardContent>
-                      <Typography sx={{ fontSize: 14 }} color="text.secondary">
+                      <Typography sx={{ fontSize: 14 }} color={timer.running === 'checking' ? "warning.contrastText" : "primary.secondary"}>
                         #{selectedIssue.id}
                       </Typography>
                       <Typography variant="h5" gutterBottom>
