@@ -226,6 +226,9 @@ export async function createTimeEntryForGroup(
   startTime: Date,
   endTime: Date,
 ) {
+  startTime.setHours(startTime.getHours() - 3);
+  endTime.setHours(endTime.getHours() - 3);
+  
   try {
     const time_json = {
       time_entry: {
@@ -234,8 +237,8 @@ export async function createTimeEntryForGroup(
         user_id: 92,
         hours: hours,
         spent_on: spentOn,
-        "easy_time_from": startTime.toISOString(),
-        "easy_time_to": endTime.toISOString(),
+        easy_time_from: startTime.toISOString(),
+        easy_time_to: endTime.toISOString(),
         comments:
           "Atividade lançada pelo Gerenciador de Atividades em nome de outro colaborador",
         custom_fields: [
@@ -264,6 +267,9 @@ export async function createTimeEntryForUser(
   startTime: Date,
   endTime: Date,
 ) {
+  startTime.setHours(startTime.getHours() - 3);
+  endTime.setHours(endTime.getHours() - 3);
+
   try {
     const time_json = {
       time_entry: {
@@ -271,8 +277,8 @@ export async function createTimeEntryForUser(
         issue_id: id_issue,
         user_id: id_user,
         hours: hours,
-        "easy_time_from": startTime.toISOString(),
-        "easy_time_to": endTime.toISOString(),
+        easy_time_from: startTime.toISOString(),
+        easy_time_to: endTime.toISOString(),
         spent_on: spentOn,
         comments: "Atividade lançada pelo Gerenciador de Atividades",
       },

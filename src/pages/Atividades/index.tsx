@@ -36,6 +36,7 @@ import {
 } from "../../services/easy";
 import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
 import { filterIssuesByStatus } from "../../utils/filterIssuesByStatus";
+import { formatDate } from "../../utils/formatDate";
 import { formatMs } from "../../utils/formatMs";
 import { generateRandomTime } from "../../utils/generateRandomTime";
 import loader from "./../../assets/loader.svg";
@@ -69,7 +70,6 @@ export default function Atividades() {
   });
 
   function handleTaskClick(index: number, issue: Issues) {
-
     if (timer.running === "stopped") {
       setSelectedIssue(issue);
     } else {
@@ -92,7 +92,7 @@ export default function Atividades() {
           formattedDate,
           hours.toFixed(3),
           startTime,
-          endTime
+          endTime,
         );
 
         toast.success(
@@ -121,7 +121,7 @@ export default function Atividades() {
           formattedDate,
           hours.toFixed(3),
           startTime,
-          endTime
+          endTime,
         );
 
         toast.success(
@@ -263,7 +263,11 @@ export default function Atividades() {
 
   function stopTimer(pausedTime?: Date) {
     let stopTime = pausedTime || new Date();
-    logTime(stopTime.getTime() - timer.startTime!.getTime(), timer.startTime!, stopTime);
+    logTime(
+      stopTime.getTime() - timer.startTime!.getTime(),
+      timer.startTime!,
+      stopTime,
+    );
     setTimer((current) => ({
       ...current,
       elapsedTime: 0,
@@ -272,9 +276,13 @@ export default function Atividades() {
     }));
   }
 
-  function pauseTimer() {    
-    let pausedTime = new Date()
-    setTimer((current) => ({ ...current, running: "paused", pausedTime: pausedTime }));
+  function pauseTimer() {
+    let pausedTime = new Date();
+    setTimer((current) => ({
+      ...current,
+      running: "paused",
+      pausedTime: pausedTime,
+    }));
   }
 
   const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
@@ -622,12 +630,25 @@ export default function Atividades() {
                   <Card
                     sx={{
                       width: "100%",
-                      backgroundColor: timer.running === 'checking' ? "warning.main" : "primary.main",
-                      color: timer.running === 'checking' ? "warning.contrastText" : "primary.contrastText",
+                      backgroundColor:
+                        timer.running === "checking"
+                          ? "warning.main"
+                          : "primary.main",
+                      color:
+                        timer.running === "checking"
+                          ? "warning.contrastText"
+                          : "primary.contrastText",
                     }}
                   >
                     <CardContent>
-                      <Typography sx={{ fontSize: 14 }} color={timer.running === 'checking' ? "warning.contrastText" : "primary.secondary"}>
+                      <Typography
+                        sx={{ fontSize: 14 }}
+                        color={
+                          timer.running === "checking"
+                            ? "warning.contrastText"
+                            : "primary.secondary"
+                        }
+                      >
                         #{selectedIssue.id}
                       </Typography>
                       <Typography variant="h5" gutterBottom>
@@ -679,32 +700,43 @@ export default function Atividades() {
                   flexDirection: "column",
                 }}
               >
-                <Box id="box-button-start">
-                  <Button
-                    startIcon={<PlayCircleFilledWhiteIcon />}
-                    color="success"
-                    fullWidth
-                    variant="contained"
-                    disabled={!selectedIssue || timer.running === "running"}
-                    onClick={startTimer}
+                <Button
+                  startIcon={<PlayCircleFilledWhiteIcon />}
+                  color="success"
+                  fullWidth
+                  variant="contained"
+                  disabled={!selectedIssue || timer.running === "running"}
+                  onClick={startTimer}
+                  sx={{
+                    marginBottom: "2%",
+                  }}
+                >
+                  Iniciar Atividade
+                </Button>
+
+                {timer.running !== "stopped" && (
+                  <Typography
+                    variant="subtitle2"
                     sx={{
-                      marginBottom: "2%",
+                      fontSize: "xx-small",
+                      fontStyle: "italic",
+                      paddingBottom: theme.spacing(1),
                     }}
                   >
-                    Iniciar Atividade
-                  </Button>
+                    Iniciada em {formatDate(timer.startTime!)}
+                  </Typography>
+                )}
 
-                  <Button
-                    startIcon={<StopCircleIcon />}
-                    color="success"
-                    fullWidth
-                    variant="contained"
-                    disabled={!selectedIssue || timer.running === "stopped"}
-                    onClick={() => stopTimer()}
-                  >
-                    Parar Atividade
-                  </Button>
-                </Box>
+                <Button
+                  startIcon={<StopCircleIcon />}
+                  color="success"
+                  fullWidth
+                  variant="contained"
+                  disabled={!selectedIssue || timer.running === "stopped"}
+                  onClick={() => stopTimer()}
+                >
+                  Parar Atividade
+                </Button>
               </Box>
             </Box>
           </Box>
