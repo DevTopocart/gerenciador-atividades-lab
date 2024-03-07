@@ -18,7 +18,8 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api";
+import { useEffect, useRef, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader, Loader } from "../../components/FullPageLoader";
@@ -54,24 +55,20 @@ export default function Atividades() {
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused";
     startTime: Date | null;
+    pausedTime: Date | null;
     elapsedTime: number;
     nextCheck: Date;
     expiredCheck: Date | null;
   }>({
     running: "stopped",
     startTime: null,
+    pausedTime: null,
     elapsedTime: 0,
     nextCheck: new Date(),
     expiredCheck: null,
   });
 
   function handleTaskClick(index: number, issue: Issues) {
-    // if (location.state.user.type === "group") {
-    //   toast.warn(
-    //     "Solicite ao seu gestor que modifique sua atividade atual no Easy Project ou pelo próprio Gerenciador",
-    //   );
-    //   return;
-    // }
     setSelectedIssue(issue);
   }
 
@@ -255,8 +252,8 @@ export default function Atividades() {
     }
   }
 
-  function stopTimer() {
-    let stopTime = new Date();
+  function stopTimer(pausedTime?: Date) {
+    let stopTime = pausedTime || new Date();
     logTime(stopTime.getTime() - timer.startTime!.getTime());
     setTimer((current) => ({
       ...current,
@@ -266,63 +263,63 @@ export default function Atividades() {
     }));
   }
 
-  // function pauseTimer() {
-  //   setTimer((current) => ({ ...current, running: "paused" }));
-  // }
+  function pauseTimer() {    
+    let pausedTime = new Date()
+    setTimer((current) => ({ ...current, running: "paused", pausedTime: pausedTime }));
+  }
 
-  // const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
+  const nextTimeoutCheckRef = useRef<NodeJS.Timeout | null>(null);
 
-  /* Timer de inatividade desabilitado temporariamente ate encontrarmos uma solucao mais elegante */
-  // useEffect(() => {
-  //   if (timer.running === "running") {
-  //     const now = new Date();
-  //     const targetDate = timer.nextCheck; // Set your exact date and time here
+  useEffect(() => {
+    if (timer.running === "running") {
+      const now = new Date();
+      const targetDate = timer.nextCheck; // Set your exact date and time here
 
-  //     const delay = targetDate.getTime() - now.getTime();
-  //     console.log(
-  //       `Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms`,
-  //     );
+      const delay = targetDate.getTime() - now.getTime();
+      console.log(
+        `Timer rodando, próxima checagem às ${timer.nextCheck}, em ${delay} ms`,
+      );
 
-  //     if (delay > 0) {
-  //       nextTimeoutCheckRef.current = setTimeout(() => {
-  //         setTimer((current) => ({
-  //           ...current,
-  //           expiredCheck: new Date(Date.now() + 300000),
-  //         }));
-  //         toast.warn(
-  //           "Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos",
-  //           { autoClose: 300000 },
-  //         );
-  //         invoke("popup_window");
-  //         pauseTimer();
-  //       }, delay);
-  //     }
-  //   }
+      if (delay > 0) {
+        nextTimeoutCheckRef.current = setTimeout(() => {
+          invoke("popup_window");
+          setTimer((current) => ({
+            ...current,
+            expiredCheck: new Date(Date.now() + 300000),
+          }));
+          toast.warn(
+            "Checando por presença, se não houver resposta as horas serão salvas automaticamente em 5 minutos",
+            { autoClose: 300000 },
+          );
+          pauseTimer();
+        }, delay);
+      }
+    }
 
-  //   if (timer.running === "paused" && timer.expiredCheck) {
-  //     const now = new Date();
-  //     const targetDate = timer.expiredCheck; // Set your exact date and time here
+    if (timer.running === "paused" && timer.expiredCheck) {
+      const now = new Date();
+      const targetDate = timer.expiredCheck; // Set your exact date and time here
 
-  //     const delay = targetDate.getTime() - now.getTime();
-  //     console.log(
-  //       `Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms`,
-  //     );
+      const delay = targetDate.getTime() - now.getTime();
+      console.log(
+        `Timer de expiração rodando, dados serão salvos às ${timer.nextCheck}, em ${delay} ms`,
+      );
 
-  //     if (delay > 0) {
-  //       nextTimeoutCheckRef.current = setTimeout(() => {
-  //         stopTimer();
-  //         console.log("Salvando dados");
-  //       }, delay);
-  //     }
-  //   }
+      if (delay > 0) {
+        nextTimeoutCheckRef.current = setTimeout(() => {
+          stopTimer(timer.pausedTime!);
+          console.log("Salvando dados");
+        }, delay);
+      }
+    }
 
-  //   return () => {
-  //     // Clean up
-  //     if (nextTimeoutCheckRef.current) {
-  //       clearTimeout(nextTimeoutCheckRef.current);
-  //     }
-  //   };
-  // }, [timer]);
+    return () => {
+      // Clean up
+      if (nextTimeoutCheckRef.current) {
+        clearTimeout(nextTimeoutCheckRef.current);
+      }
+    };
+  }, [timer]);
 
   function handleGoToGestor() {
     history.push("/painel-gestor", location.state);
@@ -692,7 +689,7 @@ export default function Atividades() {
                     fullWidth
                     variant="contained"
                     disabled={!selectedIssue || timer.running === "stopped"}
-                    onClick={stopTimer}
+                    onClick={() => stopTimer()}
                   >
                     Parar Atividade
                   </Button>

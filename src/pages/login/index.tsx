@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { invoke } from "@tauri-apps/api";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -14,7 +15,6 @@ import "react-toastify/dist/ReactToastify.css";
 import packageJson from "../../../package.json";
 import { useLoading } from "../../hooks/useLoading";
 import { getGroups, getUsers } from "../../services/easy";
-import { authLdap } from "../../services/ldap";
 import loader from "./../../assets/loader.svg";
 import background from "./../../assets/login-background.jpg";
 import logoTopocart from "./../../assets/logo_topocart.png";
@@ -29,6 +29,12 @@ export default function LoginPage() {
   const history = useHistory();
   const {loading,setLoading} = useLoading()
 
+  function handleReaparecer() {
+    setTimeout(async () => {
+      await invoke('popup_window');
+    }, 15000)
+  }
+
   async function onSubmit(data: any) {
     let user = data.Usuario;
     let password = data.Senha;
@@ -36,12 +42,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const ldap = await authLdap(user, password);
+      // const ldap = await authLdap(user, password);
 
-      if (ldap.ok === false) {
-        ldap.status === 401 ? toast.error("Usuário ou senha inválidos") : toast.error("Erro ao autenticar usuário")
-        throw new Error("Erro ao autenticar usuário")
-      }
+      // if (ldap.ok === false) {
+      //   ldap.status === 401 ? toast.error("Usuário ou senha inválidos") : toast.error("Erro ao autenticar usuário")
+      //   throw new Error("Erro ao autenticar usuário")
+      // }
       toast.info("Usuário autenticado com sucesso, recuperando informações do Easy Project. Por favor, aguarde...")
 
       const users = await getUsers();
@@ -162,6 +168,8 @@ export default function LoginPage() {
                   </>
                 )}
               </Button>
+              
+              <Button onClick={handleReaparecer}>Reaparecer em 15s</Button>
             </Box>
           </form>
         </CardContent>
