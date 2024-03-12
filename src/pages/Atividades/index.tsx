@@ -229,7 +229,7 @@ export default function Atividades() {
     setTimer((current) => ({
       ...current,
       running: "running",
-      startTime: new Date(),
+      startTime: current.running === "paused" ? current.startTime : new Date(),
       nextCheck: new Date(Date.now() + generateRandomTime()),
     }));
   }
