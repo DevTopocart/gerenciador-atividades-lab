@@ -240,8 +240,7 @@ export async function createTimeEntryForGroup(
         spent_on: spentOn,
         easy_time_from: startTime.toISOString(),
         easy_time_to: endTime.toISOString(),
-        comments:
-          `Atividade lançada pelo Gerenciador de Atividades (${pj.version}) em nome de outro colaborador`,
+        comments: `Atividade lançada pelo Gerenciador de Atividades (${pj.version}) em nome de outro colaborador`,
         custom_fields: [
           {
             id: 106,
@@ -281,8 +280,7 @@ export async function createTimeEntryForUser(
         easy_time_from: startTime.toISOString(),
         easy_time_to: endTime.toISOString(),
         spent_on: spentOn,
-        comments:
-          `Atividade lançada pelo Gerenciador de Atividades (${pj.version}) em nome de outro colaborador`,
+        comments: `Atividade lançada pelo Gerenciador de Atividades (${pj.version}) em nome de outro colaborador`,
       },
     };
 

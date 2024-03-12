@@ -36,13 +36,14 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      if (import.meta.env.VITE_APP_DEVELOPMENT_MODE != "TRUE") { 
-
+      if (import.meta.env.VITE_APP_DEVELOPMENT_MODE != "false") {
         const ldap = await authLdap(user, password);
-  
+
         if (ldap.ok === false) {
-          ldap.status === 401 ? toast.error("Usuário ou senha inválidos") : toast.error("Erro ao autenticar usuário")
-          throw new Error("Erro ao autenticar usuário")
+          ldap.status === 401
+            ? toast.error("Usuário ou senha inválidos")
+            : toast.error("Erro ao autenticar usuário");
+          return
         }
         toast.info(
           "Usuário autenticado com sucesso, recuperando informações do Easy Project. Por favor, aguarde...",
@@ -59,12 +60,10 @@ export default function LoginPage() {
       let foundGroup = groups!.find((e) => e.name == user);
 
       if (foundUser == undefined && foundGroup == undefined) {
-        setLoading(false);
         toast.error(
           `O usuário ${user} não foi encontrado no Easy Project, verifique com seu líder.`,
         );
       } else {
-        setLoading(false);
         history.push({
           pathname: "/atividades",
           state: {
@@ -84,6 +83,7 @@ export default function LoginPage() {
         );
         toast.error(e);
       }
+    } finally {
       setLoading(false);
     }
   }
@@ -105,12 +105,12 @@ export default function LoginPage() {
     >
       <Typography
         variant="h3"
-        fontWeight={"bold"}
         sx={{
           paddingBottom: "3rem",
+          textShadow: "4px 4px 8px #000000",
         }}
       >
-        Gerenciador de Atividades
+        Gerenciador de <b>Atividades</b>
       </Typography>
 
       <Divider />
@@ -118,6 +118,7 @@ export default function LoginPage() {
       <Card
         sx={{
           width: "400px",
+          backgroundColor: "rgba(0, 0, 0, 0.611)",
         }}
       >
         <CardContent>
