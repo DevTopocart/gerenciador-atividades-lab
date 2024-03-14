@@ -15,9 +15,6 @@ import packageJson from "../../../package.json";
 import { useLoading } from "../../hooks/useLoading";
 import { getGroups, getUsers } from "../../services/easy";
 import { authLdap } from "../../services/ldap";
-// import loader from "./../../assets/loader.svg";
-// import background from "./../../assets/login-background.jpg";
-// import logoTopocart from "./../../assets/logo_topocart.png";
 import { Version } from "./styles";
 
 export default function LoginPage() {
@@ -59,11 +56,9 @@ export default function LoginPage() {
       const foundUser = users!.find((e) => e.login == user);
 
       if (foundUser) {
+        localStorage.setItem("user", JSON.stringify({ ...foundUser, type: "user" }))
         history.push({
           pathname: "/atividades",
-          state: {
-            user: { ...foundUser, type: "user" },
-          },
         });
       }
 
@@ -75,13 +70,11 @@ export default function LoginPage() {
           `O usuário ${user} não foi encontrado no Easy Project, verifique com seu líder.`,
         );
       } else {
+        localStorage.setItem("user", JSON.stringify(foundUser
+          ? { ...foundUser, type: "user" }
+          : { ...foundGroup, type: "group" }))
         history.push({
           pathname: "/atividades",
-          state: {
-            user: foundUser
-              ? { ...foundUser, type: "user" }
-              : { ...foundGroup, type: "group" },
-          },
         });
       }
     } catch (e: any) {
@@ -108,7 +101,7 @@ export default function LoginPage() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        // backgroundImage: `url(${background})`, TODO
+        backgroundImage: `url('file:///src/assets/login-background.jpg')`,
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
@@ -197,7 +190,7 @@ export default function LoginPage() {
           justifyContent: "center",
         }}
       >
-        {/* <LogoTopocart src={logoTopocart} /> */}
+        <img src='file:///src/assets/logo_topocart.png' />
         <Version>Versão {packageJson.version}</Version>
       </Box>
     </Box>

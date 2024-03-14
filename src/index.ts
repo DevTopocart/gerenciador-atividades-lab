@@ -21,6 +21,7 @@ const createWindow = (): void => {
     },
     alwaysOnTop: true,
     closable: false,
+    icon: "./assets/logo_topocart.png",
     titleBarStyle: "hiddenInset",
   });
 

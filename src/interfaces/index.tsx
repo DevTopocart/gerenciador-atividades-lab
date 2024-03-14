@@ -79,6 +79,8 @@ export interface User {
   supervisor_user_id?: number;
 }
 
+
+
 export type UsersWithIssues = User & { issues?: Issues[] };
 
 export interface Workingtimecalendar {
@@ -187,3 +189,9 @@ export interface GithubAuthor {
   type: string;
   site_admin: boolean;
 }
+
+// Define a type with a type field
+export type WithType<T, TypeName> = T & { type: TypeName };
+
+// Define the derived union type that includes the type field for User and Group
+export type UserOrGroup = WithType<User, 'user'> | WithType<Group, 'group'>;

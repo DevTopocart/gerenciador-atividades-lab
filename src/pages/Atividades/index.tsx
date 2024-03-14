@@ -19,11 +19,11 @@ import {
   useTheme,
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useLoading } from "../../hooks/useLoading";
-import { Issues, User } from "../../interfaces";
+import { Issues, User, UserOrGroup } from "../../interfaces";
 import {
   createTimeEntryForGroup,
   createTimeEntryForUser,
@@ -42,7 +42,6 @@ import { generateRandomTime } from "../../utils/generateRandomTime";
 // import background from "./../../assets/login-background.jpg";
 
 export default function Atividades() {
-  const location: any = useLocation();
   const history = useHistory();
   const theme = useTheme();
   const { loading, setLoading } = useLoading();
@@ -51,6 +50,7 @@ export default function Atividades() {
   const [supervisor, setSupervisor] = useState<User>();
   const [searchkey, setSearchkey] = useState("");
   const [openFilter, setOpenFilter] = useState(false);
+  const user: UserOrGroup = JSON.parse(localStorage.getItem("user"));
 
   const [timer, setTimer] = useState<{
     running: "stopped" | "running" | "paused" | "checking";
@@ -82,10 +82,10 @@ export default function Atividades() {
     const formattedDate = today.toLocaleDateString("en-CA");
     const hours = elapsedTime / 3600000;
 
-    if (location.state.user.type === "user") {
+    if (user.type === "user") {
       try {
         await createTimeEntryForUser(
-          location.state.user.id,
+          user.id,
           selectedIssue!.project.id,
           selectedIssue!.id,
           formattedDate,
@@ -114,7 +114,7 @@ export default function Atividades() {
     } else {
       try {
         await createTimeEntryForGroup(
-          location.state.user.id,
+          user.id,
           selectedIssue!.project.id,
           selectedIssue!.id,
           formattedDate,
@@ -152,13 +152,13 @@ export default function Atividades() {
       const freshSupervisor = await fetchSupervisor();
       setSupervisor(freshSupervisor);
 
-      if (location.state.user.type === "group") {
+      if (user.type === "group") {
         issues = await getIssuesFromGroupUser(
-          location.state.user.id,
+          user.id,
           freshSupervisor?.id,
         );
       } else {
-        issues = await getIssues(location.state.user.id);
+        issues = await getIssues(user.id);
       }
 
       const uniqueIssues = Array.from(
@@ -194,13 +194,13 @@ export default function Atividades() {
     try {
       setLoading(true);
 
-      if (location.state.user.type === "user") {
-        const user = await getUser(location.state.user.id);
-        const user_supervisor = await getUser(user!.supervisor_user_id!);
+      if (user.type === "user") {
+        const userFromEasy = await getUser(user.id);
+        const user_supervisor = await getUser(userFromEasy!.supervisor_user_id!);
         setSupervisor(user_supervisor);
         return user_supervisor!;
       } else {
-        const group = await getGroup(location.state.user.id);
+        const group = await getGroup(user.id);
         const supervisor_id: number = group!.custom_fields?.find(
           (e) => e.id === 124,
         )?.value as number;
@@ -339,7 +339,7 @@ export default function Atividades() {
   }, [timer]);
 
   function handleGoToGestor() {
-    history.push("/painel-gestor", location.state);
+    history.push("/painel-gestor");
   }
 
   const now = new Date();
@@ -353,7 +353,7 @@ export default function Atividades() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        // backgroundImage: `url(${background})`,
+        backgroundImage: `url('file:///src/assets/login-background.jpg')`,
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
@@ -377,7 +377,7 @@ export default function Atividades() {
             alignItems: "center",
           }}
         >
-          {location.state.user.type === "user" && (
+          {user.type === "user" && (
             <>
               <IconButton color="success">
                 <PersonIcon />
@@ -401,9 +401,9 @@ export default function Atividades() {
         >
           <Typography variant="caption" gutterBottom>
             Logado como{" "}
-            {location.state.user.type === "user"
-              ? `${location.state.user.firstname} ${location.state.user.lastname} (Gestor: ${supervisor?.firstname} ${supervisor?.lastname})`
-              : `${location.state.user.name} (Gestor: ${supervisor?.firstname} ${supervisor?.lastname})`}
+            {user.type === "user"
+              ? `${user.firstname} ${user.lastname} (Gestor: ${supervisor?.firstname} ${supervisor?.lastname})`
+              : `${user.name} (Gestor: ${supervisor?.firstname} ${supervisor?.lastname})`}
           </Typography>
           &nbsp;
           <IconButton size="small" onClick={() => history.push("/")}>

@@ -1,3 +1,9 @@
+import AddTaskIcon from "@mui/icons-material/AddTask";
+import Groups2Icon from "@mui/icons-material/Groups2";
+import HelpIcon from "@mui/icons-material/Help";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import {
   Box,
   Dialog,
@@ -10,25 +16,15 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { FullPageLoader } from "../../components/FullPageLoader";
 import { useLoading } from "../../hooks/useLoading";
-// import { Loader } from "../login/styles";
-
-import AddTaskIcon from "@mui/icons-material/AddTask";
-import Groups2Icon from "@mui/icons-material/Groups2";
-import HelpIcon from "@mui/icons-material/Help";
-import LogoutIcon from "@mui/icons-material/Logout";
-import PersonIcon from "@mui/icons-material/Person";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 import { forwardRef, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { TransitionProps } from "react-transition-group/Transition";
-// import loader from "../../assets/loader.svg";
-// import background from "../../assets/login-background.jpg";
 import usePainelGestor from "../../hooks/usePainelGestor";
-import { GroupsWithIssues, Issues, UsersWithIssues } from "../../interfaces";
+import { GroupsWithIssues, Issues, User, UsersWithIssues, WithType } from "../../interfaces";
 import {
   addIssueToGroup,
   getAllIssuesFromSubordinates,
@@ -42,8 +38,7 @@ import { filterIssuesBySearchKey } from "../../utils/filterIssuesBySearchKey";
 import CardPainelGestor from "./CardPainelGestor";
 
 export default function PainelGestor() {
-  const location: any = useLocation();
-  const user = location.state.user;
+  const user: WithType<User, 'user'> = JSON.parse(localStorage.getItem("user"));
 
   const history = useHistory();
   const theme = useTheme();
@@ -137,7 +132,7 @@ export default function PainelGestor() {
   }
 
   function handleGoToAtividades() {
-    history.push("/atividades", location.state);
+    history.push("/atividades");
   }
 
   async function handleTaskClickOnGroup(
@@ -207,7 +202,7 @@ export default function PainelGestor() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        // backgroundImage: `url(${background})`,
+        backgroundImage: `url('file:///src/assets/login-background.jpg')`,
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
@@ -215,7 +210,10 @@ export default function PainelGestor() {
       }}
     >
       {loading && (
-        <FullPageLoader>{/* <Loader src={loader}></Loader> */}</FullPageLoader>
+        <FullPageLoader>
+          {/* <Loader src={loader}></Loader> */}
+          Aguarde, carregando...
+        </FullPageLoader>
       )}
 
       <Dialog
