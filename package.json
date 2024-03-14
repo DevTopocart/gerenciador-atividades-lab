@@ -2,14 +2,14 @@
   "name": "gerenciador-atividades",
   "productName": "gerenciador-atividades",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Gerenciador de Atividades no Easy Project da Topocart",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "format": "prettier --write \"**/*.{js,jsx,css,md,ts,tsx}\""
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.0",
@@ -22,12 +22,13 @@
     "@electron-forge/plugin-webpack": "^7.3.0",
     "@electron/fuses": "^1.7.0",
     "@types/react": "^18.2.65",
-    "@types/react-dom": "^18.2.21",
+    "@types/react-dom": "^18.2.22",
+    "@types/react-router-dom": "5",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
     "css-loader": "^6.0.0",
-    "electron": "29.1.1",
+    "electron": "29.1.2",
     "eslint": "^8.0.1",
     "eslint-plugin-import": "^2.25.0",
     "fork-ts-checker-webpack-plugin": "^7.2.13",
@@ -39,13 +40,25 @@
   },
   "keywords": [],
   "author": {
-    "name": "Victor Marotta",
-    "email": "victordossantosmarotta@gmail.com"
+    "name": "Victor Marotta - Topocart",
+    "email": "victor.santos@topocart.com.br"
   },
   "license": "MIT",
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.13",
+    "@mui/material": "^5.15.13",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.17",
+    "axios": "^1.6.7",
     "electron-squirrel-startup": "^1.0.0",
+    "mui-markdown": "^1.1.13",
+    "prettier": "^3.2.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.0",
+    "react-router-dom": "5",
+    "react-toastify": "^10.0.4",
+    "styled-components": "^6.1.8"
   }
 }
