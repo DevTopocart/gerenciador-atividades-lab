@@ -60,8 +60,8 @@ jobs:
       - name: Copy apps from pkg folder and create latest version
         run: |
           mkdir .\pkg
-          cp -r ".\out\make\squirrel.windows\x64" .\pkg
-          cp ".\pkg\gerenciador-atividades-${{ needs.make-release.outputs.VERSION }} Setup.exe" ".\pkg\gerenciador-atividades-next-latest.exe"
+          Copy-Item -Recurse ".\out\make\squirrel.windows\x64\*" ".\pkg"
+          Copy-Item ".\pkg\gerenciador-atividades-${{ needs.make-release.outputs.VERSION }} Setup.exe" ".\pkg\gerenciador-atividades-next-latest.exe"
 
       - uses: shallwefootball/s3-upload-action@master
         name: Upload app to S3
