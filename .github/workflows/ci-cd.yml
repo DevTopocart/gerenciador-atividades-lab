@@ -1,0 +1,92 @@
+name: Build app
+
+on:
+  push:
+    branches:
+      - next
+
+jobs:
+  make-release:
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.release_version.outputs.version }}
+    steps:
+      - name: Copy data
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        if:  ${{ github.ref }} == 'refs/heads/main'
+        run: yarn add @semantic-release/git @semantic-release/github
+      
+      - name: Semantic Release
+        if:  ${{ github.ref }} == 'refs/heads/main'
+        run: npx semantic-release
+        env:
+          GH_TOKEN : ${{ secrets.GH_TOKEN }}
+      
+      - id: release_version
+        run: |
+          echo "version=$(cat ./package.json | jq -r '.version')" >> $GITHUB_OUTPUT
+
+  build-package:
+    runs-on: windows-latest
+    needs: make-release
+    steps:
+      - name: Copy data
+        uses: actions/checkout@v2
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      
+      - name: Update package.json with latest version
+        run: |
+          $VERSION = "${{ needs.make-release.outputs.VERSION }}"
+          jq --arg ver "$VERSION" '.version = $ver' package.json > temp.json
+          Remove-Item -Path package.json -Force
+          Move-Item -Path temp.json -Destination package.json
+
+      - name: Install dependencies & build app
+        run: | 
+          yarn
+          yarn make
+
+      - name: Copy apps do pkg folder and create latest version
+        run: |
+          mkdir .\pkg
+          cp -r ".\out\make\squirrel.windows\x64" .\pkg
+          cp ".\pkg\gerenciador-atividades-${{ needs.make-release.outputs.VERSION }} Setup.exe" ".\pkg\gerenciador-atividades-next-latest.exe"
+
+      - uses: shallwefootball/s3-upload-action@master
+        name: Upload app to S3
+        id: S3
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: "topocart"
+          destination_dir: 'gerenciador-de-atividades'
+          source_dir: '.\pkg'
+      
+      - name: Upload app with version tag to FTP
+        uses: tomasbkk/action-ftp-upload@v1.0
+        with:
+          user: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          host: ${{ secrets.FTP_HOST }}
+          src: "./pkg/gerenciador-atividades-next-latest.exe"
+          dest: /home/apontador-horas/apontador-horas-next-v${{ needs.make-release.outputs.VERSION }}.exe
+      
+      - name: Upload app with latest tag to FTP
+        uses: tomasbkk/action-ftp-upload@v1.0
+        with:
+          user: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          host: ${{ secrets.FTP_HOST }}
+          src: "./pkg/gerenciador-atividades-next-latest.exe"
+          dest: /home/apontador-horas/apontador-horas-next-latest.exe
