@@ -54,10 +54,10 @@ jobs:
 
       - name: Install dependencies & build app
         run: | 
-          yarn
-          yarn make
+          npm install
+          npm run make
 
-      - name: Copy apps do pkg folder and create latest version
+      - name: Copy apps from pkg folder and create latest version
         run: |
           mkdir .\pkg
           cp -r ".\out\make\squirrel.windows\x64" .\pkg
